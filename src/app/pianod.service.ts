@@ -47,8 +47,8 @@ export class PianodService {
     this.listen();
   };
 
-  // TODO need to limit concurrency
-  // ie make sure only one command is sent at time
+  // Note: i expected i would have to limit concurrency
+  // but everthing seems to work
   // TODO WRITE TESTS FOR THIS!
   // would be nice if i could mock socket response
   public async sendCmd(cmd) {
@@ -59,7 +59,6 @@ export class PianodService {
       this.socket.send(cmd);
 
       let results = await this.getResponse(this.socket);
-      console.log(results);
     } else {
       console.log('NOT CONNECTED TO SOCKET');
     }
