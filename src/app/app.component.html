@@ -1,0 +1,16 @@
+<h1>
+  connected : {{ connected | async }}
+</h1>
+<h1>
+  error : {{ error | async }}
+</h1>
+<h1>
+  playback : {{ playback | async}}
+</h1>
+<h1>
+  current song <br> {{ song | async | json }}
+</h1>
+<h1>
+  current user<br> {{ user | async | json }}
+</h1>
+<input type="text" #cmd (keyup.enter)='sendCmd(cmd.value)' class="form-control" placeholder="send command">
