@@ -1,2 +1,23 @@
-User Name : <input [(ngModel)]="userName"> <br> password : <input [(ngModel)]="password">
-<button (click)='login()'> login </button>
+<!-- <li class="nav&#45;item"> -->
+<!--     <form class="form&#45;inline form&#45;group"> -->
+<!--         <input type=" text " class="form&#45;control mr&#45;sm&#45;2 " placeholder="User Name "> -->
+<!--         <input type="password " class="form&#45;control mr&#45;sm&#45;2 " placeholder="Password "> -->
+<!--         <input class="btn btn&#45;outline&#45;success my&#45;2 my&#45;sm&#45;0 " type="submit"> -->
+<!--     </form> -->
+<!-- </li> -->
+
+<li class="nav-item">
+    <form class="form-inline form-group" (ngSubmit)="onSubmit()" #myForm="ngForm">
+        <!-- <form> -->
+        <!-- <div class="form&#45;group"> -->
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" required [(ngModel)]="login.name" name="name">
+        <!-- </div> -->
+        <!-- <div class="form&#45;group"> -->
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" required [(ngModel)]="login.password" name="password">
+        <!-- </div> -->
+        <button type="submit" class="btn btn-default" [disabled]="!myForm.form.valid" >Login</button>
+    </form>
+
+</li>
