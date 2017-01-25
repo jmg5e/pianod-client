@@ -7,7 +7,7 @@
 <!-- </h1> -->
 <div *ngIf="(connected | async) === true">
 
-    <nav class="navbar navbar-inverse bg-inverse">
+    <nav class="navbar navbar-inverse navbar-static-top bg-inverse">
         <!-- Nav tabs -->
         <ul class="nav nav-pills" role="tablist" *ngIf="loggedIn">
             <li class="nav-item">
@@ -24,12 +24,11 @@
             </li>
         </ul>
         <ul class="nav nav-pills" *ngIf="loggedIn === false">
-            <app-login> </app-login>
+            <li class="nav-item">
+                <app-login> </app-login>
+            </li>
         </ul>
     </nav>
-    <h1>
-    {{ error | async }}
-    </h1>
     <!-- Tab panes -->
     <div class="tab-content">
         <div class="tab-pane active" id="nowPlaying" role="tabpanel">
@@ -50,3 +49,8 @@
     <!-- <input type="text" #cmd (keyup.enter)='sendCmd(cmd.value)' class="form&#45;control" placeholder="send command"> -->
     <app-controls [playback]="playback | async" *ngIf="loggedIn === true"> </app-controls>
 </div>
+
+<!--  DEBUG -->
+<h1>
+error:     {{ error | async }}
+</h1>

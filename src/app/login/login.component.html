@@ -6,18 +6,18 @@
 <!--     </form> -->
 <!-- </li> -->
 
-<li class="nav-item">
-    <form class="form-inline form-group" (ngSubmit)="onSubmit()" #myForm="ngForm">
-        <!-- <form> -->
-        <!-- <div class="form&#45;group"> -->
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" required [(ngModel)]="login.name" name="name">
-        <!-- </div> -->
-        <!-- <div class="form&#45;group"> -->
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" required [(ngModel)]="login.password" name="password">
-        <!-- </div> -->
-        <button type="submit" class="btn btn-default" [disabled]="!myForm.form.valid" >Login</button>
-    </form>
+<!-- <li class="nav&#45;item"> -->
+<form class="form-inline form-group" (ngSubmit)="onSubmit()" #myForm="ngForm">
+    <!-- <form> -->
+    <!-- <div class="form&#45;group"> -->
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" required [(ngModel)]="login.name" name="name">
+    <!-- </div> -->
+    <!-- <div class="form&#45;group"> -->
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" required [(ngModel)]="login.password" name="password">
+    <!-- </div> -->
+    <button type="submit" class="btn btn-default" [disabled]="!myForm.form.valid">Login</button>
+</form>
 
-</li>
+<!-- </li> -->

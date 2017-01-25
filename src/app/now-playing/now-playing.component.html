@@ -1,3 +1,23 @@
-<div class='card'>
-    {{ songInfo | json }}
+<div class="container-fluid">
+    <div class="card-deck-wrapper">
+        <div class="card-deck">
+            <div class="card">
+                <img class="card-img img-fluid" [src]="songInfo?.CoverArt" alt="Card image cap">
+            </div>
+            <div class="card  card-inverse text-center">
+                <h3 class="card-header">{{songInfo?.Title}}</h3>
+                <div class="card-block">
+                    <h5 class="card-text"> {{songInfo?.Artist}} </h5 >
+                    <h5 class="card-text"> {{songInfo?.Album}} </h5 >
+                    <h6> {{songInfo?.Station}} </h6> 
+                </div>
+              <div class="card-footer text-muted">
+                <!-- <a [href]="songInfo.SeeAlso"> seeAlso </a> -->
+              </div>
+            </div>
+        </div>
+    </div>
 </div>
+<!-- <div class='card'> -->
+<!--     {{ songInfo | json }} -->
+<!-- </div> -->

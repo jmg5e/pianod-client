@@ -1,19 +1,23 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import {DebugElement} from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
 
-import { ControlsComponent } from './controls.component';
+import {PianodService} from '../pianod.service';
+
+import {ControlsComponent} from './controls.component';
 
 describe('ControlsComponent', () => {
   let component: ControlsComponent;
   let fixture: ComponentFixture<ControlsComponent>;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ControlsComponent ]
-    })
-    .compileComponents();
+    TestBed
+        .configureTestingModule({
+          providers : [ PianodService ],
+          declarations : [ ControlsComponent ]
+        })
+        .compileComponents();
   }));
 
   beforeEach(() => {
@@ -22,7 +26,5 @@ describe('ControlsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should create', () => { expect(component).toBeTruthy(); });
 });
