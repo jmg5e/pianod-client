@@ -1,13 +1,20 @@
-<nav class="navbar fixed-bottom navbar-inverse bg-inverse">
-    <form class="form-inline">
-        <div class="btn-group">
-            <button (click)="play()" [ngClass]="{active: playback==='PLAYING'}" class="btn btn-outline-primary">
-                      <span class="glyphicon glyphicon-play">play</span></button>
-            <button (click)="pause()" [ngClass]="{active: playback==='PAUSED'}" class="btn btn-sm btn-outline-primary">
-                       <span class="glyphicon glyphicon-pause">pause</span></button>
-            <button [ngClass]="{active: playback==='STOPPED'}" class="btn btn-outline-primary">
-                      <span class="glyphicon glyphicon-stop">stop</span></button>
-        </div>
-        <span class='navbar-text'>{{playback}}</span>
-    </form>
-</nav>
+<md-toolbar>
+    <button md-fab color="primary">Play</button>
+    <button md-fab color="primary">Pause</button>
+    <button md-fab color="primary">Stop</button>
+    <span class="example-fill-remaining-space"></span>
+    <span> {{playback}} </span>
+</md-toolbar>
+<!-- <nav class="navbar fixed&#45;bottom navbar&#45;inverse bg&#45;inverse"> -->
+<!--     <form class="form&#45;inline"> -->
+<!--         <div class="btn&#45;group"> -->
+<!--             <button (click)="play()" [ngClass]="{active: playback==='PLAYING'}" class="btn btn&#45;outline&#45;primary"> -->
+<!--                       <span class="glyphicon glyphicon&#45;play">play</span></button> -->
+<!--             <button (click)="pause()" [ngClass]="{active: playback==='PAUSED'}" class="btn btn&#45;sm btn&#45;outline&#45;primary"> -->
+<!--                        <span class="glyphicon glyphicon&#45;pause">pause</span></button> -->
+<!--             <button [ngClass]="{active: playback==='STOPPED'}" class="btn btn&#45;outline&#45;primary"> -->
+<!--                       <span class="glyphicon glyphicon&#45;stop">stop</span></button> -->
+<!--         </div> -->
+<!--         <span class='navbar&#45;text'>{{playback}}</span> -->
+<!--     </form> -->
+<!-- </nav> -->

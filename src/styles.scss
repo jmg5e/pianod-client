@@ -1,0 +1,63 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css';
+.flex-container {
+    display: flex;
+}
+
+.flex-container> * {
+    flex: 0 0 auto;
+}
+
+.stretchy {
+    flex: 1 1 auto;
+}
+
+.column {
+    flex-direction: column;
+}
+
+html,
+body,
+.full-screen {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+.full-screen {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-screen> * {
+    flex: 0 0 auto;
+}
+
+.full-screen> .header,
+.full-screen> .footer {
+    height: 50px;
+    background: #555;
+    color: white;
+}
+
+.full-screen> .main {
+    flex: 1 1 auto;
+    display: flex;
+}
+
+.full-screen> .main> * {
+    flex: 0 0 auto;
+}
+
+.full-screen> .main> .left,
+.full-screen> .main> .right {
+    width: 200px;
+    background: #eee;
+}
+
+.full-screen> .main> .middle {
+    flex: 1 1 auto;
+}

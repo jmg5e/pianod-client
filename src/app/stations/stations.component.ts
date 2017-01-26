@@ -4,7 +4,7 @@ import {PianodService} from '../pianod.service';
 @Component({
   selector : 'app-stations',
   templateUrl : './stations.component.html',
-  styleUrls : [ './stations.component.css' ]
+  styleUrls : [ './stations.component.scss' ]
 })
 export class StationsComponent implements OnInit {
   /* would be realy cool if i could subscribe to some custom event

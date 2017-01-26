@@ -1,0 +1,31 @@
+
+.parent {
+    display: flex;
+    // justify-content: space-around;
+    height: 400px;
+    width: 100%;
+}
+.station-selected{
+    /*height: 50px;*/
+    // margin: 5px;
+    width: 75%;
+    // background: DeepSkyBlue;
+    // color: white;
+    text-align: center;
+    line-height: 50px;
+    font-weight: 600;
+}
+
+.station-list{
+ 	-webkit-box-shadow: 0 7px 4px #777;
+	-moz-box-shadow: 0 7px 4px #777;
+    box-shadow: 0 7px 4px #777; width: 25%;
+    // align-self: flex-end;
+    margin: 5px;
+    background: grey;
+    // color: white;
+    text-align: center;
+    line-height: 50px;
+    font-weight: 600;
+    overflow: auto;
+}

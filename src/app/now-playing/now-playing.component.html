@@ -1,23 +1,32 @@
-<div class="container-fluid">
-    <div class="card-deck-wrapper">
-        <div class="card-deck">
-            <div class="card">
-                <img class="card-img img-fluid" [src]="songInfo?.CoverArt" alt="Card image cap">
-            </div>
-            <div class="card  card-inverse text-center">
-                <h3 class="card-header">{{songInfo?.Title}}</h3>
-                <div class="card-block">
-                    <h5 class="card-text"> {{songInfo?.Artist}} </h5 >
-                    <h5 class="card-text"> {{songInfo?.Album}} </h5 >
-                    <h6> {{songInfo?.Station}} </h6> 
-                </div>
-              <div class="card-footer text-muted">
-                <!-- <a [href]="songInfo.SeeAlso"> seeAlso </a> -->
-              </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- <div class='card'> -->
-<!--     {{ songInfo | json }} -->
-<!-- </div> -->
+<!-- <h1> Now Playing </h1> -->
+<md-card class="now-playing-card">
+    <md-card-title-group>
+        <img md-card-lg-image [src]="songInfo?.CoverArt">
+        <md-card-title>{{ songInfo?.Title }} </md-card-title>
+        <md-card-subtitle>Subtitle</md-card-subtitle>
+    </md-card-title-group>
+    <md-card-content>
+        <p>{{songInfo?.Artist}}</p>
+        <p>{{songInfo?.Album}}</p>
+    </md-card-content>
+    <md-card-actions>
+        <button md-button>
+          <i class="material-icons md-18" >favorite</i> LIKE
+        </button>
+        <button md-button>
+          <i class="material-icons md-18">unfavorite</i> DISLIKE
+        </button>
+    </md-card-actions>
+</md-card>
+
+<!-- <div class="fill&#45;space"> </div> -->
+<md-toolbar color="primary" class="playback-panel">
+    <md-button-toggle-group name="playback-control" [ngModel]="playback">
+        <md-button-toggle value="PLAYING" (click)="play()">play</md-button-toggle>
+        <md-button-toggle value="PAUSED" (click)="pause()">pause</md-button-toggle>
+        <md-button-toggle value="STOPPED">stop</md-button-toggle>
+    </md-button-toggle-group>
+    <span class="fill-space"> </span>
+    <p> playback = {{playback}}</p>
+</md-toolbar>
+<!-- {{ songInfo | json }} -->

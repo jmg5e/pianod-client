@@ -3,24 +3,20 @@ import {PianodService} from '../pianod.service';
 @Component({
   selector : 'app-connect',
   templateUrl : './connect.component.html',
-  styleUrls : [ './connect.component.css' ]
+  styleUrls : [ './connect.component.scss' ]
 })
 export class ConnectComponent implements OnInit {
 
   // connected;
-  host: string = 'localhost';
+  hostname: string = 'localhost';
   port: number = 4446;
-  socketUrl: string = 'ws://localhost:4446/pianod';
-  constructor(private pianodService: PianodService) {
-    // console.log('connected compent created');
-    // this.connected = this.pianodService.connected$;
-  }
 
-  ngOnInit() {}
-  updateUrl() { this.socketUrl = `ws://${this.host}:${this.port}/pianod`; }
+  constructor(private pianodService: PianodService) {}
+
+  ngOnInit() { this.connect(); }
+  onSubmit() { this.connect(); }
   connect() {
-    // console.log('connect');
-    // pianodService.connect('ws://localhost:4446/pianod');
-    this.pianodService.connect(this.socketUrl);
+    let socketUrl = `ws://${this.hostname}:${this.port}/pianod`;
+    this.pianodService.connect(socketUrl);
   }
 }

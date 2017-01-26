@@ -3,7 +3,7 @@ import {PianodService} from '../pianod.service';
 @Component({
   selector : 'app-controls',
   templateUrl : './controls.component.html',
-  styleUrls : [ './controls.component.css' ]
+  styleUrls : [ './controls.component.scss' ]
 })
 export class ControlsComponent implements OnInit {
   @Input() playback: string;

@@ -6,7 +6,7 @@ import {PianodService} from '../pianod.service';
   moduleId : module.id,
   selector : 'app-login',
   templateUrl : './login.component.html',
-  styleUrls : [ './login.component.css' ]
+  styleUrls : [ './login.component.scss' ]
 })
 export class LoginComponent implements OnInit {
   // @Inject(FormBuilder) fb: FormBuilder;

@@ -1,3 +1,18 @@
- Host Name : <input [(ngModel)]="host" (change)='updateUrl()'> Port : <input [(ngModel)]="port" (change)='updateUrl()'>
-<br> Pianod Socket : <input [ngModel]="socketUrl">
-<button (click)='connect()'> connect </button>
+<md-card>
+    <md-toolbar color="primary">Connect to pianod socket</md-toolbar>
+    <md-card-content>
+        <form class="form-inline form-group" (ngSubmit)="onSubmit()" #myForm="ngForm">
+            <md-input-container style="width: 100%">
+                <input md-input type="text" required placeholder="hostname" [(ngModel)]="hostname" name="hostname">
+            </md-input-container>
+            <md-input-container style="width: 100%">
+                <input md-input type="number" required placeholder="port" name="port" [(ngModel)]="port">
+            </md-input-container>
+            <button md-button type='submit'> Connect </button>
+        </form>
+    </md-card-content>
+</md-card>
+
+<!-- Host Name : <input [(ngModel)]="host" (change)='updateUrl()'> Port : <input [(ngModel)]="port" (change)='updateUrl()'> -->
+<!-- <br> Pianod Socket : <input [ngModel]="socketUrl"> -->
+<!-- <button (click)='connect()'> connect </button> -->
