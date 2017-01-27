@@ -1,4 +1,12 @@
-<md-card>
+<div class="connecting-container" *ngIf="connecting">
+    <div class="connecting-spinner">
+        <h1> CONNECTING </h1>
+        <md-progress-spinner mode="indeterminate" class="spinner">
+        </md-progress-spinner>
+    </div>
+</div>
+
+<md-card *ngIf="!connecting">
     <md-toolbar color="primary">Connect to pianod socket</md-toolbar>
     <md-card-content>
         <form class="form-inline form-group" (ngSubmit)="onSubmit()" #myForm="ngForm">

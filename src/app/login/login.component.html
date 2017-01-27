@@ -3,10 +3,10 @@
     <md-card-content>
         <form class="form-inline form-group" (ngSubmit)="onSubmit()" #myForm="ngForm">
             <md-input-container style="width: 100%">
-                <input md-input type="text" placeholder="User Name" id="name" required [(ngModel)]="login.name" name="name">
+                <input md-input type="text" placeholder="User Name" id="name" required [(ngModel)]="userLogin.name" name="name">
             </md-input-container>
             <md-input-container style="width: 100%">
-                <input md-input type="password" placeholder="password" class="form-control" id="password" required [(ngModel)]="login.password" name="password">
+                <input md-input type="password" placeholder="password" class="form-control" id="password" required [(ngModel)]="userLogin.password" name="password">
             </md-input-container>
             <button md-button-pressed type='submit'> submit </button>
         </form>

@@ -3,12 +3,9 @@
     <md-card-title-group>
         <img md-card-lg-image [src]="songInfo?.CoverArt">
         <md-card-title>{{ songInfo?.Title }} </md-card-title>
-        <md-card-subtitle>Subtitle</md-card-subtitle>
+        <md-card-subtitle>{{ songInfo?.Artist}}</md-card-subtitle>
+        <md-card-subtitle>{{ songInfo?.Album}}</md-card-subtitle>
     </md-card-title-group>
-    <md-card-content>
-        <p>{{songInfo?.Artist}}</p>
-        <p>{{songInfo?.Album}}</p>
-    </md-card-content>
     <md-card-actions>
         <button md-button>
           <i class="material-icons md-18" >favorite</i> LIKE

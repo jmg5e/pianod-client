@@ -1,49 +1,56 @@
 <div class="full-screen">
-    <md-toolbar [color]="!isLoggedIn ? 'primary' : 'accent'">
-        <span>Pianod Client</span>
-        <span class="fill-space"></span>
-        <!-- <span class="spacer"></span> -->
-        <button md-icon-button [mdMenuTriggerFor]="menu">
+    <!-- <div class="connect"> -->
+    <app-connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app-connect>
+    <!-- </div> -->
+    <div class="app-content" *ngIf="connected">
+        <md-toolbar [color]="!isLoggedIn ? 'primary' : 'accent'">
+            <span>Pianod Client</span>
+            <span class="fill-space"></span>
+            <button md-button-pressed (click)="showLogin()" *ngIf="!loggedIn"> LOGIN</button>
+            <button md-button-pressed *ngIf="loggedIn"> LOGOUT</button>
+            <!-- <span class="spacer"></span> -->
+            <button md-icon-button [mdMenuTriggerFor]="menu">
       <md-icon>more_vert</md-icon>
     </button>
-        <md-menu #menu="mdMenu">
-            <button md-menu-item>
+            <md-menu #menu="mdMenu" (click)="showLogin()">
+                <button md-menu-item>
         <md-icon>fingerprint</md-icon>
         <span>Login</span>
       </button>
-            <button md-menu-item>
+                <button md-menu-item>
         <md-icon>notificationsoff</md-icon>
         <span>Settings</span>
       </button>
-            <button md-menu-item>
+                <button md-menu-item>
         <md-icon>notificationsoff</md-icon>
         <span>Connect</span>
       </button>
-        </md-menu>
-    </md-toolbar>
+            </md-menu>
+        </md-toolbar>
 
-    <md-tab-group>
-        <md-tab label="Now Playing">
-            <app-now-playing [playback]="playback | async" [songInfo]="song | async"> </app-now-playing>
+        <md-tab-group>
+            <md-tab label="Now Playing">
+                <app-now-playing [playback]="playback | async" [songInfo]="song | async"> </app-now-playing>
 
-        </md-tab>
-        <md-tab label="Stations">
-            <div id="page-padding">
-                <h1>Stations</h1>
-                <app-stations> </app-stations>
-            </div>
-        </md-tab>
-        <md-tab label="Search">
-            <div id="page-padding">
-                <h1>search</h1>
-                <app-find> </app-find>
-            </div>
-        </md-tab>
-        <md-tab label="Login" *ngIf="!loggedIn">
-            <div id="page-padding">
-                <h1>Login</h1>
-                <app-login></app-login>
-            </div>
-        </md-tab>
-    </md-tab-group>
+            </md-tab>
+            <md-tab label="Stations">
+                <div id="page-padding">
+                    <h1>Stations</h1>
+                    <app-stations> </app-stations>
+                </div>
+            </md-tab>
+            <md-tab label="Search">
+                <div id="page-padding">
+                    <h1>search</h1>
+                    <app-find> </app-find>
+                </div>
+            </md-tab>
+            <md-tab label="Login" *ngIf="!loggedIn">
+                <div id="page-padding">
+                    <h1>Login</h1>
+                    <app-login></app-login>
+                </div>
+            </md-tab>
+        </md-tab-group>
+    </div>
 </div>

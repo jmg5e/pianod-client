@@ -7,8 +7,6 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 
-// import {RouterModule, Routes} from '@angular/router';
-
 import {AppComponent} from './app.component';
 import {ConnectComponent} from './connect/connect.component';
 import {ControlsComponent} from './controls/controls.component';

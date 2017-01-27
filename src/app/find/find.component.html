@@ -4,6 +4,9 @@
 </md-toolbar>
 
 <div class="results-container">
-    <!-- <md&#45;card class="card&#45;seed"> -->
-    <!-- </md&#45;card> -->
+
+    <md-card class="card-seed" *ngFor="let seed of results">
+        <md-card-title>Seed</md-card-title>
+        <md-card-subtitle>{{ seed | json }}</md-card-subtitle>
+    </md-card>
 </div>

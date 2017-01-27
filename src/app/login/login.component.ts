@@ -13,14 +13,29 @@ export class LoginComponent implements OnInit {
 
   // loginForm: FormGroup;
   submitted = false;
-  login = {name : 'admin', password : 'admin'};
-  constructor(private pianodService: PianodService) {}
+  userLogin = {name : 'admin', password : 'admin'};
+
+  constructor(private pianodService: PianodService) {
+    // console.log(localStorage);
+    // this.login(localStorage.getItem('userName'),
+    //            localStorage.getItem('userPass'));
+    // if (localStorage['userPass'] && localStorage['userName']) {
+    //   this.login(localStorage['userName'], localStorage['userPass']);
+    // }
+  }
 
   ngOnInit() {}
+  onSubmit() { this.login(this.userLogin.name, this.userLogin.password); }
 
-  onSubmit() {
-    this.submitted = true;
+  login(name, password) {
     this.pianodService.sendCmd(
-        `user ${this.login.name} ${this.login.password}`);
+        `user ${this.userLogin.name} ${this.userLogin.password}`);
+
+    this.pianodService.user$.subscribe((user) => {
+      if (user.loggedIn) {
+        localStorage.setItem('userName', this.userLogin.name);
+        localStorage.setItem('userPass', this.userLogin.password);
+      }
+    });
   }
 }

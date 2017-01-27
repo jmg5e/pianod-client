@@ -56,6 +56,7 @@ export class PianodService {
       this.socket.send(cmd);
 
       let results = await this.getResponse(this.socket);
+      return results;
     } else {
       console.log('NOT CONNECTED TO SOCKET');
     }
@@ -132,8 +133,8 @@ export class PianodService {
       this.updatePlayback(msg);
     }
 
+    // no station selected
     if (msg.code === 108) {
-      // no station selected
       this.songInfo.SelectedStation = '';
     }
 
