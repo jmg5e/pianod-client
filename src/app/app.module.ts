@@ -11,6 +11,9 @@ import {AppComponent} from './app.component';
 import {ConnectComponent} from './connect/connect.component';
 import {ControlsComponent} from './controls/controls.component';
 import {FindComponent} from './find/find.component';
+import {
+  LoginDialogComponent
+} from './login/login-dialog/login-dialog.component';
 import {LoginComponent} from './login/login.component';
 import {NowPlayingComponent} from './now-playing/now-playing.component';
 import {PianodService} from './pianod.service';
@@ -25,8 +28,10 @@ import {StationsComponent} from './stations/stations.component';
 @NgModule({
   declarations : [
     AppComponent, NowPlayingComponent, SettingsComponent, LoginComponent,
-    ConnectComponent, ControlsComponent, StationsComponent, FindComponent
+    ConnectComponent, ControlsComponent, StationsComponent, FindComponent,
+    LoginDialogComponent
   ],
+  entryComponents : [ LoginDialogComponent ],
   // RouterModule.forRoot(appRoutes)
   imports : [
     BrowserModule, MaterialModule.forRoot(), FlexLayoutModule.forRoot(),

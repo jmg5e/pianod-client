@@ -1,4 +1,6 @@
 <div class="full-screen">
+    <!-- <h3> connected = {{connected}} </h3> -->
+    <!-- <h3> loggedIn = {{user?.loggedIn}} </h3> -->
     <!-- <div class="connect"> -->
     <app-connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app-connect>
     <!-- </div> -->
@@ -6,26 +8,24 @@
         <md-toolbar [color]="!isLoggedIn ? 'primary' : 'accent'">
             <span>Pianod Client</span>
             <span class="fill-space"></span>
-            <button md-button-pressed (click)="showLogin()" *ngIf="!loggedIn"> LOGIN</button>
-            <button md-button-pressed *ngIf="loggedIn"> LOGOUT</button>
-            <!-- <span class="spacer"></span> -->
-            <button md-icon-button [mdMenuTriggerFor]="menu">
-      <md-icon>more_vert</md-icon>
-    </button>
-            <md-menu #menu="mdMenu" (click)="showLogin()">
-                <button md-menu-item>
-        <md-icon>fingerprint</md-icon>
-        <span>Login</span>
-      </button>
-                <button md-menu-item>
-        <md-icon>notificationsoff</md-icon>
-        <span>Settings</span>
-      </button>
-                <button md-menu-item>
-        <md-icon>notificationsoff</md-icon>
-        <span>Connect</span>
-      </button>
-            </md-menu>
+            <app-login (userLogin)="userLogin($event)"> </app-login>
+            <!--         <button md&#45;icon&#45;button [mdMenuTriggerFor]="menu"> -->
+            <!--   <md&#45;icon>more_vert</md&#45;icon> -->
+            <!-- </button> -->
+            <!--         <md&#45;menu #menu="mdMenu" (click)="showLogin()"> -->
+            <!--             <button md&#45;menu&#45;item> -->
+            <!--     <md&#45;icon>fingerprint</md&#45;icon> -->
+            <!--     <span>Login</span> -->
+            <!--   </button> -->
+            <!--             <button md&#45;menu&#45;item> -->
+            <!--     <md&#45;icon>notificationsoff</md&#45;icon> -->
+            <!--     <span>Settings</span> -->
+            <!--   </button> -->
+            <!--             <button md&#45;menu&#45;item> -->
+            <!--     <md&#45;icon>notificationsoff</md&#45;icon> -->
+            <!--     <span>Connect</span> -->
+            <!--   </button> -->
+            <!--         </md&#45;menu> -->
         </md-toolbar>
 
         <md-tab-group>
@@ -43,12 +43,6 @@
                 <div id="page-padding">
                     <h1>search</h1>
                     <app-find> </app-find>
-                </div>
-            </md-tab>
-            <md-tab label="Login" *ngIf="!loggedIn">
-                <div id="page-padding">
-                    <h1>Login</h1>
-                    <app-login></app-login>
                 </div>
             </md-tab>
         </md-tab-group>

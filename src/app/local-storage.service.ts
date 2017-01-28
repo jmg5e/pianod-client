@@ -31,4 +31,12 @@ export class LocalStorageService {
     }
     return data;
   }
+  remove(name) {
+    let data = JSON.parse(window.localStorage.getItem('Pianod'));
+    window.localStorage.removeItem('Pianod');
+    if (data[name]) {
+      delete data[name];
+    };
+    window.localStorage.setItem('Pianod', JSON.stringify(data));
+  }
 }

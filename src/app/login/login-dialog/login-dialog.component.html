@@ -1,0 +1,15 @@
+<h1 md-dialog-title>Login</h1>
+<md-dialog-actions>
+    <form class="form-inline form-group" (ngSubmit)="onSubmit($event)" #loginForm="ngForm">
+        <md-input-container style="width: 100%">
+            <input md-input type="text" required placeholder="username" [(ngModel)]="username" name="username">
+        </md-input-container>
+        <md-input-container style="width: 100%">
+            <input md-input type="password" required placeholder="password" name="password" [(ngModel)]="password">
+        </md-input-container>
+        <div class="flex-container" style="justify-content: space-around;">
+            <button md-button md-dialog-close>Cancel</button>
+            <button md-button type='submit'> Login </button>
+        </div>
+    </form>
+</md-dialog-actions>

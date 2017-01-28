@@ -1,6 +1,11 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+
+import {LocalStorageService} from '../local-storage.service';
 import {PianodService} from '../pianod.service';
+import {User} from '../user';
+import {LoginDialogComponent} from './login-dialog/login-dialog.component';
 
 @Component({
   moduleId : module.id,
@@ -8,34 +13,61 @@ import {PianodService} from '../pianod.service';
   templateUrl : './login.component.html',
   styleUrls : [ './login.component.scss' ]
 })
+
 export class LoginComponent implements OnInit {
-  // @Inject(FormBuilder) fb: FormBuilder;
+  dialogRef: MdDialogRef<LoginDialogComponent>;
+  loginInfo: LoginInfo;
+  user: User = new User();
+  @Output() userLogin = new EventEmitter<User>();
 
-  // loginForm: FormGroup;
-  submitted = false;
-  userLogin = {name : 'admin', password : 'admin'};
+  constructor(private pianodService: PianodService,
+              private localStorageService: LocalStorageService,
+              public dialog: MdDialog) {}
 
-  constructor(private pianodService: PianodService) {
-    // console.log(localStorage);
-    // this.login(localStorage.getItem('userName'),
-    //            localStorage.getItem('userPass'));
-    // if (localStorage['userPass'] && localStorage['userName']) {
-    //   this.login(localStorage['userName'], localStorage['userPass']);
-    // }
-  }
+  ngOnInit() {
+    this.loginInfo = this.localStorageService.get('userLogin');
+    if (this.loginInfo) {
+      // console.log('auto login');
+      this.login(this.loginInfo);
+    }
 
-  ngOnInit() {}
-  onSubmit() { this.login(this.userLogin.name, this.userLogin.password); }
-
-  login(name, password) {
-    this.pianodService.sendCmd(
-        `user ${this.userLogin.name} ${this.userLogin.password}`);
-
-    this.pianodService.user$.subscribe((user) => {
+    this.pianodService.user$.subscribe((user: User) => {
+      this.user = user;
       if (user.loggedIn) {
-        localStorage.setItem('userName', this.userLogin.name);
-        localStorage.setItem('userPass', this.userLogin.password);
+        this.userLogin.emit(user);
+        // TODO : passsword is stored in plain text in browser storage!
+        // logInfo could potential be modified before event, potentially saving
+        // incorrect login credientials
+        this.localStorageService.save('userLogin', this.loginInfo);
       }
     });
   }
+
+  openDialog() {
+    this.dialogRef =
+        this.dialog.open(LoginDialogComponent, {disableClose : true});
+
+    this.dialogRef.afterClosed().subscribe((loginInput: LoginInfo) => {
+      if (loginInput) {
+        this.loginInfo = loginInput;
+        this.login(loginInput);
+      }
+      this.dialogRef = null;
+    });
+  }
+
+  login(loginData: LoginInfo) {
+    this.pianodService.sendCmd(
+        `user ${loginData.username} ${loginData.password}`);
+  }
+
+  logout() {
+    this.localStorageService.remove('userLogin');
+    this.pianodService.logout();
+  }
+}
+
+interface LoginInfo {
+  username: string;
+  password: string;
 }

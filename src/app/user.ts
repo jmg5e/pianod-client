@@ -10,9 +10,6 @@ interface Privileges {
 export class User {
   name: string;
   loggedIn: boolean = false;
-  // privileges : <any>;
-  // password: string; //needed to automatically reconnect
-  // pianod can handle  encrypted passwords i think
 
   privileges: any;
 

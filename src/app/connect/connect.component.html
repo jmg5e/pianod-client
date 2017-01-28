@@ -9,7 +9,7 @@
 <md-card *ngIf="!connecting">
     <md-toolbar color="primary">Connect to pianod socket</md-toolbar>
     <md-card-content>
-        <form class="form-inline form-group" (ngSubmit)="onSubmit()" #myForm="ngForm">
+        <form class="form-inline form-group" (ngSubmit)="onSubmit()" #connectForm="ngForm">
             <md-input-container style="width: 100%">
                 <input md-input type="text" required placeholder="hostname" [(ngModel)]="hostname" name="hostname">
             </md-input-container>
@@ -21,6 +21,3 @@
     </md-card-content>
 </md-card>
 
-<!-- Host Name : <input [(ngModel)]="host" (change)='updateUrl()'> Port : <input [(ngModel)]="port" (change)='updateUrl()'> -->
-<!-- <br> Pianod Socket : <input [ngModel]="socketUrl"> -->
-<!-- <button (click)='connect()'> connect </button> -->

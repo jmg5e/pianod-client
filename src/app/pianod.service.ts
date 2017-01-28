@@ -27,6 +27,7 @@ export class PianodService {
   private error = new Subject<string>();
   private song = new BehaviorSubject<SongInfo>(new SongInfo());
   private user = new BehaviorSubject<User>(new User());
+
   constructor() {
     this.connected$ = this.connected.asObservable();
     this.playback$ = this.playback.asObservable();
@@ -36,16 +37,34 @@ export class PianodService {
   }
 
   // connect to websocket
+  // TODO bugfix : should provide components with pianod state on socket
+  // reconect
   public connect(url) {
     const self = this;
     this.socket = new WebSocket(url);
-    this.socket.onopen = function() { self.connected.next(true); };
-    this.socket.onclose = function() { self.connected.next(false); };
+    this.socket.onopen = function() {
+      self.connected.next(true);
+      self.user.next(new User());
+    };
+    this.socket.onclose = function() {
+      self.connected.next(false);
+      self.user.next(new User());
+      // retry connection
+      setTimeout(() => { self.connect(url); }, 2000);
+    };
     this.listen();
   };
 
-  // Note: i expected i would have to limit concurrency
-  // but everthing seems to work
+  public disconnect() { this.socket.close(); }
+
+  // just reconnect to socket, pianod service should handle everthing
+  public logout() {
+    if (this.socket.OPEN && this.socket.url) {
+      let url = this.socket.url;
+      this.connect(url);
+    }
+  }
+
   // TODO WRITE TESTS FOR THIS!
   // would be nice if i could mock socket response
   public async sendCmd(cmd) {
@@ -58,7 +77,7 @@ export class PianodService {
       let results = await this.getResponse(this.socket);
       return results;
     } else {
-      console.log('NOT CONNECTED TO SOCKET');
+      this.error.next('Not Connected to Pianod Service');
     }
   };
 

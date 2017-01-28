@@ -28,7 +28,6 @@ export class ConnectComponent implements OnInit {
               private localStorageService: LocalStorageService) {}
 
   ngOnInit() {
-    // window.localStorage.clear();
     this.pianodUrl = this.localStorageService.get('pianodUrl');
     if (this.pianodUrl && typeof this.pianodUrl === 'string') {
       // console.log('auto connect');
@@ -38,20 +37,20 @@ export class ConnectComponent implements OnInit {
     }
 
     this.pianodService.connected$.subscribe((state) => {
-      // console.log(state);
+      this.userConnected.emit(state);
       // lost connection
       if (this.connected && state === false) {
-        this.snackBar.open('lost connection to pianod');
-        this.userConnected.emit(state);
+        // this.snackBar.open('lost connection to pianod');
       }
       this.connected = state;
     });
   }
+
   onSubmit() {
     this.pianodUrl = `ws://${this.hostname}:${this.port}/pianod`;
     this.connect();
   }
-  //  try connecting to pianod socket
+
   connect() {
     this.pianodService.connect(this.pianodUrl);
     this.connecting = true;
@@ -62,7 +61,6 @@ export class ConnectComponent implements OnInit {
         this.snackBar.open('failed to connect to pianod');
       } else {
         this.localStorageService.save('pianodUrl', this.pianodUrl);
-        // should be true
         this.userConnected.emit(this.connected);
       }
     }, 1000);
