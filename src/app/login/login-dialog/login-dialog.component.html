@@ -1,15 +1,27 @@
 <h1 md-dialog-title>Login</h1>
-<md-dialog-actions>
-    <form class="form-inline form-group" (ngSubmit)="onSubmit($event)" #loginForm="ngForm">
+<div md-dialog-actions>
+    <form (ngSubmit)="submitForm(loginForm.value)" [formGroup]="loginForm">
         <md-input-container style="width: 100%">
-            <input md-input type="text" required placeholder="username" [(ngModel)]="username" name="username">
+            <input md-input type="text" formControlName="username" placeholder="User Name">
         </md-input-container>
         <md-input-container style="width: 100%">
-            <input md-input type="password" required placeholder="password" name="password" [(ngModel)]="password">
+            <input md-input type="text" required formControlName="password" placeholder="Password">
         </md-input-container>
         <div class="flex-container" style="justify-content: space-around;">
-            <button md-button md-dialog-close>Cancel</button>
+            <button md-button>Cancel</button>
             <button md-button type='submit'> Login </button>
         </div>
     </form>
-</md-dialog-actions>
+    <!-- <form class="form&#45;inline form&#45;group" (ngSubmit)="onSubmit($event)" #loginForm="ngForm"> -->
+    <!--     <md&#45;input&#45;container style="width: 100%"> -->
+    <!--         <input md&#45;input type="text" required placeholder="username" [(ngModel)]="username" name="username"> -->
+    <!--     </md&#45;input&#45;container> -->
+    <!--     <md&#45;input&#45;container style="width: 100%"> -->
+    <!--         <input md&#45;input type="password" required placeholder="password" name="password" [(ngModel)]="password"> -->
+    <!--     </md&#45;input&#45;container> -->
+    <!--     <div class="flex&#45;container" style="justify&#45;content: space&#45;around;"> -->
+    <!--         <button md&#45;button md&#45;dialog&#45;close>Cancel</button> -->
+    <!--         <button md&#45;button type='submit'> Login </button> -->
+    <!--     </div> -->
+    <!-- </form> -->
+</div>

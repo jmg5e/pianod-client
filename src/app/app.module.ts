@@ -1,7 +1,6 @@
 import 'hammerjs';
 
 import {NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
@@ -34,8 +33,7 @@ import {StationsComponent} from './stations/stations.component';
   entryComponents : [ LoginDialogComponent ],
   // RouterModule.forRoot(appRoutes)
   imports : [
-    BrowserModule, MaterialModule.forRoot(), FlexLayoutModule.forRoot(),
-    ReactiveFormsModule, FormsModule
+    BrowserModule, MaterialModule.forRoot(), FormsModule, ReactiveFormsModule
   ],
   providers : [ PianodService ],
   bootstrap : [ AppComponent ]
