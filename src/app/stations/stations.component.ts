@@ -19,8 +19,13 @@ export class StationsComponent implements OnInit {
   ngOnInit() {}
 
   getStations() {
+    // console.log(this.pianodService);
+    // this.pianodService.sendCmd('stations');
     this.pianodService.getStations().then(
-        (stations) => { this.stations = stations; });
+        (stations) => { console.log(stations); });
+    // this.pianodService.sendCmd('stations').then((stations) => {
+    //   console.log(stations);
+    //   // this.stations = stations;
+    // });
   }
-  getStationSeed(station) {}
 }

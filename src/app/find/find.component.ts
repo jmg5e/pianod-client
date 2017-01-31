@@ -13,17 +13,9 @@ export class FindComponent implements OnInit {
   ngOnInit() {}
 
   search(searchTerm, category) {
-    let cmd = `FIND ${category} \"${searchTerm}\"`;
-    this.pianodService.sendCmd(cmd).then((res: any) => {
-      if (res.data) {
-        res.data.map((packet: Array<any>) => {
-          let seed = {};
-          Object.assign(seed, packet);
-          console.log(seed);
-          // console.log(seed.length);
-        });
-      }
-      // console.log(res);
+    // let cmd = `FIND ${category} \"${searchTerm}\"`;
+    this.pianodService.search(searchTerm, category).then((res: any) => {
+      console.log(res);
     });
   }
 }

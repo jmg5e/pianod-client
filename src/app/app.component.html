@@ -1,4 +1,4 @@
-<div class="full-screen">
+<div class="fullscreen">
     <app-connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app-connect>
     <!-- <button (click)="nextTab()"> next </button> -->
     <!-- <button (click)="prevTab()"> prev </button> -->
@@ -9,7 +9,7 @@
             <app-login (userLogin)="userLogin($event)"> </app-login>
         </md-toolbar>
 
-        <md-tab-group [selectedIndex]="selectedTab" md-swipe-content="true">
+        <md-tab-group [selectedIndex]="selectedTab">
             <md-tab label="Now Playing">
                 <app-now-playing [playback]="playback | async" [songInfo]="song | async"> </app-now-playing>
 

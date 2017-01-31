@@ -22,8 +22,8 @@ export class AppComponent {
   user = new User();
   loggedIn = false;
   barConfig = new MdSnackBarConfig();
-  SWIPE_ACTION = {LEFT : 'swipeleft', RIGHT : 'swiperight'};
-  selectedTab: number = 1;
+  // SWIPE_ACTION = {LEFT : 'swipeleft', RIGHT : 'swiperight'};
+  selectedTab: number = 0;
 
   constructor(private pianodService: PianodService,
               private snackBar: MdSnackBar) {
@@ -36,16 +36,16 @@ export class AppComponent {
     this.song = this.pianodService.song$;
   }
 
-  nextTab() {
-    if (this.selectedTab < 3) {
-      this.selectedTab++;
-    }
-  }
-  prevTab() {
-    if (this.selectedTab > 0) {
-      this.selectedTab--;
-    }
-  }
+  // nextTab() {
+  //   if (this.selectedTab < 3) {
+  //     this.selectedTab++;
+  //   }
+  // }
+  // prevTab() {
+  //   if (this.selectedTab > 0) {
+  //     this.selectedTab--;
+  //   }
+  // }
 
   sendCmd(cmd) { this.pianodService.sendCmd(cmd); }
 

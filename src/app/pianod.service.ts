@@ -4,6 +4,8 @@ import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/takeUntil';
 
 import {Injectable} from '@angular/core';
+import * as Async from 'async';
+// import * as d3 from 'd3-queue';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
@@ -20,14 +22,16 @@ export class PianodService {
   public playback$: Observable<string>;
   public song$: Observable<SongInfo>;
   public user$: Observable<User>;
-  private songInfo: SongInfo = new SongInfo();
-  private userInfo: User = new User();
-  private socket: WebSocket;
+
   private connected = new BehaviorSubject<boolean>(false);
   private playback = new BehaviorSubject<string>('STOPPED');
   private error = new Subject<string>();
   private song = new BehaviorSubject<SongInfo>(new SongInfo());
   private user = new BehaviorSubject<User>(new User());
+  private songInfo: SongInfo = new SongInfo();
+  private userInfo: User = new User();
+  private socket: WebSocket;
+  private q: any;
 
   constructor() {
     this.connected$ = this.connected.asObservable();
@@ -35,26 +39,35 @@ export class PianodService {
     this.error$ = this.error.asObservable();
     this.song$ = this.song.asObservable();
     this.user$ = this.user.asObservable();
+
+    // limit concurrency of socket commands to 1
+    // using libarary async js queue to solve this problem
+    this.q = Async.queue((cmd, done) => {
+      // console.log('q running cmd', cmd);
+      this.doSendCmd(cmd)
+          .then((res) => {
+            // console.log('q is done with cmd,', cmd);
+            // console.log(res);
+            done(res);
+          })
+          .catch((err) => { done(err); });
+    }, 1);
   }
 
   // connect to websocket
   // TODO bugfix : should provide components with pianod state on socket
   // reconect
-  // should get response when first connecting to pianod
+  // should get a success response when first connecting to pianod
   public async connect(url) {
     const self = this;
     this.socket = new WebSocket(url);
-    let response = await this.getResponse(this.socket);
+    let response = await this.getResponse();
 
     if (response.msg.content === 'Connected') {
       self.connected.next(true);
       self.user.next(new User());
     }
 
-    // this.socket.onopen = function() {
-    //   self.connected.next(true);
-    //   self.user.next(new User());
-    // };
     this.socket.onclose = function() {
       console.log('socket closed');
       self.connected.next(false);
@@ -62,7 +75,7 @@ export class PianodService {
       // retry connection
       // setTimeout(() => { self.connect(url); }, 2000);
     };
-    // console.log('connect -> ', response);
+
     this.listen();
   };
 
@@ -71,41 +84,58 @@ export class PianodService {
   // just reconnect to socket, pianod service should handle everthing
   public logout() {
     if (this.socket.OPEN && this.socket.url) {
-      let url = this.socket.url;
-      this.connect(url);
-      // this.user.next(new User());
+      this.connect(this.socket.url);
     }
   }
 
   // TODO WRITE TESTS FOR THIS!
   // would be nice if i could mock socket response
-  public async sendCmd(cmd) {
-    if (this.socket.readyState === WebSocket.OPEN) {
-      console.log('sending cmd ', cmd);
-      this.socket.send(cmd);
-
-      let results = await this.getResponse(this.socket);
-      console.log('finished cmd ', cmd);
-
-      return results;
-    } else {
-      this.error.next('Not Connected to Pianod Service');
-    }
+  // sendCmd -> pushes cmd to queue -> doSendCmd() -> getResponse
+  public sendCmd(cmd): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.q.push(cmd, function(res) { return resolve(res); });
+    });
   }
 
   public async getStations() {
+    // get list of stations
+    let response = await this.sendCmd('stations');
+    let stations =
+        response.data[0].map((station) => ({Name : station.Station}));
 
-    let stations = await this.getStationList();
+    // get seeds for each station
+    stations = Promise.all(stations.map(async(station) => {
+      let seeds: any;
+      let seedResponse: any =
+          await this.sendCmd(`station seeds \"${station.Name}\"`);
+      // get seeds for station, transform seed array into a single object
+      seeds = seedResponse.data.map(
+          (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
+
+      Object.assign(station, {Seeds : seeds});
+      return station;
+    }));
+
     return stations;
   }
 
-  private async getStationList() {
-    let stationList = await this.sendCmd('stations').then((res) => res.data);
-    // flatten array
-    stationList = stationList.reduce((acc, cur) => acc.concat(cur), []);
-    // rename Station property to Name
-    stationList = stationList.map(({Station : Station}) => ({Name : Station}));
-    return stationList;
+  public async search(searchTerm, category) {
+    let response = await this.sendCmd(`FIND ${category} \"${searchTerm}\"`);
+    let results = response.data.map(
+        (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
+    return results;
+  }
+
+  // send command to socket and listen for response
+  private doSendCmd(cmd): Promise<any> {
+    if (this.socket.readyState === WebSocket.OPEN) {
+      // console.log('sending cmd ', cmd);
+      this.socket.send(cmd);
+      return this.getResponse();
+    } else {
+      this.error.next('Not Connected to Pianod Service');
+      return Promise.reject('Not Connected to Pianod Service');
+    }
   }
 
   // listen for ALL incoming socket messaged and update pianod
@@ -133,16 +163,18 @@ export class PianodService {
 
   // get response from incoming socket messages
   // see  documentation/protocal.md for pianod dataRequest protocol
-  private getResponse(socket) {
+  private getResponse() {
     const end$ = new Subject<any>();
     let dataRequest = false;
     let dataPacket = [];
     let data = [];
+    let msgs = [];
     // observe response from socket messages
-    const response = Observable.fromEvent(socket, 'message');
-    response.map((msg: any) => new Message(msg.data))
+    const response$ = Observable.fromEvent(this.socket, 'message');
+    response$.map((msg: any) => new Message(msg.data))
         .takeUntil(end$)
         .subscribe((msg: Message) => {
+          msgs.push(msg);
           if (msg.error) {
             end$.error(msg.content);
             // end$.next(msg);
@@ -154,11 +186,11 @@ export class PianodService {
             dataPacket = [];
             dataRequest = true;
           } else if (msg.code === 200) { // success
-            end$.next({msg : msg});
+            end$.next({msgs : msgs, msg : msg});
             end$.complete();
           } else if (msg.code === 204) { // end of data request
             data.push(dataPacket);
-            end$.next({msg : msg, data : data});
+            end$.next({msgs : msgs, msg : msg, data : data});
             end$.complete();
           } else if (dataRequest) {
             dataPacket.push(msg.data);
@@ -180,12 +212,11 @@ export class PianodService {
     if (msg.code > 100 && msg.code < 107) { // playback
       this.updatePlayback(msg);
     }
-
     // no station selected
     if (msg.code === 108) {
       this.songInfo.SelectedStation = '';
     }
-
+    // user logged in
     if (msg.code === 136) {
       this.userInfo.update(msg);
       this.user.next(this.userInfo);
@@ -199,6 +230,9 @@ export class PianodService {
       break;
     case 102:
       this.playback.next('PAUSED');
+      break;
+    case 103:
+      this.playback.next('STOPPED');
       break;
     };
   }

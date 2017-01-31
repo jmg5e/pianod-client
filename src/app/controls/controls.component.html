@@ -1,11 +1,11 @@
 <md-toolbar color="primary" class="control-panel">
-    <button md-button (click)="play()" [color]="playback==='PLAYING' ? 'accent' : ''">
+    <button md-button (click)="play()" [color]="playback==='PLAYING' ? 'accent' : 'default'">
       <md-icon class="md-24">play_arrow</md-icon>
     </button>
-    <button md-button (click)="pause()" [color]="playback==='PAUSED' ? 'accent' : ''">
+    <button md-button (click)="pause()" [color]="playback==='PAUSED' ? 'accent' : 'default'">
       <md-icon class="md-24">pause</md-icon>
-    </button> 
-    <button md-button [color]="playback==='STOPPED' ? 'accent' : ''">
+    </button>
+    <button md-button [color]="playback==='STOPPED' ? 'accent' : 'default'">
       <md-icon class="md-24">stop</md-icon>
     </button>
     <span class="fill-space"> </span>
