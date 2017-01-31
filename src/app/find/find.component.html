@@ -1,10 +1,18 @@
-<md-toolbar color="primary" class="search-panel">
-    <input mdInput type="search">
-    <button md-flat-button>search</button>
-</md-toolbar>
+<md-card>
+    <md-input-container>
+        <input md-input type="text" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
+    </md-input-container>
+    <md-select placeholder="Any" [(ngModel)]="category">
+        <md-option value="Any"> Any</md-option>
+        <md-option value="Artist"> Artist </md-option>
+        <md-option value="Genre"> Genre</md-option>
+    </md-select>
+    <button md-button> Search</button>
+</md-card>
 
+{{searchInput.value}}
+<br> {{category}}
 <div class="results-container">
-
     <md-card class="card-seed" *ngFor="let seed of results">
         <md-card-title>Seed</md-card-title>
         <md-card-subtitle>{{ seed | json }}</md-card-subtitle>

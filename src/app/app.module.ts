@@ -5,6 +5,10 @@ import {FormsModule} from '@angular/forms';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
+// import {
+//   HAMMER_GESTURE_CONFIG,
+//   HammerGestureConfig
+// } from '@angular/platform-browser';
 
 import {AppComponent} from './app.component';
 import {ConnectComponent} from './connect/connect.component';
@@ -35,7 +39,7 @@ import {StationsComponent} from './stations/stations.component';
   imports : [
     BrowserModule, MaterialModule.forRoot(), FormsModule, ReactiveFormsModule
   ],
-  providers : [ PianodService ],
+  providers : [ PianodService],
   bootstrap : [ AppComponent ]
 })
 export class AppModule {

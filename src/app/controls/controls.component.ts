@@ -2,11 +2,12 @@ import {Component, Input, OnInit} from '@angular/core';
 import {PianodService} from '../pianod.service';
 @Component({
   selector : 'app-controls',
-  templateUrl : './controls.component.html',
-  styleUrls : [ './controls.component.scss' ]
+  templateUrl : './controls.component.html'
+  // styleUrls : [ './controls.component.scss' ]
 })
 export class ControlsComponent implements OnInit {
   @Input() playback: string;
+  playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
 
   constructor(private pianodService: PianodService) {}
 

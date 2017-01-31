@@ -1,20 +1,15 @@
-.now-playing-card {
-    width: 90%;
-    height: 90%;
-    // padding: 10px;
-    margin: 10px;
-}
-.control-panel {
+.now-playing {
     display: flex;
-    flex-direction: row;     /* make main axis horizontal (default setting) */
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
     align-items: center;
-    justify-content: center; /* center items horizontally, in this case */
-    align-items: center;     /* center items vertically, in this case */
-    self-align : flex-end;
+    justify-content: center;
 }
 
-.fill-space {
-    // This fills the remaining space, by using flexbox. 
-    // Every toolbar row uses a flexbox row layout.
-    flex: 1 1 auto;
+.card {
+    margin: 50px 5px 5px 5px;
+    height: 100%;
+    width: 100%;
 }
+

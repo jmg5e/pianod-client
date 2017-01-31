@@ -1,6 +1,7 @@
 import 'rxjs/add/observable/interval';
 
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
@@ -15,23 +16,27 @@ import {PianodService} from '../pianod.service';
 
 export class ConnectComponent implements OnInit {
 
-  // @Output() connectState: boolean = false;
   @Output() userConnected = new EventEmitter<boolean>();
   public pianodUrl: string;
-  // connected;
-  hostname: string = 'localhost';
-  port: number = 4446;
+  connectForm;
   connected: boolean = false;
   connecting: boolean = true; // show conecting spinner
+  barConfig = new MdSnackBarConfig();
+
   constructor(private pianodService: PianodService,
               private snackBar: MdSnackBar,
-              private localStorageService: LocalStorageService) {}
+              private localStorageService: LocalStorageService,
+              private fb: FormBuilder) {
+    this.barConfig.duration = 3000;
 
-  ngOnInit() {
+    this.connectForm = fb.group({
+      host : [ null, Validators.required ],
+      port : [ null, Validators.required ]
+    });
     this.pianodUrl = this.localStorageService.get('pianodUrl');
     if (this.pianodUrl && typeof this.pianodUrl === 'string') {
       // console.log('auto connect');
-      this.connect();
+      this.connect(this.pianodUrl);
     } else {
       this.connecting = false;
     }
@@ -46,21 +51,22 @@ export class ConnectComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    this.pianodUrl = `ws://${this.hostname}:${this.port}/pianod`;
-    this.connect();
+  ngOnInit() {}
+  submitForm(form) {
+    this.pianodUrl = `ws://${form.host.trim()}:${form.port}/pianod`;
+    this.connect(this.pianodUrl);
   }
 
-  connect() {
-    this.pianodService.connect(this.pianodUrl);
+  connect(url) {
+    this.pianodService.connect(url);
     this.connecting = true;
 
     setTimeout(() => {
       this.connecting = false; // no longer show spinner
       if (this.connected === false) {
-        this.snackBar.open('failed to connect to pianod');
+        this.snackBar.open('failed to connect to pianod', '', this.barConfig);
       } else {
-        this.localStorageService.save('pianodUrl', this.pianodUrl);
+        this.localStorageService.save('pianodUrl', url);
         this.userConnected.emit(this.connected);
       }
     }, 1000);

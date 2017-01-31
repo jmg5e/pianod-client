@@ -1,29 +1,19 @@
-<!-- <h1> Now Playing </h1> -->
-<md-card class="now-playing-card">
-    <md-card-title-group>
-        <img md-card-lg-image [src]="songInfo?.CoverArt">
-        <md-card-title>{{ songInfo?.Title }} </md-card-title>
-        <md-card-subtitle>{{ songInfo?.Artist}}</md-card-subtitle>
-        <md-card-subtitle>{{ songInfo?.Album}}</md-card-subtitle>
-    </md-card-title-group>
-    <md-card-actions>
-        <button md-button>
+<h1 align='center'> Now Playing </h1>
+<div class="now-playing">
+    <md-card class="card">
+        <md-card-title-group>
+            <img md-card-lg-image [src]="songInfo?.CoverArt">
+            <md-card-title>{{ songInfo?.Title }} </md-card-title>
+            <md-card-subtitle>{{ songInfo?.Artist}}</md-card-subtitle>
+            <md-card-subtitle>{{ songInfo?.Album}}</md-card-subtitle>
+        </md-card-title-group>
+        <md-card-actions>
+            <button md-button>
           <i class="material-icons md-18" >favorite</i> LIKE
         </button>
-        <button md-button>
+            <button md-button>
           <i class="material-icons md-18">unfavorite</i> DISLIKE
         </button>
-    </md-card-actions>
-</md-card>
-
-<!-- <div class="fill&#45;space"> </div> -->
-<md-toolbar color="primary" class="playback-panel">
-    <md-button-toggle-group name="playback-control" [ngModel]="playback">
-        <md-button-toggle value="PLAYING" (click)="play()">play</md-button-toggle>
-        <md-button-toggle value="PAUSED" (click)="pause()">pause</md-button-toggle>
-        <md-button-toggle value="STOPPED">stop</md-button-toggle>
-    </md-button-toggle-group>
-    <span class="fill-space"> </span>
-    <p> playback = {{playback}}</p>
-</md-toolbar>
-<!-- {{ songInfo | json }} -->
+        </md-card-actions>
+    </md-card>
+</div>

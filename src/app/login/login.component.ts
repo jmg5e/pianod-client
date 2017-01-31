@@ -1,5 +1,4 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-// import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {LocalStorageService} from '../local-storage.service';
@@ -10,8 +9,8 @@ import {LoginDialogComponent} from './login-dialog/login-dialog.component';
 @Component({
   moduleId : module.id,
   selector : 'app-login',
-  templateUrl : './login.component.html',
-  styleUrls : [ './login.component.scss' ]
+  templateUrl : './login.component.html'
+  // styleUrls : [ './login.component.scss' ]
 })
 
 export class LoginComponent implements OnInit {
@@ -33,8 +32,9 @@ export class LoginComponent implements OnInit {
 
     this.pianodService.user$.subscribe((user: User) => {
       this.user = user;
+      this.userLogin.emit(user);
       if (user.loggedIn) {
-        this.userLogin.emit(user);
+        // this.userLogin.emit(user);
         // TODO : passsword is stored in plain text in browser storage!
         // logInfo could potential be modified before event, potentially saving
         // incorrect login credientials
@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
 
   openDialog() {
     this.dialogRef =
-        this.dialog.open(LoginDialogComponent, {disableClose : true});
+        this.dialog.open(LoginDialogComponent, {disableClose : false});
 
     this.dialogRef.afterClosed().subscribe((loginInput: LoginInfo) => {
       if (loginInput) {
@@ -64,6 +64,7 @@ export class LoginComponent implements OnInit {
   logout() {
     this.localStorageService.remove('userLogin');
     this.pianodService.logout();
+    this.userLogin.emit(new User());
   }
 }
 

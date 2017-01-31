@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {PianodService} from '../pianod.service';
-
 @Component({
   selector : 'app-stations',
   templateUrl : './stations.component.html',
@@ -18,4 +17,10 @@ export class StationsComponent implements OnInit {
   constructor(private pianodService: PianodService) {}
 
   ngOnInit() {}
+
+  getStations() {
+    this.pianodService.getStations().then(
+        (stations) => { this.stations = stations; });
+  }
+  getStationSeed(station) {}
 }

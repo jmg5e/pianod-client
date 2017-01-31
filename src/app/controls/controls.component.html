@@ -1,20 +1,13 @@
-<md-toolbar>
-    <button md-fab color="primary">Play</button>
-    <button md-fab color="primary">Pause</button>
-    <button md-fab color="primary">Stop</button>
-    <span class="example-fill-remaining-space"></span>
-    <span> {{playback}} </span>
+<md-toolbar color="primary" class="control-panel">
+    <button md-button (click)="play()" [color]="playback==='PLAYING' ? 'accent' : ''">
+      <md-icon class="md-24">play_arrow</md-icon>
+    </button>
+    <button md-button (click)="pause()" [color]="playback==='PAUSED' ? 'accent' : ''">
+      <md-icon class="md-24">pause</md-icon>
+    </button> 
+    <button md-button [color]="playback==='STOPPED' ? 'accent' : ''">
+      <md-icon class="md-24">stop</md-icon>
+    </button>
+    <span class="fill-space"> </span>
+    <!-- <p> playback = {{playback}}</p> -->
 </md-toolbar>
-<!-- <nav class="navbar fixed&#45;bottom navbar&#45;inverse bg&#45;inverse"> -->
-<!--     <form class="form&#45;inline"> -->
-<!--         <div class="btn&#45;group"> -->
-<!--             <button (click)="play()" [ngClass]="{active: playback==='PLAYING'}" class="btn btn&#45;outline&#45;primary"> -->
-<!--                       <span class="glyphicon glyphicon&#45;play">play</span></button> -->
-<!--             <button (click)="pause()" [ngClass]="{active: playback==='PAUSED'}" class="btn btn&#45;sm btn&#45;outline&#45;primary"> -->
-<!--                        <span class="glyphicon glyphicon&#45;pause">pause</span></button> -->
-<!--             <button [ngClass]="{active: playback==='STOPPED'}" class="btn btn&#45;outline&#45;primary"> -->
-<!--                       <span class="glyphicon glyphicon&#45;stop">stop</span></button> -->
-<!--         </div> -->
-<!--         <span class='navbar&#45;text'>{{playback}}</span> -->
-<!--     </form> -->
-<!-- </nav> -->

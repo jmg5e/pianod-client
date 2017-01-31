@@ -2,6 +2,7 @@ import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/takeUntil';
+
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -13,14 +14,14 @@ import {User} from './user';
 
 @Injectable()
 export class PianodService {
-  public responseTimeout: number = 2000;
+  public responseTimeout: number = 5000;
   public connected$: Observable<boolean>;
   public error$: Observable<string>;
   public playback$: Observable<string>;
   public song$: Observable<SongInfo>;
   public user$: Observable<User>;
-  public songInfo: SongInfo = new SongInfo();
-  public userInfo: User = new User();
+  private songInfo: SongInfo = new SongInfo();
+  private userInfo: User = new User();
   private socket: WebSocket;
   private connected = new BehaviorSubject<boolean>(false);
   private playback = new BehaviorSubject<string>('STOPPED');
@@ -39,19 +40,29 @@ export class PianodService {
   // connect to websocket
   // TODO bugfix : should provide components with pianod state on socket
   // reconect
-  public connect(url) {
+  // should get response when first connecting to pianod
+  public async connect(url) {
     const self = this;
     this.socket = new WebSocket(url);
-    this.socket.onopen = function() {
+    let response = await this.getResponse(this.socket);
+
+    if (response.msg.content === 'Connected') {
       self.connected.next(true);
       self.user.next(new User());
-    };
+    }
+
+    // this.socket.onopen = function() {
+    //   self.connected.next(true);
+    //   self.user.next(new User());
+    // };
     this.socket.onclose = function() {
+      console.log('socket closed');
       self.connected.next(false);
       self.user.next(new User());
       // retry connection
-      setTimeout(() => { self.connect(url); }, 2000);
+      // setTimeout(() => { self.connect(url); }, 2000);
     };
+    // console.log('connect -> ', response);
     this.listen();
   };
 
@@ -62,26 +73,43 @@ export class PianodService {
     if (this.socket.OPEN && this.socket.url) {
       let url = this.socket.url;
       this.connect(url);
+      // this.user.next(new User());
     }
   }
 
   // TODO WRITE TESTS FOR THIS!
   // would be nice if i could mock socket response
   public async sendCmd(cmd) {
-    // this.socket.send(cmd);
-
-    let self = this;
     if (this.socket.readyState === WebSocket.OPEN) {
+      console.log('sending cmd ', cmd);
       this.socket.send(cmd);
 
       let results = await this.getResponse(this.socket);
+      console.log('finished cmd ', cmd);
+
       return results;
     } else {
       this.error.next('Not Connected to Pianod Service');
     }
-  };
+  }
+
+  public async getStations() {
+
+    let stations = await this.getStationList();
+    return stations;
+  }
+
+  private async getStationList() {
+    let stationList = await this.sendCmd('stations').then((res) => res.data);
+    // flatten array
+    stationList = stationList.reduce((acc, cur) => acc.concat(cur), []);
+    // rename Station property to Name
+    stationList = stationList.map(({Station : Station}) => ({Name : Station}));
+    return stationList;
+  }
 
   // listen for ALL incoming socket messaged and update pianod
+  // ignore dataRequests
   private listen() {
     const self = this;
     let dataRequest = false;
@@ -104,10 +132,9 @@ export class PianodService {
   }
 
   // get response from incoming socket messages
-  // TODO handle muitiple data packets
   // see  documentation/protocal.md for pianod dataRequest protocol
   private getResponse(socket) {
-    const end$ = new Subject();
+    const end$ = new Subject<any>();
     let dataRequest = false;
     let dataPacket = [];
     let data = [];
@@ -124,13 +151,14 @@ export class PianodService {
             if (dataRequest) {           // Multiple data packets
               data.push(dataPacket);
             }
+            dataPacket = [];
             dataRequest = true;
           } else if (msg.code === 200) { // success
-            end$.next(msg);
+            end$.next({msg : msg});
             end$.complete();
           } else if (msg.code === 204) { // end of data request
             data.push(dataPacket);
-            end$.next(data);
+            end$.next({msg : msg, data : data});
             end$.complete();
           } else if (dataRequest) {
             dataPacket.push(msg.data);
@@ -142,6 +170,7 @@ export class PianodService {
 
     return end$.toPromise(); // async await with observables?
   }
+
   // update pianod
   private updatePianod(msg: Message) {
     if (msg.data) {

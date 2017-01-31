@@ -16,7 +16,5 @@ export class NowPlayingComponent implements OnInit {
     // console.log('now playing constructor');
   }
 
-  play() { this.pianodService.sendCmd('play'); }
-  pause() { this.pianodService.sendCmd('pause'); }
   ngOnInit() {}
 }
