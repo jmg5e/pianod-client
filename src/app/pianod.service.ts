@@ -16,7 +16,7 @@ import {User} from './user';
 
 @Injectable()
 export class PianodService {
-  public responseTimeout: number = 5000;
+  public responseTimeout: number = 30000;
   public connected$: Observable<boolean>;
   public error$: Observable<string>;
   public playback$: Observable<string>;
@@ -43,14 +43,17 @@ export class PianodService {
     // limit concurrency of socket commands to 1
     // using libarary async js queue to solve this problem
     this.q = Async.queue((cmd, done) => {
-      // console.log('q running cmd', cmd);
+      console.log('q running cmd', cmd);
       this.doSendCmd(cmd)
           .then((res) => {
-            // console.log('q is done with cmd,', cmd);
-            // console.log(res);
+            console.log('q is done with cmd,', cmd);
+            console.log(res);
             done(res);
           })
-          .catch((err) => { done(err); });
+          .catch((err) => {
+            console.log('q is done with cmd,', cmd);
+            done(err);
+          });
     }, 1);
   }
 
@@ -61,12 +64,13 @@ export class PianodService {
   public async connect(url) {
     const self = this;
     this.socket = new WebSocket(url);
-    let response = await this.getResponse();
 
-    if (response.msg.content === 'Connected') {
+    // if (response.msg.content === 'Connected') {
+    this.socket.onopen = function() {
+      console.log('socket opened');
       self.connected.next(true);
-      self.user.next(new User());
-    }
+      // self.user.next(new User());
+    };
 
     this.socket.onclose = function() {
       console.log('socket closed');
@@ -75,6 +79,7 @@ export class PianodService {
       // retry connection
       // setTimeout(() => { self.connect(url); }, 2000);
     };
+    let response = await this.getResponse();
 
     this.listen();
   };
@@ -197,8 +202,10 @@ export class PianodService {
           }
         });
 
-    setTimeout(function() { end$.error('ERROR: Response Timeout'); },
-               this.responseTimeout);
+    // setTimeout(() => {
+    //   end$.error('ERROR: Response Timeout');
+    //   return Promise.reject(msgs);
+    // }, this.responseTimeout);
 
     return end$.toPromise(); // async await with observables?
   }

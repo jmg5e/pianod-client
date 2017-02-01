@@ -33,9 +33,13 @@ export class ConnectComponent implements OnInit {
       host : [ null, Validators.required ],
       port : [ null, Validators.required ]
     });
+  }
+
+  ngOnInit() {
     this.pianodUrl = this.localStorageService.get('pianodUrl');
     if (this.pianodUrl && typeof this.pianodUrl === 'string') {
-      // console.log('auto connect');
+      console.log('auto connect');
+      console.log(this.pianodUrl);
       this.connect(this.pianodUrl);
     } else {
       this.connecting = false;
@@ -51,7 +55,6 @@ export class ConnectComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
   submitForm(form) {
     this.pianodUrl = `ws://${form.host.trim()}:${form.port}/pianod`;
     this.connect(this.pianodUrl);

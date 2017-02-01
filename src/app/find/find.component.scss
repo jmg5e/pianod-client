@@ -1,0 +1,39 @@
+.tab-content {}
+
+.search-bar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    align-items: space-between;
+    justify-items: space-between;
+    justify-content: space-around;
+}
+
+.search-input {
+    flex-grow: 3;
+}
+
+.search-category {
+    /* margin-right: 20px; */
+}
+
+.results-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+md-card {
+    padding: 25px;
+    margin: 10px;
+    text-align: center;
+}
+
+md-card-actions {
+    display: flex;
+    align-items: space-between;
+    justify-content: space-around;
+}
+

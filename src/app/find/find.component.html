@@ -1,20 +1,27 @@
-<md-card>
-    <md-input-container>
-        <input md-input type="text" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
-    </md-input-container>
-    <md-select placeholder="Any" [(ngModel)]="category">
-        <md-option value="Any"> Any</md-option>
-        <md-option value="Artist"> Artist </md-option>
-        <md-option value="Genre"> Genre</md-option>
-    </md-select>
-    <button md-button> Search</button>
-</md-card>
-
-{{searchInput.value}}
-<br> {{category}}
-<div class="results-container">
-    <md-card class="card-seed" *ngFor="let seed of results">
-        <md-card-title>Seed</md-card-title>
-        <md-card-subtitle>{{ seed | json }}</md-card-subtitle>
-    </md-card>
+<div class="tab-content">
+    <md-toolbar class="search-bar">
+        <md-select placeholder="category" [(ngModel)]="category">
+            <md-option value="Any"> Any</md-option>
+            <md-option value="Artist"> Artist </md-option>
+            <md-option value="Genre"> Genre</md-option>
+        </md-select>
+        <md-input-container class="search-input">
+            <input md-input type="text" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
+        </md-input-container>
+        <button md-button (click)="search(searchInput.value, category)"> Search</button>
+    </md-toolbar>
+    <hr>
+    <div class="results-container">
+        <md-card *ngFor="let item of results">
+            <!-- {{item | json}} -->
+            <md-card-subtitle>{{item?.ID}}</md-card-subtitle>
+            <md-card-subtitle>{{item?.Artist}}</md-card-subtitle>
+            <md-card-subtitle>{{item?.Song}}</md-card-subtitle>
+            <md-card-subtitle>{{item.Genre}}</md-card-subtitle>
+            <md-card-actions>
+                <button md-button> Add To Station </button>
+                <button md-button> New Station</button>
+            </md-card-actions>
+        </md-card>
+    </div>
 </div>

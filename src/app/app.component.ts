@@ -26,6 +26,7 @@ export class AppComponent {
   selectedTab: number = 0;
 
   constructor(private pianodService: PianodService,
+              private localStorageService: LocalStorageService,
               private snackBar: MdSnackBar) {
     // window.localStorage.clear();
     this.barConfig.duration = 3000;
@@ -47,7 +48,12 @@ export class AppComponent {
   //   }
   // }
 
-  sendCmd(cmd) { this.pianodService.sendCmd(cmd); }
+  disconnect() {
+    console.log('disconect()');
+    this.localStorageService.remove('pianodUrl');
+    this.pianodService.disconnect();
+    this.connected = false;
+  }
 
   //  event from child component
   //  TODO bug after losing connection connect component should be rendered

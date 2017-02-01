@@ -1,6 +1,32 @@
-<button md-button-pressed (click)="getStations()"> get stations </button>
-
-<md-card *ngFor="let station of stations">
-    <md-card-title> {{station.Name}} </md-card-title>
-    <button md-button-pressed (click)="getStationSeeds(station.Name)"> get seeds </button>
-</md-card>
+<div class="tab-content">
+    <!-- <md&#45;card> -->
+    <!--     <button md&#45;button&#45;pressed (click)="getStations()"> get stations </button> -->
+    <!-- </md&#45;card> -->
+    <md-card *ngFor="let station of stations">
+        <md-card-title>
+            <span>{{station?.Name}}</span>
+        </md-card-title>
+        <div class="station-controls">
+            <md-button-toggle #show>
+                <md-icon>settings</md-icon>
+            </md-button-toggle>
+            <md-button-toggle>
+                Mix
+                <md-icon>playlist_add</md-icon>
+            </md-button-toggle>
+            <button md-button color="primary" (click)="playStation(station.Name)"> Play </button>
+        </div>
+        <md-card-content *ngIf="show.checked">
+            <md-list dense>
+                <md-list-item *ngFor="let seed of station.Seeds">
+                    <h4> {{seed | json }} </h4>
+                </md-list-item>
+            </md-list>
+            <md-card-actions>
+                <button md-button>Rename</button>
+                <span class="fill-space"> </span>
+                <button md-button>Delete</button>
+            </md-card-actions>
+        </md-card-content>
+    </md-card>
+</div>

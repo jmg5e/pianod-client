@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
   dialogRef: MdDialogRef<LoginDialogComponent>;
   loginInfo: LoginInfo;
   user: User = new User();
+  connected: boolean = false;
   @Output() userLogin = new EventEmitter<User>();
 
   constructor(private pianodService: PianodService,
@@ -24,11 +25,18 @@ export class LoginComponent implements OnInit {
               public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.loginInfo = this.localStorageService.get('userLogin');
-    if (this.loginInfo) {
-      // console.log('auto login');
-      this.login(this.loginInfo);
-    }
+    this.pianodService.connected$.subscribe((connected) => {
+      // need to know if connected!
+      if (connected && !this.connected) {
+        this.loginInfo = this.localStorageService.get('userLogin');
+        if (this.loginInfo) {
+          // console.log('auto login');
+          this.login(this.loginInfo);
+        }
+      }
+      this.connected = connected;
+
+    });
 
     this.pianodService.user$.subscribe((user: User) => {
       this.user = user;

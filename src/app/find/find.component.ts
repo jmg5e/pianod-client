@@ -7,15 +7,18 @@ import {PianodService} from '../pianod.service';
 })
 export class FindComponent implements OnInit {
   results = [];
-  category = 'Any';
+  category = 'Artist';
   constructor(private pianodService: PianodService) {}
 
   ngOnInit() {}
 
+  // this is slow... should create seperate socket just for searching
   search(searchTerm, category) {
+    console.log('searching');
     // let cmd = `FIND ${category} \"${searchTerm}\"`;
-    this.pianodService.search(searchTerm, category).then((res: any) => {
-      console.log(res);
+    this.pianodService.search(searchTerm, category).then((results: any) => {
+      console.log(results);
+      this.results = results;
     });
   }
 }
