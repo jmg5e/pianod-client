@@ -11,6 +11,12 @@
         <button md-button (click)="search(searchInput.value, category)"> Search</button>
     </md-toolbar>
     <hr>
+    <div class="search-container" *ngIf="searching">
+        <div class="connecting-spinner">
+            <md-progress-spinner mode="indeterminate" class="spinner">
+            </md-progress-spinner>
+        </div>
+    </div>
     <div class="results-container">
         <md-card *ngFor="let item of results">
             <!-- {{item | json}} -->

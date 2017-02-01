@@ -2,7 +2,7 @@ import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/takeUntil';
-
+import 'rxjs/add/operator/catch';
 import {Injectable} from '@angular/core';
 import * as Async from 'async';
 // import * as d3 from 'd3-queue';
@@ -51,7 +51,7 @@ export class PianodService {
             done(res);
           })
           .catch((err) => {
-            console.log('q is done with cmd,', cmd);
+            console.log('q(err) is done with cmd,', cmd);
             done(err);
           });
     }, 1);
@@ -65,21 +65,11 @@ export class PianodService {
     const self = this;
     this.socket = new WebSocket(url);
 
-    // if (response.msg.content === 'Connected') {
-    this.socket.onopen = function() {
-      console.log('socket opened');
-      self.connected.next(true);
-      // self.user.next(new User());
-    };
-
-    this.socket.onclose = function() {
-      console.log('socket closed');
-      self.connected.next(false);
-      self.user.next(new User());
-      // retry connection
-      // setTimeout(() => { self.connect(url); }, 2000);
-    };
     let response = await this.getResponse();
+    if (response.msg.content === 'Connected') {
+      this.connected.next(true);
+      this.user.next(new User());
+    }
 
     this.listen();
   };
@@ -98,7 +88,7 @@ export class PianodService {
   // sendCmd -> pushes cmd to queue -> doSendCmd() -> getResponse
   public sendCmd(cmd): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.q.push(cmd, function(res) { return resolve(res); });
+      this.q.push(cmd, (res) => { return resolve(res); });
     });
   }
 
@@ -164,6 +154,14 @@ export class PianodService {
         self.updatePianod(msg);
       }
     };
+
+    this.socket.onclose = function() {
+      console.log('socket closed');
+      self.connected.next(false);
+      self.user.next(new User());
+      // retry connection
+      // setTimeout(() => { self.connect(url); }, 2000);
+    };
   }
 
   // get response from incoming socket messages
@@ -178,6 +176,7 @@ export class PianodService {
     const response$ = Observable.fromEvent(this.socket, 'message');
     response$.map((msg: any) => new Message(msg.data))
         .takeUntil(end$)
+        .catch((err) => { return Promise.reject({error : err, msgs : msgs}); })
         .subscribe((msg: Message) => {
           msgs.push(msg);
           if (msg.error) {
@@ -202,10 +201,10 @@ export class PianodService {
           }
         });
 
-    // setTimeout(() => {
-    //   end$.error('ERROR: Response Timeout');
-    //   return Promise.reject(msgs);
-    // }, this.responseTimeout);
+    setTimeout(() => {
+      end$.error('ERROR: Response Timeout');
+      // return Promise.reject(msgs);
+    }, this.responseTimeout);
 
     return end$.toPromise(); // async await with observables?
   }
