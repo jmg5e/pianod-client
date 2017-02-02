@@ -38,8 +38,7 @@ export class ConnectComponent implements OnInit {
   ngOnInit() {
     this.pianodUrl = this.localStorageService.get('pianodUrl');
     if (this.pianodUrl && typeof this.pianodUrl === 'string') {
-      console.log('auto connect');
-      console.log(this.pianodUrl);
+      // console.log('auto connect');
       this.connect(this.pianodUrl);
     } else {
       this.connecting = false;
@@ -72,6 +71,6 @@ export class ConnectComponent implements OnInit {
         this.localStorageService.save('pianodUrl', url);
         this.userConnected.emit(this.connected);
       }
-    }, 1000);
+    }, 2000);
   }
 }

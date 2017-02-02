@@ -43,17 +43,7 @@ export class PianodService {
     // limit concurrency of socket commands to 1
     // using libarary async js queue to solve this problem
     this.q = Async.queue((cmd, done) => {
-      console.log('q running cmd', cmd);
-      this.doSendCmd(cmd)
-          .then((res) => {
-            console.log('q is done with cmd,', cmd);
-            console.log(res);
-            done(res);
-          })
-          .catch((err) => {
-            console.log('q(err) is done with cmd,', cmd);
-            done(err);
-          });
+      this.doSendCmd(cmd).then(res => done(res)).catch(err => done(err));
     }, 1);
   }
 
@@ -156,7 +146,7 @@ export class PianodService {
     };
 
     this.socket.onclose = function() {
-      console.log('socket closed');
+      // console.log('socket closed');
       self.connected.next(false);
       self.user.next(new User());
       // retry connection
