@@ -22,10 +22,16 @@ export class PianodService {
   public playback$: Observable<string>;
   public song$: Observable<SongInfo>;
   public user$: Observable<User>;
+  public stations$: Observable<any>;
+  public mixList$: Observable<any>;
+  public currentStation$: Observable<string>;
 
   private connected = new BehaviorSubject<boolean>(false);
   private playback = new BehaviorSubject<string>('STOPPED');
   private error = new Subject<string>();
+  private currentStation = new Subject<string>();
+  private stations = new Subject<any>();
+  private mixList = new Subject<any>();
   private song = new BehaviorSubject<SongInfo>(new SongInfo());
   private user = new BehaviorSubject<User>(new User());
   private songInfo: SongInfo = new SongInfo();
@@ -39,7 +45,9 @@ export class PianodService {
     this.error$ = this.error.asObservable();
     this.song$ = this.song.asObservable();
     this.user$ = this.user.asObservable();
-
+    this.stations$ = this.stations.asObservable();
+    this.mixList$ = this.mixList.asObservable();
+    this.currentStation$ = this.currentStation.asObservable();
     // limit concurrency of socket commands to 1
     // using libarary async js queue to solve this problem
     this.q = Async.queue((cmd, done) => {
@@ -104,6 +112,13 @@ export class PianodService {
     return stations;
   }
 
+  public async getMixList() {
+    // get list of stations
+    let response = await this.sendCmd('mix list');
+    let mixList = response.data[0].map((station) => ({Name : station.Station}));
+    return mixList;
+  }
+
   public async search(searchTerm, category) {
     let response = await this.sendCmd(`FIND ${category} \"${searchTerm}\"`);
     let results = response.data.map(
@@ -116,7 +131,7 @@ export class PianodService {
     if (this.socket.readyState === WebSocket.OPEN) {
       // console.log('sending cmd ', cmd);
       this.socket.send(cmd);
-      return this.getResponse();
+      return this.getResponse(); // return promise
     } else {
       this.error.next('Not Connected to Pianod Service');
       return Promise.reject('Not Connected to Pianod Service');
@@ -210,12 +225,27 @@ export class PianodService {
     }
     // no station selected
     if (msg.code === 108) {
-      this.songInfo.SelectedStation = '';
+      this.currentStation.next('');
+    }
+    if (msg.code === 109) {
+      this.currentStation.next(msg.data.SelectedStation);
+    }
+    // stationList changed
+    if (msg.code === 135) {
+      this.getStations().then(
+          (stationList) => { this.stations.next(stationList); });
+    }
+    // mixList changed
+    if (msg.code === 134) {
+      this.getMixList().then((mixList) => { this.mixList.next(mixList); });
     }
     // user logged in
     if (msg.code === 136) {
       this.userInfo.update(msg);
       this.user.next(this.userInfo);
+      this.getStations().then(
+          (stationList) => { this.stations.next(stationList); });
+      this.getMixList().then((mixList) => { this.mixList.next(mixList); });
     }
   }
 

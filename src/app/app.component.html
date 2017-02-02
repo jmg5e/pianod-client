@@ -4,7 +4,6 @@
         <span class="fill-space"></span>
         <md-menu #appMenu="mdMenu">
             <app-login (userLogin)="userLogin($event)"> </app-login>
-            <!-- <button md&#45;menu&#45;item> Login </button> -->
             <button md-menu-item (click)="disconnect()"> Disconect </button>
         </md-menu>
 
@@ -20,8 +19,7 @@
                 <template md-tab-label>
               <em>Now Playing</em>
             </template>
-                <app-now-playing [playback]="playback | async" [songInfo]="song | async"> </app-now-playing>
-                <!-- <app&#45;now&#45;playing></app&#45;now&#45;playing> -->
+                <app-now-playing> </app-now-playing>
             </md-tab>
             <md-tab *ngIf="user.loggedIn">
                 <template md-tab-label>
@@ -33,39 +31,9 @@
                 <template md-tab-label>
               <em>Search</em>
             </template>
-                <app-find> </app-find>
+                <app-search> </app-search>
             </md-tab>
         </md-tab-group>
-        <!-- <md&#45;toolbar color="primary">Bottom Content</md&#45;toolbar> -->
-        <app-controls [playback]="playback | async"> </app-controls>
+        <app-controls> </app-controls>
     </div>
 </div>
-
-<!-- <div class="app&#45;container"> -->
-<!--     <app&#45;connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app&#45;connect> -->
-<!--     <!&#45;&#45; <button (click)="nextTab()"> next </button> &#45;&#45;> -->
-<!--     <!&#45;&#45; <button (click)="prevTab()"> prev </button> &#45;&#45;> -->
-<!--     <div class="app&#45;content" *ngIf="connected"> -->
-<!--         <md&#45;toolbar [color]="user.loggedIn ? 'primary' : 'warn'"> -->
-<!--             <span>Pianod Client</span> -->
-<!--             <span class="fill&#45;space"></span> -->
-<!--             <app&#45;login (userLogin)="userLogin($event)"> </app&#45;login> -->
-<!--         </md&#45;toolbar> -->
-<!--  -->
-<!--         <md&#45;tab&#45;group [selectedIndex]="selectedTab"> -->
-<!--             <md&#45;tab label="Now Playing"> -->
-<!--                 <app&#45;now&#45;playing [playback]="playback | async" [songInfo]="song | async"> </app&#45;now&#45;playing> -->
-<!--  -->
-<!--             </md&#45;tab> -->
-<!--             <md&#45;tab label="Stations" *ngIf="user.loggedIn"> -->
-<!--                 <h1>Stations</h1> -->
-<!--                 <app&#45;stations> </app&#45;stations> -->
-<!--             </md&#45;tab> -->
-<!--             <md&#45;tab label="Search" *ngIf="user.loggedIn"> -->
-<!--                 <h1>search</h1> -->
-<!--                 <app&#45;find> </app&#45;find> -->
-<!--             </md&#45;tab> -->
-<!--         </md&#45;tab&#45;group> -->
-<!--         <app&#45;controls [playback]="playback | async"> </app&#45;controls> -->
-<!--     </div> -->
-<!-- </div> -->

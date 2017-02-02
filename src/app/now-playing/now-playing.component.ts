@@ -8,12 +8,12 @@ import {SongInfo} from '../song-info';
   styleUrls : [ './now-playing.component.scss' ]
 })
 export class NowPlayingComponent implements OnInit {
-  @Input() songInfo: SongInfo;
-  @Input() playback: string;
-  playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
-
+  // @Input() songInfo: SongInfo;
+  // @Input() playback: string;
+  // playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
+  song: SongInfo;
   constructor(private pianodService: PianodService) {
-    // console.log('now playing constructor');
+    this.pianodService.song$.subscribe((songInfo) => this.song = songInfo);
   }
 
   ngOnInit() {}

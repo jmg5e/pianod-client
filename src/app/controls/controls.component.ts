@@ -6,10 +6,13 @@ import {PianodService} from '../pianod.service';
   // styleUrls : [ './controls.component.scss' ]
 })
 export class ControlsComponent implements OnInit {
-  @Input() playback: string;
+  playback: string;
   playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
 
-  constructor(private pianodService: PianodService) {}
+  constructor(private pianodService: PianodService) {
+    this.pianodService.playback$.subscribe(playback => this.playback =
+                                               playback);
+  }
 
   ngOnInit() {}
   play() { this.pianodService.sendCmd('play'); }

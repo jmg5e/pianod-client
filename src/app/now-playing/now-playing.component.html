@@ -1,11 +1,11 @@
 <div class="tab-content">
     <md-card>
         <md-card-title-group>
-            <md-card-title>{{songInfo?.Title}}</md-card-title>
+            <md-card-title>{{song?.Title}}</md-card-title>
             <!-- <img md&#45;card&#45;lg&#45;image src="path/to/img.png"> -->
-            <img md-card-lg-image [src]="songInfo?.CoverArt">
-            <md-card-subtitle>{{songInfo?.Artist}}</md-card-subtitle>
-            <md-card-subtitle> {{songInfo?.Album}}</md-card-subtitle>
+            <img md-card-lg-image [src]="song?.CoverArt">
+            <md-card-subtitle>{{song?.Artist}}</md-card-subtitle>
+            <md-card-subtitle> {{song?.Album}}</md-card-subtitle>
         </md-card-title-group>
         <md-card-actions>
 
@@ -20,6 +20,7 @@
                 <md-icon>thumb_down</md-icon>
             </button>
         </md-card-actions>
+        <!-- {{song | async | json }} -->
     </md-card>
 </div>
 

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 // import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
@@ -14,7 +14,7 @@ import {User} from './user';
   providers : [ LocalStorageService ]
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
   error;
   connected = false; // is set from child ConnectComponent
   playback;
@@ -30,23 +30,12 @@ export class AppComponent {
               private snackBar: MdSnackBar) {
     // window.localStorage.clear();
     this.barConfig.duration = 3000;
-
-    this.error = this.pianodService.error$.subscribe(
-        (err) => { this.snackBar.open(err, '', this.barConfig); });
-    this.playback = this.pianodService.playback$;
-    this.song = this.pianodService.song$;
   }
 
-  // nextTab() {
-  //   if (this.selectedTab < 3) {
-  //     this.selectedTab++;
-  //   }
-  // }
-  // prevTab() {
-  //   if (this.selectedTab > 0) {
-  //     this.selectedTab--;
-  //   }
-  // }
+  ngOnInit() {
+    this.error = this.pianodService.error$.subscribe(
+        (err) => { this.snackBar.open(err, '', this.barConfig); });
+  }
 
   disconnect() {
     console.log('disconect()');
