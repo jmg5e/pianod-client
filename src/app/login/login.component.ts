@@ -7,7 +7,6 @@ import {User} from '../user';
 import {LoginDialogComponent} from './login-dialog/login-dialog.component';
 
 @Component({
-  moduleId : module.id,
   selector : 'app-login',
   templateUrl : './login.component.html'
   // styleUrls : [ './login.component.scss' ]

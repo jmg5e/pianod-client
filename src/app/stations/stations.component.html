@@ -7,7 +7,8 @@
             <md-button-toggle #show>
                 <md-icon>settings</md-icon>
             </md-button-toggle>
-            <md-button-toggle>
+            <input type="text" [value]="inMix(station.Name)">
+            <md-button-toggle [checked]="inMix(station.Name)" (click)="toggleInMix(station.Name)">
                 Mix
                 <md-icon>playlist_add</md-icon>
             </md-button-toggle>
@@ -17,6 +18,7 @@
             <md-list dense>
                 <md-list-item *ngFor="let seed of station.Seeds">
                     <h4> {{seed | json }} </h4>
+                    <button md-button (click)="deleteSeed(seed.ID)"> delete </button>
                 </md-list-item>
             </md-list>
             <md-card-actions>

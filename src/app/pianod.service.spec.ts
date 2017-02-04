@@ -16,30 +16,31 @@ import {Observable} from 'rxjs/Rx';
 import {PianodService} from './pianod.service';
 
 describe('PianodService - Setup', () => {
+  let testService;
   beforeEach(() => {
     TestBed.configureTestingModule({providers : [ PianodService ]});
   });
 
   it('should ...', inject([ PianodService ], (service: PianodService) => {
        expect(service).toBeTruthy();
+       testService = service;
      }));
 
   describe('connect()', () => {
-    it('connect$ event should eventually be true...',
-       async(inject([ PianodService ], (service: PianodService) => {
-         // let source = Observable.range(0, 1).subscribeOn(service.connected$);
-         const initialConnection = service.connected$.take(1).subscribe(
-             (connected) => { expect(connected).toEqual(false); });
+    it('connect$ event should eventually be true...', (done) => {
+      // console.log(testService);
 
-         // service.connected should eventually be true
-         const testConnection =
-             service.connected$.take(2)
-                 .skipWhile((connected) => connected === false)
-                 .subscribe(
-                     (connected) => { expect(connected).toEqual(true); });
-
-         // TODO mock websocket
-         service.connect('ws://localhost:4446/pianod');
-       })));
+      testService.connected$.take(2)
+          .skipWhile((connected) => connected === false)
+          .subscribe((connected) => {
+            expect(connected).toEqual(true);
+            done();
+          });
+      testService.connect('ws://localhost:4446/pianod');
+    });
   });
+
+  describe('login()', () => {
+
+                      });
 });

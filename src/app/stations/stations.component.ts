@@ -15,7 +15,7 @@ export class StationsComponent implements OnInit {
   @Input() station;
   currentStation;
   stations = [];
-  mixList = [];
+  mixList: Array<string> = [];
 
   constructor(private pianodService: PianodService) {
     this.currentStation = this.pianodService.currentStation$;
@@ -28,12 +28,24 @@ export class StationsComponent implements OnInit {
     });
 
     this.pianodService.mixList$.subscribe((mixList) => {
-      // console.log('got mixList');
-      // console.log(mixList);
-      this.mixList = mixList;
+      this.mixList =
+          mixList.map(station => station.Name.replace('Station', '').trim());
     });
   }
+
   playStation(stationName) {
     this.pianodService.sendCmd(`PLAY STATION \"${stationName}\"`);
+  }
+
+  inMix(stationName) { return (this.mixList.indexOf(stationName) !== -1); }
+
+  toggleInMix(stationName) {
+    this.pianodService.sendCmd(`MIX TOGGLE\"${stationName}\"`);
+  }
+  deleteSeed(seedId) {
+    console.log('deleting seed');
+    this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then((res) => {
+      console.log(res);
+    });
   }
 }

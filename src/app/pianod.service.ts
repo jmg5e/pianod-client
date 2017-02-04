@@ -70,6 +70,7 @@ export class PianodService {
     }
 
     this.listen();
+    return response;
   };
 
   public disconnect() { this.socket.close(); }

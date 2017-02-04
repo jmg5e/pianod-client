@@ -27,4 +27,15 @@ export class SearchComponent implements OnInit {
         })
         .catch((err) => { this.searching = false; });
   }
+  createStation(seedId) {
+    console.log('creating station');
+    this.pianodService.sendCmd(`CREATE STATION FROM SUGGESTION ${seedId}`)
+        .then((res) => { console.log(res); });
+  }
+  addToStation(seedId, stationName) {
+    console.log('adding seed to station');
+    this.pianodService
+        .sendCmd(`ADD SEED FROM SUGGESTION ${seedId} TO ${stationName}`)
+        .then((res) => { console.log(res); });
+  }
 }

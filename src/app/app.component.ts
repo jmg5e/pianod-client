@@ -10,8 +10,7 @@ import {User} from './user';
 @Component({
   selector : 'app-root',
   templateUrl : './app.component.html',
-  styleUrls : [ './app.component.scss' ],
-  providers : [ LocalStorageService ]
+  styleUrls : [ './app.component.scss' ]
 })
 
 export class AppComponent implements OnInit {
