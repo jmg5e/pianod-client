@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
+
 // import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {LocalStorageService} from './local-storage.service';
@@ -8,6 +9,7 @@ import {PianodService} from './pianod.service';
 import {User} from './user';
 
 @Component({
+  changeDetection : ChangeDetectionStrategy.OnPush,
   selector : 'app-root',
   templateUrl : './app.component.html',
   styleUrls : [ './app.component.scss' ]
@@ -37,10 +39,17 @@ export class AppComponent implements OnInit {
         (err) => { this.snackBar.open(err, '', this.barConfig); });
     this.pianodService.currentStation$.subscribe(
         currentStation => this.currentStation = currentStation);
+
+    this.pianodService.connected$.subscribe((state) => {
+      // lost connection
+      if (this.connected && state === false) {
+        this.snackBar.open('lost connection to pianod');
+      }
+      this.connected = state;
+    });
   }
 
   disconnect() {
-    console.log('disconect()');
     this.localStorageService.remove('pianodUrl');
     this.pianodService.disconnect();
     this.connected = false;
@@ -48,7 +57,7 @@ export class AppComponent implements OnInit {
 
   //  event from child component
   //  TODO bug after losing connection connect component should be rendered
-  userConnected(state) { this.connected = state; }
+  // userConnected(state) { this.connected = state; }
 
   userLogin(user) { this.user = user; }
 }

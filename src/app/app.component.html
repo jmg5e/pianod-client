@@ -12,7 +12,8 @@
         </button>
     </md-toolbar>
 
-    <app-connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app-connect>
+    <!-- <app&#45;connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app&#45;connect> -->
+    <app-connect *ngIf="!connected"> </app-connect>
     <div *ngIf="connected">
         <md-tab-group class="tab-container">
             <md-tab>

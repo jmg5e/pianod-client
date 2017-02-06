@@ -16,7 +16,7 @@ import {PianodService} from '../pianod.service';
 
 export class ConnectComponent implements OnInit {
 
-  @Output() userConnected = new EventEmitter<boolean>();
+  // @Output() userConnected = new EventEmitter<boolean>();
   public pianodUrl: string;
   connectForm;
   connected: boolean = false;
@@ -44,14 +44,8 @@ export class ConnectComponent implements OnInit {
       this.connecting = false;
     }
 
-    this.pianodService.connected$.subscribe((state) => {
-      this.userConnected.emit(state);
-      // lost connection
-      if (this.connected && state === false) {
-        // this.snackBar.open('lost connection to pianod');
-      }
-      this.connected = state;
-    });
+    this.pianodService.connected$.subscribe(connected => this.connected =
+                                                connected);
   }
 
   submitForm(form) {
@@ -60,8 +54,8 @@ export class ConnectComponent implements OnInit {
   }
 
   connect(url) {
-    this.pianodService.connect(url);
     this.connecting = true;
+    this.pianodService.connect(url);
 
     setTimeout(() => {
       this.connecting = false; // no longer show spinner
@@ -69,7 +63,6 @@ export class ConnectComponent implements OnInit {
         this.snackBar.open('failed to connect to pianod', '', this.barConfig);
       } else {
         this.localStorageService.save('pianodUrl', url);
-        this.userConnected.emit(this.connected);
       }
     }, 2000);
   }

@@ -1,11 +1,12 @@
-<div class="connecting-container" *ngIf="connecting">
-    <div class="connecting-spinner">
-        <h1> CONNECTING </h1>
-        <md-progress-spinner mode="indeterminate" class="spinner">
-        </md-progress-spinner>
-    </div>
-</div>
-<md-card *ngIf="!connecting">
+<!-- <div class="connecting&#45;container" *ngIf="connecting"> -->
+<!--     <div class="connecting&#45;spinner"> -->
+<!--         <h1> CONNECTING </h1> -->
+<!--         <md&#45;progress&#45;spinner mode="indeterminate" class="spinner"> -->
+<!--         </md&#45;progress&#45;spinner> -->
+<!--     </div> -->
+<!-- </div> -->
+<!-- <md&#45;card *ngIf="!connecting"> -->
+<md-card>
     <form (ngSubmit)="submitForm(connectForm.value)" [formGroup]="connectForm">
         <md-input-container style="width: 100%">
             <input md-input type="text" formControlName="host" placeholder="Host">
@@ -18,18 +19,3 @@
         </div>
     </form>
 </md-card>
-
-<!-- <md&#45;card *ngIf="!connecting"> -->
-<!--     <md&#45;toolbar color="primary">Connect to pianod socket</md&#45;toolbar> -->
-<!--     <!&#45;&#45; <md&#38;#45;card&#38;#45;content> &#45;&#45;> -->
-<!--     <!&#45;&#45;     <form (ngSubmit)="onSubmit(connectForm.value)" #connectForm="ngForm"> &#45;&#45;> -->
-<!--     <!&#45;&#45;         <md&#38;#45;input&#38;#45;container style="width: 100%"> &#45;&#45;> -->
-<!--     <!&#45;&#45;             <input md&#38;#45;input type="text" required placeholder="hostname" [(ngModel)]="hostname" name="hostname"> &#45;&#45;> -->
-<!--     <!&#45;&#45;         </md&#38;#45;input&#38;#45;container> &#45;&#45;> -->
-<!--     <!&#45;&#45;         <md&#38;#45;input&#38;#45;container style="width: 100%"> &#45;&#45;> -->
-<!--     <!&#45;&#45;             <input md&#38;#45;input type="number" required placeholder="port" name="port" [(ngModel)]="port"> &#45;&#45;> -->
-<!--     <!&#45;&#45;         </md&#38;#45;input&#38;#45;container> &#45;&#45;> -->
-<!--     <!&#45;&#45;         <button md&#38;#45;button type='submit'> Connect </button> &#45;&#45;> -->
-<!--     <!&#45;&#45;     </form> &#45;&#45;> -->
-<!--     <!&#45;&#45; </md&#38;#45;card&#38;#45;content> &#45;&#45;> -->
-<!-- </md&#45;card> -->
