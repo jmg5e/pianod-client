@@ -5,15 +5,31 @@
     <button md-button (click)="pause()" [color]="playback==='PAUSED' ? 'accent' : 'default'">
       <md-icon class="md-24">pause</md-icon>
     </button>
-    <button md-button [color]="playback==='STOPPED' ? 'accent' : 'default'">
+    <button md-button (click)="stop()" [color]="playback==='STOPPED' ? 'accent' : 'default'">
       <md-icon class="md-24">stop</md-icon>
     </button>
     <!-- {{currentStation}} -->
     <span class="fill-space"> </span>
-    <!-- <button md&#45;button class="active" (click)="toggleMix()"> mix </button> -->
-    <button md-button [color]="currentStation === 'mix QuickMix' ? 'accent' : 'default'" (click)="toggleMix()">
-      <md-icon>playlist_add</md-icon>
-      mix 
+    <button md-icon-button [mdMenuTriggerFor]="menu">
+      <md-icon>more_vert</md-icon>
     </button>
-    <!-- <p> playback = {{playback}}</p> -->
+    <md-menu #menu="mdMenu">
+        <button md-menu-item [ngClass]="{'active' : currentStation === 'mix QuickMix'}" (click)="playMix()">
+          <md-icon>playlist_add</md-icon>
+          <span>Mix</span>
+      </button>
+        <button md-menu-item *ngFor="let station of stationList" [ngClass]="{'active': station === currentStation}" (click)="changeStation(station)">
+          <span>{{station}}</span>
+        </button>
+    </md-menu>
+    <!-- <label for="selectedStation">Playing : </label> -->
+    <!-- <select placeholder="Station" id="selectedStation" (change)="changeStation($event.target.value)" [(ngModel)]="currentStation"> -->
+    <!--     <option value="mix QuickMix"> -->
+    <!--       Mix -->
+    <!--     </option> -->
+    <!--     <option disabled role=separator> -->
+    <!--     <option *ngFor="let station of stationList " [value]="station "> -->
+    <!--         {{ station }} -->
+    <!--     </option> -->
+    <!-- </select> -->
 </md-toolbar>

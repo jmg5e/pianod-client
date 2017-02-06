@@ -55,7 +55,11 @@ export class StationsComponent implements OnInit {
   deleteSeed(seedId) {
     // console.log('deleting seed');
     this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then((res) => {
-      console.log(res);
+      let msg = res.msg;
+      if (msg.code === 200) {
+        this.pianodService.updateStations();
+      }
+      // console.log(res);
     });
   }
 

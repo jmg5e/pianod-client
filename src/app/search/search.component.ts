@@ -33,7 +33,6 @@ export class SearchComponent implements OnInit {
 
   createStation(seedId) {
     this.pianodService.sendCmd(`CREATE STATION FROM SUGGESTION ${seedId}`);
-    // .then((res) => { console.log(res); });
   }
 
   addToStation(seedId, stationName) {
@@ -43,7 +42,6 @@ export class SearchComponent implements OnInit {
           if (res.msg.code === 200) {
             this.pianodService.updateStations();
           }
-          // console.log(res);
         });
   }
 }

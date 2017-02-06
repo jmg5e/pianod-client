@@ -10,10 +10,15 @@ export class ControlsComponent implements OnInit {
   playback: string;
   playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
   currentStation: string;
-
+  stationList: Array<string>;
   constructor(private pianodService: PianodService) {
     this.pianodService.playback$.subscribe(playback => this.playback =
                                                playback);
+
+    this.pianodService.stations$.subscribe((stations) => {
+      this.stationList = stations.map(station => station.Name);
+    });
+
     this.pianodService.currentStation$.subscribe(
         currentStation => this.currentStation = currentStation);
   }
@@ -23,11 +28,16 @@ export class ControlsComponent implements OnInit {
 
   pause() { this.pianodService.sendCmd('PAUSE'); }
 
-  toggleMix() {
-    if (this.currentStation !== 'mix QuickMix') {
+  stop() { this.pianodService.sendCmd('STOP NOW'); }
+
+  playMix() { this.pianodService.sendCmd('PLAY MIX'); }
+
+  changeStation(station) {
+    if (station === 'mix QuickMix') {
       this.pianodService.sendCmd('PLAY MIX');
     } else {
-      // this.pianodService.sendCmd('PLAY STATION Default');
+      this.pianodService.sendCmd(`PLAY STATION \"${station}\"`);
+      // console.log('changing station to ', station);
     }
   }
 }
