@@ -1,30 +1,57 @@
 <div class="tab-content">
     <md-card *ngFor="let station of stations">
-        <md-card-title>
+        <md-card-title class="station-bar">
             <span>{{station?.Name}}</span>
-        </md-card-title>
-        <div class="station-controls">
-            <md-button-toggle #show>
+            <span class="fill-space"> </span>
+            <button md-button [ngClass]="{'active': station.Name === currentStation}" (click)="playStation(station.Name)"><md-icon>play_arrow</md-icon> Play </button>
+            <button md-button [ngClass]="{'active': inMix(station.Name)}" (click)="toggleInMix(station.Name)">
+                    <md-icon>playlist_add</md-icon>
+                    Mix
+            </button>
+            <md-button-toggle #showEditOptions>
                 <md-icon>settings</md-icon>
             </md-button-toggle>
-            <input type="text" [value]="inMix(station.Name)">
-            <md-button-toggle [checked]="inMix(station.Name)" (click)="toggleInMix(station.Name)">
-                Mix
-                <md-icon>playlist_add</md-icon>
-            </md-button-toggle>
-            <button md-button color="primary" (click)="playStation(station.Name)"> Play </button>
-        </div>
-        <md-card-content *ngIf="show.checked">
+            <!-- <button md&#45;button [mdMenuTriggerFor]="menu"><md&#45;icon>menu</md&#45;icon></button> -->
+            <!-- <md&#45;menu #menu="mdMenu"> -->
+            <!--     <button md&#45;menu&#45;item color="primary" (click)="playStation(station.Name)"><md&#45;icon>play_arrow</md&#45;icon> Play </button> -->
+            <!--     <button md&#45;menu&#45;item [ngClass]="{'active': inMix(station.Name)}" (click)="toggleInMix(station.Name)"> -->
+            <!--         <md&#45;icon>playlist_add</md&#45;icon> -->
+            <!--         Mix -->
+            <!--     </button> -->
+            <!-- </md&#45;menu> -->
+        </md-card-title>
+        <md-card-content *ngIf="showEditOptions.checked">
             <md-list dense>
                 <md-list-item *ngFor="let seed of station.Seeds">
-                    <h4> {{seed | json }} </h4>
-                    <button md-button (click)="deleteSeed(seed.ID)"> delete </button>
+                    <div class="seed-row">
+                        <span class="seed">
+                            <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+                        <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
+                        <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
+                        </span>
+                        <md-select disabled placeholder="rating">
+                            <md-option value="like">
+                                like
+                            </md-option>
+                            <md-option value="nuetral">
+                                neutral
+                            </md-option>
+                            <md-option value="dislike">
+                                dislike
+                            </md-option>
+                        </md-select>
+                        <button md-button-icon class="deleteSeed-btn" (click)="deleteSeed(seed.ID)"><md-icon>delete</md-icon></button>
+                    </div>
                 </md-list-item>
             </md-list>
+            <md-card-actions class="rename-station">
+                <md-input-container>
+                    <input md-input type="text" #newName [value]="station.Name" (keyup.enter)="renameStation(station.Name,newName.value)">
+                </md-input-container>
+                <button md-button (click)="renameStation(station.Name,newName.value)">Rename</button>
+            </md-card-actions>
             <md-card-actions>
-                <button md-button>Rename</button>
-                <span class="fill-space"> </span>
-                <button md-button>Delete</button>
+                <button md-button class="delete-btn" color="warn" (click)="openConfirmDialog(station.Name)">Delete</button>
             </md-card-actions>
         </md-card-content>
     </md-card>

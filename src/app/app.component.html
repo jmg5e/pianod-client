@@ -25,7 +25,7 @@
                 <template md-tab-label>
               <em>Stations</em>
             </template>
-                <app-stations> </app-stations>
+                <app-stations [currentStation]="currentStation"> </app-stations>
             </md-tab>
             <md-tab *ngIf="user.loggedIn">
                 <template md-tab-label>

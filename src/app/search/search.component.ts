@@ -9,33 +9,41 @@ import {PianodService} from '../pianod.service';
 
 export class SearchComponent implements OnInit {
   results = [];
+  stationList = [];
   category = 'Artist';
   searching: boolean = false;
   constructor(private pianodService: PianodService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.pianodService.stations$.subscribe((stations) => {
+      this.stationList = stations.map(station => station.Name);
+    });
+  }
 
-  // this is slow sometimes, could create seperate socket just for searching
   search(searchTerm, category) {
-    console.log('searching');
     this.searching = true;
     this.pianodService.search(searchTerm, category)
         .then((results: any) => {
-          console.log(results);
+          // console.log(results);
           this.results = results;
           this.searching = false;
         })
         .catch((err) => { this.searching = false; });
   }
+
   createStation(seedId) {
-    console.log('creating station');
-    this.pianodService.sendCmd(`CREATE STATION FROM SUGGESTION ${seedId}`)
-        .then((res) => { console.log(res); });
+    this.pianodService.sendCmd(`CREATE STATION FROM SUGGESTION ${seedId}`);
+    // .then((res) => { console.log(res); });
   }
+
   addToStation(seedId, stationName) {
-    console.log('adding seed to station');
     this.pianodService
         .sendCmd(`ADD SEED FROM SUGGESTION ${seedId} TO ${stationName}`)
-        .then((res) => { console.log(res); });
+        .then((res) => {
+          if (res.msg.code === 200) {
+            this.pianodService.updateStations();
+          }
+          // console.log(res);
+        });
   }
 }

@@ -91,7 +91,14 @@ export class PianodService {
     });
   }
 
-  public async getStations() {
+  // there is no event when adding/deleting station seeds
+  // temporary fix... alow components to force update stations
+  public updateStations() {
+    this.getStations().then(
+        (stationList) => { this.stations.next(stationList); });
+  }
+
+  private async getStations() {
     // get list of stations
     let response = await this.sendCmd('stations');
     let stations =
@@ -113,7 +120,7 @@ export class PianodService {
     return stations;
   }
 
-  public async getMixList() {
+  private async getMixList() {
     // get list of stations
     let response = await this.sendCmd('mix list');
     let mixList = response.data[0].map((station) => ({Name : station.Station}));
@@ -199,7 +206,9 @@ export class PianodService {
             end$.next({msgs : msgs, msg : msg});
             end$.complete();
           } else if (msg.code === 204) { // end of data request
-            data.push(dataPacket);
+            if (dataPacket.length > 0) {
+              data.push(dataPacket);
+            }
             end$.next({msgs : msgs, msg : msg, data : data});
             end$.complete();
           } else if (dataRequest) {
@@ -229,7 +238,8 @@ export class PianodService {
       this.currentStation.next('');
     }
     if (msg.code === 109) {
-      this.currentStation.next(msg.data.SelectedStation);
+      this.currentStation.next(
+          msg.data.SelectedStation.replace('station ', ''));
     }
     // stationList changed
     if (msg.code === 135) {

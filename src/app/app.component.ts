@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   song;
   user = new User();
   loggedIn = false;
+  currentStation: string;
   barConfig = new MdSnackBarConfig();
   // SWIPE_ACTION = {LEFT : 'swipeleft', RIGHT : 'swiperight'};
   selectedTab: number = 0;
@@ -34,6 +35,8 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.error = this.pianodService.error$.subscribe(
         (err) => { this.snackBar.open(err, '', this.barConfig); });
+    this.pianodService.currentStation$.subscribe(
+        currentStation => this.currentStation = currentStation);
   }
 
   disconnect() {

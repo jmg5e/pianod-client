@@ -21,13 +21,44 @@ md-card-actions {
     justify-content: space-between;
 }
 
-.slide-toggle {
-    margin-left: 30px;
-}
-
-.station-controls {
+.station-bar {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    /* background-color: violet; */
+}
+
+.rename-station{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.rename-station > md-input-container{
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.delete-btn {
+    width: 100%;
+}
+
+.active {
+    color: green;
+}
+
+.seed-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+.seed {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.deleteSeed-btn {
+    display: flex;
 }

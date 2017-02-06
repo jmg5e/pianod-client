@@ -22,19 +22,24 @@ import {LoginComponent} from './login/login.component';
 import {NowPlayingComponent} from './now-playing/now-playing.component';
 import {PianodService} from './pianod.service';
 import {SearchComponent} from './search/search.component';
+import {
+  ConfirmDialogComponent
+} from './stations/confirm-dialog/confirm-dialog.component';
 import {StationsComponent} from './stations/stations.component';
 
-// const appRoutes: Routes = [
-//   {path : 'NowPlaying', component : NowPlayingComponent},
-//   {path : 'Settings', component : SettingsComponent},
-//   // {path : 'Connect', component : ConnectComponent}
-// ];
 @NgModule({
   declarations : [
-    AppComponent, NowPlayingComponent, LoginComponent, ConnectComponent,
-    ControlsComponent, StationsComponent, LoginDialogComponent, SearchComponent
+    AppComponent,
+    NowPlayingComponent,
+    LoginComponent,
+    ConnectComponent,
+    ControlsComponent,
+    StationsComponent,
+    LoginDialogComponent,
+    SearchComponent,
+    ConfirmDialogComponent,
   ],
-  entryComponents : [ LoginDialogComponent ],
+  entryComponents : [ LoginDialogComponent, ConfirmDialogComponent ],
   // RouterModule.forRoot(appRoutes)
   imports : [
     BrowserModule, MaterialModule.forRoot(), FormsModule, ReactiveFormsModule

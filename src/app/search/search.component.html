@@ -10,7 +10,6 @@
         </md-input-container>
         <button md-button (click)="search(searchInput.value, category)"> Search</button>
     </md-toolbar>
-    <hr>
     <div class="search-container" *ngIf="searching">
         <div class="connecting-spinner">
             <md-progress-spinner mode="indeterminate" class="spinner">
@@ -20,13 +19,16 @@
     <div class="results-container">
         <md-card *ngFor="let item of results">
             <!-- {{item | json}} -->
-            <md-card-subtitle>{{item?.ID}}</md-card-subtitle>
-            <md-card-subtitle>{{item?.Artist}}</md-card-subtitle>
-            <md-card-subtitle>{{item?.Song}}</md-card-subtitle>
-            <md-card-subtitle>{{item.Genre}}</md-card-subtitle>
+            <!-- <md&#45;card&#45;subtitle>{{item?.ID}}</md&#45;card&#45;subtitle> -->
+            <md-card-subtitle *ngIf="item.Artist">Artist : {{item?.Artist}}</md-card-subtitle>
+            <md-card-subtitle *ngIf="item.Song"> Song : {{item?.Song}}</md-card-subtitle>
+            <md-card-subtitle *ngIf="item.Genre"> Genre : {{item?.Genre}}</md-card-subtitle>
             <md-card-actions>
-                <button md-button (click)="addToStation(item.ID,'Default')"> Add To Station </button>
-                <button md-button (click)="createStation(item.ID)"> New Station</button>
+                <select #selectedStation>
+                <option *ngFor="let station of stationList" [value]="station">{{station}}</option>
+              </select>
+                <button md-button (click)="addToStation(item.ID,selectedStation.value)"> <md-icon>input</md-icon>Add To Station </button>
+                <button md-button (click)="createStation(item.ID)"> <md-icon>fiber_new</md-icon>New Station</button>
             </md-card-actions>
         </md-card>
     </div>

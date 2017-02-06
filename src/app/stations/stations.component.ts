@@ -1,24 +1,29 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+
 import {PianodService} from '../pianod.service';
 import {User} from '../user';
+
+import {
+  ConfirmDialogComponent
+} from './confirm-dialog/confirm-dialog.component';
+
 @Component({
   selector : 'app-stations',
   templateUrl : './stations.component.html',
   styleUrls : [ './stations.component.scss' ]
 })
+
 export class StationsComponent implements OnInit {
-  /* would be realy cool if i could subscribe to some custom event
-   * for example
-   * message -> 135 Station list has changed
-   * pianodService.createObservableForCode(135)
-  */
-  @Input() station;
-  currentStation;
+  confirmDialogRef: MdDialogRef<ConfirmDialogComponent>;
+
+  @Input() currentStation;
   stations = [];
   mixList: Array<string> = [];
 
-  constructor(private pianodService: PianodService) {
-    this.currentStation = this.pianodService.currentStation$;
+  constructor(private pianodService: PianodService, public dialog: MdDialog) {
+    // this.pianodService.currentStation$.subscribe(
+    //     currentStation => this.currentStation = currentStation);
   }
 
   ngOnInit() {
@@ -40,12 +45,35 @@ export class StationsComponent implements OnInit {
   inMix(stationName) { return (this.mixList.indexOf(stationName) !== -1); }
 
   toggleInMix(stationName) {
-    this.pianodService.sendCmd(`MIX TOGGLE\"${stationName}\"`);
+    this.pianodService.sendCmd(`MIX TOGGLE \"${stationName}\"`);
   }
+
+  deleteStation(stationName) {
+    this.pianodService.sendCmd(`DELETE STATION \"${stationName}\"`);
+  }
+
   deleteSeed(seedId) {
-    console.log('deleting seed');
+    // console.log('deleting seed');
     this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then((res) => {
       console.log(res);
+    });
+  }
+
+  renameStation(stationName, newName) {
+    this.pianodService.sendCmd(
+        `RENAME STATION \"${stationName}\" TO \"${newName}\"`);
+  }
+
+  openConfirmDialog(stationName) {
+    this.confirmDialogRef =
+        this.dialog.open(ConfirmDialogComponent, {disableClose : true});
+
+    this.confirmDialogRef.componentInstance.station = stationName;
+    this.confirmDialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result === true) {
+        this.deleteStation(stationName);
+      }
+      this.confirmDialogRef = null;
     });
   }
 }

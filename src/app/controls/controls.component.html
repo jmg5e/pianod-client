@@ -8,6 +8,12 @@
     <button md-button [color]="playback==='STOPPED' ? 'accent' : 'default'">
       <md-icon class="md-24">stop</md-icon>
     </button>
+    <!-- {{currentStation}} -->
     <span class="fill-space"> </span>
+    <!-- <button md&#45;button class="active" (click)="toggleMix()"> mix </button> -->
+    <button md-button [color]="currentStation === 'mix QuickMix' ? 'accent' : 'default'" (click)="toggleMix()">
+      <md-icon>playlist_add</md-icon>
+      mix 
+    </button>
     <!-- <p> playback = {{playback}}</p> -->
 </md-toolbar>
