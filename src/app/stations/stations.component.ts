@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {PianodService} from '../pianod.service';
@@ -17,25 +17,30 @@ import {
 export class StationsComponent implements OnInit {
   confirmDialogRef: MdDialogRef<ConfirmDialogComponent>;
 
-  @Input() currentStation;
+  currentStation: string;
   stations = [];
   mixList: Array<string> = [];
+  @Output() stationsModified = new EventEmitter();
 
-  constructor(private pianodService: PianodService, public dialog: MdDialog) {
-    // this.pianodService.currentStation$.subscribe(
-    //     currentStation => this.currentStation = currentStation);
-  }
+  constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.pianodService.stations$.subscribe((stations) => {
-      // console.log('got stations');
-      this.stations = stations;
+    this.pianodService.user$.subscribe((user) => {
+      if (user.loggedIn) {
+        this.pianodService.updateStations();
+      }
     });
+
+    this.pianodService.stations$.subscribe(
+        (stations) => { this.stations = stations; });
 
     this.pianodService.mixList$.subscribe((mixList) => {
       this.mixList =
           mixList.map(station => station.Name.replace('Station', '').trim());
     });
+
+    this.pianodService.currentStation$.subscribe(
+        currentStation => this.currentStation = currentStation);
   }
 
   playStation(stationName) {
@@ -49,17 +54,26 @@ export class StationsComponent implements OnInit {
   }
 
   deleteStation(stationName) {
-    this.pianodService.sendCmd(`DELETE STATION \"${stationName}\"`);
+    this.pianodService.sendCmd(`DELETE STATION \"${stationName}\"`)
+        .then(res => {
+          if (!res.error) {
+            this.stationsModified.emit('Station ' + stationName +
+                                       ' was successfully deleted.');
+          }
+        });
   }
 
   deleteSeed(seedId) {
-    // console.log('deleting seed');
     this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then((res) => {
-      let msg = res.msg;
-      if (msg.code === 200) {
-        this.pianodService.updateStations();
+      if (!res.error) {
+        // this.pianodService.updateStations();
+        this.stations = this.stations.map(station => {
+          station.Seeds = station.Seeds.filter(seed => seed.ID !== seedId);
+          return station;
+        });
+        this.stationsModified.emit(
+            'Seed was successfully deleted from station.');
       }
-      // console.log(res);
     });
   }
 

@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   dialogRef: MdDialogRef<LoginDialogComponent>;
   loginInfo: LoginInfo;
   user: User = new User();
-  connected: boolean = false;
+  connected = false;
   @Output() userLogin = new EventEmitter<User>();
 
   constructor(private pianodService: PianodService,
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
 
     this.pianodService.user$.subscribe((user: User) => {
       this.user = user;
-      this.userLogin.emit(user);
+      // this.userLogin.emit(user);
       if (user.loggedIn) {
         // this.userLogin.emit(user);
         // TODO : passsword is stored in plain text in browser storage!
@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
   logout() {
     this.localStorageService.remove('userLogin');
     this.pianodService.logout();
-    this.userLogin.emit(new User());
+    // this.userLogin.emit(new User());
   }
 }
 

@@ -9,7 +9,7 @@ interface Privileges {
 
 export class User {
   name: string;
-  loggedIn: boolean = false;
+  loggedIn = false;
 
   privileges: any;
 

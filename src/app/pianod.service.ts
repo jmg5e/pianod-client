@@ -16,7 +16,7 @@ import {User} from './user';
 
 @Injectable()
 export class PianodService {
-  public responseTimeout: number = 30000;
+  public responseTimeout = 30000;
   public connected$: Observable<boolean>;
   public error$: Observable<string>;
   public playback$: Observable<string>;
@@ -56,15 +56,13 @@ export class PianodService {
   }
 
   // connect to websocket
-  // TODO bugfix : should provide components with pianod state on socket
-  // reconect
-  // should get a success response when first connecting to pianod
+  // should get a response when first connecting to pianod
   public async connect(url) {
     const self = this;
     this.socket = new WebSocket(url);
 
     let response = await this.getResponse();
-    if (response.msg.content === 'Connected') {
+    if (!response.error && response.msg === 'Connected') {
       this.connected.next(true);
       this.user.next(new User());
     }
@@ -191,11 +189,9 @@ export class PianodService {
         .takeUntil(end$)
         .catch((err) => { return Promise.reject({error : err, msgs : msgs}); })
         .subscribe((msg: Message) => {
-          msgs.push(msg);
+          msgs.push(msg); // for debugging purposes only
           if (msg.error) {
-            end$.error(msg.content);
-            // end$.next(msg);
-            // end$.complete();
+            end$.error({error : true, msg : msg.content, msgs : msgs});
           } else if (msg.code === 203) { // start of data request
             if (dataRequest) {           // Multiple data packets
               data.push(dataPacket);
@@ -203,23 +199,24 @@ export class PianodService {
             dataPacket = [];
             dataRequest = true;
           } else if (msg.code === 200) { // success
-            end$.next({msgs : msgs, msg : msg});
+            end$.next({error : msg.error, msg : msg.content});
+            // end$.next({msgs : msgs, msg : msg});
             end$.complete();
           } else if (msg.code === 204) { // end of data request
             if (dataPacket.length > 0) {
               data.push(dataPacket);
             }
-            end$.next({msgs : msgs, msg : msg, data : data});
+            end$.next({error : msg.error, data : data});
             end$.complete();
           } else if (dataRequest) {
             dataPacket.push(msg.data);
           }
         });
 
-    setTimeout(() => {
-      end$.error('ERROR: Response Timeout');
-      // return Promise.reject(msgs);
-    }, this.responseTimeout);
+    // setTimeout(() => {
+    //   end$.error({error : true, msg : 'ERROR: Response Timeout'});
+    //   return Promise.reject(msgs);
+    // }, this.responseTimeout);
 
     return end$.toPromise(); // async await with observables?
   }
@@ -237,6 +234,7 @@ export class PianodService {
     if (msg.code === 108) {
       this.currentStation.next('');
     }
+    // Selected  Station
     if (msg.code === 109) {
       this.currentStation.next(
           msg.data.SelectedStation.replace('station ', ''));

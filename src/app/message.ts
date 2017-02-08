@@ -8,14 +8,14 @@ export class Message {
   error: boolean;
 
   constructor(packet: string) {
-    const obj = Message.parseData(packet);
+    const obj = this.parseData(packet);
     this.code = obj.code;
 
     // get data property from Message contents
     // codes betwee 109 - 121 contain "key: value"
     // is really alot more of these
     if (this.code > 108 && this.code < 121) {
-      this.data = Message.getData(obj.content);
+      this.data = this.getData(obj.content);
     } else {
       this.content = obj.content;
     }
@@ -27,20 +27,10 @@ export class Message {
     }
   }
 
-  // extract code and content from line
-  private static parseData(packet: string) {
-    const messageMatch = packet.match(new RegExp('([0-9]{3}) (.+)', 'i'));
-    if (messageMatch !== null) {
-      const code = parseInt(messageMatch[1], 10);
-      const content = messageMatch[2];
-      return ({code : code, content : content});
-    }
-  }
-
   // return object  from string "key: value"
   // would be nice if it was in correct json format
   // probably would be better to just format string into valid json
-  public static getData(content) {
+  private getData(content) {
     const splittedMessage = content.split(': ');
     const key: string = splittedMessage.slice(0, 1)[0];
     const prop: string = splittedMessage.slice(1).join(': ');
@@ -48,4 +38,14 @@ export class Message {
       return {[key] : prop};
     }
   };
+
+  // extract code and content from line
+  private parseData(packet: string) {
+    const messageMatch = packet.match(new RegExp('([0-9]{3}) (.+)', 'i'));
+    if (messageMatch !== null) {
+      const code = parseInt(messageMatch[1], 10);
+      const content = messageMatch[2];
+      return ({code : code, content : content});
+    }
+  }
 }

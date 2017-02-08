@@ -4,43 +4,26 @@
             <md-card-title>{{song?.Title}}</md-card-title>
             <!-- <img md&#45;card&#45;lg&#45;image src="path/to/img.png"> -->
             <img md-card-lg-image [src]="song?.CoverArt">
-            <md-card-subtitle>{{song?.Artist}}</md-card-subtitle>
-            <md-card-subtitle> {{song?.Album}}</md-card-subtitle>
+            <md-card-subtitle><label> Artist : </label> {{song?.Artist}}</md-card-subtitle>
+            <md-card-subtitle><label> Album : </label> {{song?.Album}}</md-card-subtitle>
         </md-card-title-group>
-        <md-card-actions>
-
-            <!-- <md&#45;progress&#45;bar> </md&#45;progress&#45;bar> -->
-            <span class="fill-space"> </span>
-            <span> 0:23 / 2:15 </span>
-            <span class="fill-space"> </span>
-            <button md-button>
-                <md-icon>thumb_up</md-icon>
-            </button>
-            <button md-button>
-                <md-icon>thumb_down</md-icon>
-            </button>
-        </md-card-actions>
+        <md-card-content>
+            <p>
+                {{song?.Station}}
+            </p>
+        </md-card-content>
+        <!-- <md&#45;card&#45;actions> -->
+        <!--     <!&#45;&#45; <md&#38;#45;progress&#38;#45;bar> </md&#38;#45;progress&#38;#45;bar> &#45;&#45;> -->
+        <!--     <span class="fill&#45;space"> </span> -->
+        <!--     <span> 0:23 / 2:15 </span> -->
+        <!--     <span class="fill&#45;space"> </span> -->
+        <!--     <button md&#45;button> -->
+        <!--         <md&#45;icon>thumb_up</md&#45;icon> -->
+        <!--     </button> -->
+        <!--     <button md&#45;button> -->
+        <!--         <md&#45;icon>thumb_down</md&#45;icon> -->
+        <!--     </button> -->
+        <!-- </md&#45;card&#45;actions> -->
         <!-- {{song | async | json }} -->
     </md-card>
 </div>
-
-
-<!-- <h1 align='center'> Now Playing </h1> -->
-<!-- <div class="now&#45;playing"> -->
-<!--     <md&#45;card class="card"> -->
-<!--         <md&#45;card&#45;title&#45;group> -->
-<!--             <img md&#45;card&#45;lg&#45;image [src]="songInfo?.CoverArt"> -->
-<!--             <md&#45;card&#45;title>{{ songInfo?.Title }} </md&#45;card&#45;title> -->
-<!--             <md&#45;card&#45;subtitle>{{ songInfo?.Artist}}</md&#45;card&#45;subtitle> -->
-<!--             <md&#45;card&#45;subtitle>{{ songInfo?.Album}}</md&#45;card&#45;subtitle> -->
-<!--         </md&#45;card&#45;title&#45;group> -->
-<!--         <md&#45;card&#45;actions> -->
-<!--             <button md&#45;button> -->
-<!--           <i class="material&#45;icons md&#45;18" >favorite</i> LIKE -->
-<!--         </button> -->
-<!--             <button md&#45;button> -->
-<!--           <i class="material&#45;icons md&#45;18">unfavorite</i> DISLIKE -->
-<!--         </button> -->
-<!--         </md&#45;card&#45;actions> -->
-<!--     </md&#45;card> -->
-<!-- </div> -->

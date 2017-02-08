@@ -3,10 +3,13 @@
         <md-card-title class="station-bar">
             <span>{{station?.Name}}</span>
             <span class="fill-space"> </span>
-            <button md-button [ngClass]="{'active': station.Name === currentStation}" (click)="playStation(station.Name)"><md-icon>play_arrow</md-icon> Play </button>
+            <!-- <button md&#45;button [ngClass]="{'active': station.Name === currentStation}" (click)="playStation(station.Name)"> -->
+            <!--   <md&#45;icon>play_arrow</md&#45;icon>  -->
+            <!--   <span class="label&#45;btn">Mix</span> -->
+            <!-- </button> -->
             <button md-button [ngClass]="{'active': inMix(station.Name)}" (click)="toggleInMix(station.Name)">
                     <md-icon>playlist_add</md-icon>
-                    Mix
+                    <span class="label-btn">Mix</span>
             </button>
             <md-button-toggle #showEditOptions>
                 <md-icon>settings</md-icon>
@@ -25,21 +28,21 @@
                 <md-list-item *ngFor="let seed of station.Seeds">
                     <div class="seed-row">
                         <span class="seed">
-                            <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
-                        <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
-                        <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
+                          <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+                          <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
+                          <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
                         </span>
-                        <md-select disabled placeholder="rating">
-                            <md-option value="like">
-                                like
-                            </md-option>
-                            <md-option value="nuetral">
-                                neutral
-                            </md-option>
-                            <md-option value="dislike">
-                                dislike
-                            </md-option>
-                        </md-select>
+                        <!-- <md&#45;select disabled placeholder="rating"> -->
+                        <!--     <md&#45;option value="like"> -->
+                        <!--         like -->
+                        <!--     </md&#45;option> -->
+                        <!--     <md&#45;option value="nuetral"> -->
+                        <!--         neutral -->
+                        <!--     </md&#45;option> -->
+                        <!--     <md&#45;option value="dislike"> -->
+                        <!--         dislike -->
+                        <!--     </md&#45;option> -->
+                        <!-- </md&#45;select> -->
                         <button md-button-icon class="deleteSeed-btn" (click)="deleteSeed(seed.ID)"><md-icon>delete</md-icon></button>
                     </div>
                 </md-list-item>

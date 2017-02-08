@@ -1,35 +1,48 @@
 <div class="tab-content">
-    <md-toolbar class="search-bar">
-        <md-select placeholder="category" [(ngModel)]="category">
+    <div class="search-bar">
+        <md-select placeholder="category" [(ngModel)]="category" class="search-category">
             <md-option value="Any"> Any</md-option>
             <md-option value="Artist"> Artist </md-option>
             <md-option value="Genre"> Genre</md-option>
         </md-select>
         <md-input-container class="search-input">
-            <input md-input type="text" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
+            <input md-input type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
         </md-input-container>
-        <button md-button (click)="search(searchInput.value, category)"> Search</button>
-    </md-toolbar>
+        <button md-button class="search-btn" (click)="search(searchInput.value, category)"> Search</button>
+    </div>
+    <div class="selected-bar" disabled>
+        <button md-button (click)="addToStation(selectedSeed,selectedStation)" [disabled]="!selectedStation">
+            <span class="label-btn">Add To Station</span> 
+            <md-icon>input</md-icon>
+          </button>
+        <md-select [(ngModel)]="selectedStation" [disabled]="!selectedSeed ">
+            <md-option *ngFor="let station of stationList" [value]="station">{{station}}</md-option>
+        </md-select>
+        <span class="fill-space"></span>
+        <button md-button class="seed-bar-input" (click)="createStation(selectedSeed)" [disabled]="!selectedSeed"> 
+          <md-icon>fiber_new</md-icon>
+          <span class="label-btn">New Station</span></button>
+    </div>
     <div class="search-container" *ngIf="searching">
         <div class="connecting-spinner">
             <md-progress-spinner mode="indeterminate" class="spinner">
             </md-progress-spinner>
         </div>
     </div>
-    <div class="results-container">
-        <md-card *ngFor="let item of results">
+    <div class="results-container" *ngIf="!searching">
+        <md-card *ngFor="let seed of results" (click)="selectSeed(seed.ID)" [ngClass]="{'selected': selectedSeed === seed.ID }">
             <!-- {{item | json}} -->
             <!-- <md&#45;card&#45;subtitle>{{item?.ID}}</md&#45;card&#45;subtitle> -->
-            <md-card-subtitle *ngIf="item.Artist">Artist : {{item?.Artist}}</md-card-subtitle>
-            <md-card-subtitle *ngIf="item.Song"> Song : {{item?.Song}}</md-card-subtitle>
-            <md-card-subtitle *ngIf="item.Genre"> Genre : {{item?.Genre}}</md-card-subtitle>
-            <md-card-actions>
-                <select #selectedStation>
-                <option *ngFor="let station of stationList" [value]="station">{{station}}</option>
-              </select>
-                <button md-button (click)="addToStation(item.ID,selectedStation.value)"> <md-icon>input</md-icon>Add To Station </button>
-                <button md-button (click)="createStation(item.ID)"> <md-icon>fiber_new</md-icon>New Station</button>
-            </md-card-actions>
+            <md-card-subtitle *ngIf="seed.Artist">Artist : {{seed?.Artist}}</md-card-subtitle>
+            <md-card-subtitle *ngIf="seed.Song"> Song : {{seed?.Song}}</md-card-subtitle>
+            <md-card-subtitle *ngIf="seed.Genre"> Genre : {{seed?.Genre}}</md-card-subtitle>
+            <!-- <md&#45;card&#45;actions> -->
+            <!--     <select #selectedStation> -->
+            <!--     <option *ngFor="let station of stationList" [value]="station">{{station}}</option> -->
+            <!--   </select> -->
+            <!--     <button md&#45;button (click)="addToStation(seed.ID,selectedStation.value)"> <md&#45;icon>input</md&#45;icon>Add To Station </button> -->
+            <!--     <button md&#45;button (click)="createStation(seed.ID)"> <md&#45;icon>fiber_new</md&#45;icon>New Station</button> -->
+            <!-- </md&#45;card&#45;actions> -->
         </md-card>
     </div>
 </div>

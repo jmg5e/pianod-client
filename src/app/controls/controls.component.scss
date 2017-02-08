@@ -1,3 +1,8 @@
+@media screen and (max-width: 600px) {
+  .currentStation{
+    display: none;
+  }
+}
 .active {
     color: green;
 }

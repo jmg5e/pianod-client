@@ -15,12 +15,10 @@ app-container {
     display: flex;
     flex-direction: column;
     height: 70vh;
-    /* background-color: grey; */
 }
 
 .tab-container {
     display: flex;
-    /* background-color: yellow; */
     -webkit-overflow-scrolling: touch;
 }
 
@@ -38,4 +36,8 @@ app-container {
 
 .fill-space {
     flex: 1 1 auto;
+}
+.control-bar {
+    display: flex;
+    align-self: flex-end;
 }

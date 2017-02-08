@@ -3,7 +3,8 @@
         <span>Pianod Client</span>
         <span class="fill-space"></span>
         <md-menu #appMenu="mdMenu">
-            <app-login (userLogin)="userLogin($event)"> </app-login>
+            <!-- <app&#45;login (userLogin)="userLogin($event)"> </app&#45;login> -->
+            <app-login> </app-login>
             <button md-menu-item (click)="disconnect()"> Disconect </button>
         </md-menu>
 
@@ -14,7 +15,7 @@
 
     <!-- <app&#45;connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app&#45;connect> -->
     <app-connect *ngIf="!connected"> </app-connect>
-    <div *ngIf="connected">
+    <span *ngIf="connected">
         <md-tab-group class="tab-container">
             <md-tab>
                 <template md-tab-label>
@@ -26,15 +27,17 @@
                 <template md-tab-label>
               <em>Stations</em>
             </template>
-                <app-stations [currentStation]="currentStation"> </app-stations>
+                <!-- <app&#45;stations [currentStation]="currentStation"> </app&#45;stations> -->
+                <app-stations (stationsModified)="snackBarMsg($event)"> </app-stations>
             </md-tab>
             <md-tab *ngIf="user.loggedIn">
                 <template md-tab-label>
               <em>Search</em>
             </template>
-                <app-search> </app-search>
+                <app-search (stationsModified)="snackBarMsg($event)"> </app-search>
             </md-tab>
         </md-tab-group>
-        <app-controls> </app-controls>
-    </div>
+        <div class="fill"> </div>
+        <app-controls class="control-bar"> </app-controls>
+    </span>
 </div>

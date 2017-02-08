@@ -1,12 +1,12 @@
-<!-- <div class="connecting&#45;container" *ngIf="connecting"> -->
-<!--     <div class="connecting&#45;spinner"> -->
-<!--         <h1> CONNECTING </h1> -->
-<!--         <md&#45;progress&#45;spinner mode="indeterminate" class="spinner"> -->
-<!--         </md&#45;progress&#45;spinner> -->
-<!--     </div> -->
-<!-- </div> -->
-<!-- <md&#45;card *ngIf="!connecting"> -->
-<md-card>
+<div class="connecting-container" *ngIf="connecting">
+    <div class="connecting-spinner">
+        <h1> CONNECTING </h1>
+        <md-progress-spinner mode="indeterminate" class="spinner">
+        </md-progress-spinner>
+    </div>
+</div>
+<md-card *ngIf="!connecting">
+<!-- <md&#45;card> -->
     <form (ngSubmit)="submitForm(connectForm.value)" [formGroup]="connectForm">
         <md-input-container style="width: 100%">
             <input md-input type="text" formControlName="host" placeholder="Host">

@@ -19,8 +19,8 @@ export class ConnectComponent implements OnInit {
   // @Output() userConnected = new EventEmitter<boolean>();
   public pianodUrl: string;
   connectForm;
-  connected: boolean = false;
-  connecting: boolean = true; // show conecting spinner
+  connected = false;
+  connecting = true; // show conecting spinner
   barConfig = new MdSnackBarConfig();
 
   constructor(private pianodService: PianodService,

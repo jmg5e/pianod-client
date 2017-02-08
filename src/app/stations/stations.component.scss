@@ -1,3 +1,10 @@
+
+@media screen and (max-width: 600px) {
+  .label-btn {
+    display: none;
+  }
+}
+
 .tab-content {
     align-items: center;
     /* align-content: center; */
@@ -8,7 +15,7 @@ md-card {
     height: auto;
     margin: 20px;
     padding: 20px;
-    width: 70%;
+    width: 90%;
 }
 
 md-card> md-card-title {
@@ -25,13 +32,14 @@ md-card-actions {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 
 .rename-station{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;
+    // justify-content: space-between;
+    // align-items: stretch;
 }
 
 .rename-station > md-input-container{
@@ -54,6 +62,7 @@ md-card-actions {
     justify-content: space-between;
     align-items: center;
 }
+
 .seed {
     display: flex;
     flex: 1 1 auto;
@@ -61,4 +70,5 @@ md-card-actions {
 
 .deleteSeed-btn {
     display: flex;
+    background-color: red;
 }

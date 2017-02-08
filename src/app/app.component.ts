@@ -9,7 +9,7 @@ import {PianodService} from './pianod.service';
 import {User} from './user';
 
 @Component({
-  changeDetection : ChangeDetectionStrategy.OnPush,
+  // changeDetection : ChangeDetectionStrategy.OnPush,
   selector : 'app-root',
   templateUrl : './app.component.html',
   styleUrls : [ './app.component.scss' ]
@@ -22,10 +22,10 @@ export class AppComponent implements OnInit {
   song;
   user = new User();
   loggedIn = false;
-  currentStation: string;
+  // currentStation: string;
   barConfig = new MdSnackBarConfig();
   // SWIPE_ACTION = {LEFT : 'swipeleft', RIGHT : 'swiperight'};
-  selectedTab: number = 0;
+  // selectedTab: number = 0;
 
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService,
@@ -37,8 +37,9 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.error = this.pianodService.error$.subscribe(
         (err) => { this.snackBar.open(err, '', this.barConfig); });
-    this.pianodService.currentStation$.subscribe(
-        currentStation => this.currentStation = currentStation);
+    // this.pianodService.currentStation$.subscribe(
+    //     currentStation => this.currentStation = currentStation);
+    this.pianodService.user$.subscribe(user => this.user = user);
 
     this.pianodService.connected$.subscribe((state) => {
       // lost connection
@@ -59,5 +60,6 @@ export class AppComponent implements OnInit {
   //  TODO bug after losing connection connect component should be rendered
   // userConnected(state) { this.connected = state; }
 
-  userLogin(user) { this.user = user; }
+  // userLogin(user) { this.user = user; }
+  snackBarMsg(msg: string) { this.snackBar.open(msg, '', this.barConfig); }
 }
