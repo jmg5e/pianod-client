@@ -1,9 +1,9 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
-import {LocalStorageService} from '../local-storage.service';
-import {PianodService} from '../pianod.service';
-import {User} from '../user';
+import {LocalStorageService} from '../shared/local-storage.service';
+import {PianodService} from '../shared/pianod.service';
+import {User} from '../shared/models/user';
 import {LoginDialogComponent} from './login-dialog/login-dialog.component';
 
 @Component({

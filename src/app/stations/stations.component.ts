@@ -1,9 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
-
-import {PianodService} from '../pianod.service';
-import {User} from '../user';
-
+import {User} from '../shared/models/user';
+import {PianodService} from '../shared/pianod.service';
 import {
   ConfirmDialogComponent
 } from './confirm-dialog/confirm-dialog.component';
@@ -31,8 +29,8 @@ export class StationsComponent implements OnInit {
     // }
     // });
 
-    this.pianodService.stations$.subscribe(
-        (stations) => { this.stations = stations; });
+    this.pianodService.stations$.subscribe(stations => this.stations =
+                                               stations);
 
     this.pianodService.mixList$.subscribe((mixList) => {
       this.mixList =
@@ -64,7 +62,7 @@ export class StationsComponent implements OnInit {
   }
 
   deleteSeed(seedId) {
-    this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then((res) => {
+    this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then(res => {
       if (!res.error) {
         // this.pianodService.updateStations();
         this.stations = this.stations.map(station => {

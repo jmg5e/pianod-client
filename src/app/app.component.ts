@@ -8,10 +8,10 @@ import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 
 // import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
-import {LocalStorageService} from './local-storage.service';
+import {LocalStorageService} from './shared/local-storage.service';
 import {LoginComponent} from './login/login.component';
-import {PianodService} from './pianod.service';
-import {User} from './user';
+import {PianodService} from './shared/pianod.service';
+import {User} from './shared/models/user';
 
 @Component({
   // changeDetection : ChangeDetectionStrategy.OnPush,

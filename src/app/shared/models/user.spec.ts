@@ -20,6 +20,7 @@ describe('User', () => {
 
        user.update(mockMessage1);
        expect(user.loggedIn).toBeTruthy();
+       // TODO test all initial properties
        expect(user.privileges.admin).toBeTruthy();
 
        user.update(mockMessage2);

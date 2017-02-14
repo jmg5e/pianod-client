@@ -13,9 +13,9 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
-import {Message} from './message';
-import {SongInfo} from './song-info';
-import {User} from './user';
+import {Message} from './models/message';
+import {SongInfo} from './models/song-info';
+import {User} from './models/user';
 
 @Injectable()
 export class PianodService {

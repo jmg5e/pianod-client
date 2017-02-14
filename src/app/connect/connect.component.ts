@@ -1,12 +1,11 @@
-import 'rxjs/add/observable/interval';
-
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
-import {LocalStorageService} from '../local-storage.service';
-import {PianodService} from '../pianod.service';
+import {LocalStorageService} from '../shared/local-storage.service';
+import {PianodService} from '../shared/pianod.service';
+// import 'rxjs/add/observable/interval';
 
 @Component({
   selector : 'app-connect',

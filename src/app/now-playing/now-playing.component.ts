@@ -1,7 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {PianodService} from '../pianod.service';
-import {SongInfo} from '../song-info';
+
+import {SongInfo} from '../shared/models/song-info';
+import {PianodService} from '../shared/pianod.service';
+
 @Component({
   selector : 'app-now-playing',
   templateUrl : './now-playing.component.html',
@@ -13,7 +15,7 @@ export class NowPlayingComponent implements OnInit {
   // playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
   song: SongInfo;
   constructor(private pianodService: PianodService) {
-    this.pianodService.song$.subscribe((songInfo) => this.song = songInfo);
+    this.pianodService.song$.subscribe(songInfo => this.song = songInfo);
   }
 
   ngOnInit() {}

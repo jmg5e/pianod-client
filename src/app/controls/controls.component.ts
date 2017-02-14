@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PianodService} from '../pianod.service';
+import {PianodService} from '../shared/pianod.service';
 
 @Component({
   selector : 'app-controls',
