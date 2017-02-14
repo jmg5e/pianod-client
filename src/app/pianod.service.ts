@@ -1,8 +1,11 @@
+import 'rxjs/add/operator/delay';
 import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/timeout';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/catch';
+
 import {Injectable} from '@angular/core';
 import * as Async from 'async';
 // import * as d3 from 'd3-queue';
@@ -16,7 +19,7 @@ import {User} from './user';
 
 @Injectable()
 export class PianodService {
-  public responseTimeout = 30000;
+  public responseTimeout = 2000;
   public connected$: Observable<boolean>;
   public error$: Observable<string>;
   public playback$: Observable<string>;
@@ -29,7 +32,7 @@ export class PianodService {
   private connected = new BehaviorSubject<boolean>(false);
   private playback = new BehaviorSubject<string>('STOPPED');
   private error = new Subject<string>();
-  private currentStation = new Subject<string>();
+  private currentStation = new BehaviorSubject<string>('');
   private stations = new Subject<any>();
   private mixList = new Subject<any>();
   private song = new BehaviorSubject<SongInfo>(new SongInfo());
@@ -37,7 +40,7 @@ export class PianodService {
   private songInfo: SongInfo = new SongInfo();
   private userInfo: User = new User();
   private socket: WebSocket;
-  private q: any;
+  private q;
 
   constructor() {
     this.connected$ = this.connected.asObservable();
@@ -60,6 +63,13 @@ export class PianodService {
   public async connect(url) {
     const self = this;
     this.socket = new WebSocket(url);
+    // this.socket.onerror = function(err) { console.log(err); };
+    // has to be a better way
+    setTimeout(() => {
+      if (this.socket.readyState !== 1) {
+        return Promise.reject(`websocket failed to connect ${url}`);
+      }
+    }, 100);
 
     let response = await this.getResponse();
     if (!response.error && response.msg === 'Connected') {
@@ -80,17 +90,14 @@ export class PianodService {
     }
   }
 
-  // TODO WRITE TESTS FOR THIS!
-  // would be nice if i could mock socket response
   // sendCmd -> pushes cmd to queue -> doSendCmd() -> getResponse
   public sendCmd(cmd): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.q.push(cmd, (res) => { return resolve(res); });
-    });
+    return new Promise(
+        (resolve, reject) => { this.q.push(cmd, (res) => { resolve(res); }); });
   }
 
   // there is no event when adding/deleting station seeds
-  // temporary fix... alow components to force update stations
+  // temporary fix... alow components to update stations
   public updateStations() {
     this.getStations().then(
         (stationList) => { this.stations.next(stationList); });
@@ -99,8 +106,12 @@ export class PianodService {
   private async getStations() {
     // get list of stations
     let response = await this.sendCmd('stations');
+
+    // get list of stations from dataPacket and rename property
     let stations =
-        response.data[0].map((station) => ({Name : station.Station}));
+        response.data.reduce((results, dataPacket) => dataPacket.map(
+                                 station => ({Name : station.Station})),
+                             []);
 
     // get seeds for each station
     stations = Promise.all(stations.map(async(station) => {
@@ -118,13 +129,6 @@ export class PianodService {
     return stations;
   }
 
-  private async getMixList() {
-    // get list of stations
-    let response = await this.sendCmd('mix list');
-    let mixList = response.data[0].map((station) => ({Name : station.Station}));
-    return mixList;
-  }
-
   public async search(searchTerm, category) {
     let response = await this.sendCmd(`FIND ${category} \"${searchTerm}\"`);
     let results = response.data.map(
@@ -132,10 +136,21 @@ export class PianodService {
     return results;
   }
 
+  private async getMixList() {
+    // get list of stations
+    let response = await this.sendCmd('mix list');
+
+    // get list of stations from dataPacket and rename property
+    let mixList =
+        response.data.reduce((results, dataPacket) => dataPacket.map(
+                                 station => ({Name : station.Station})),
+                             []);
+    return mixList;
+  }
+
   // send command to socket and listen for response
   private doSendCmd(cmd): Promise<any> {
     if (this.socket.readyState === WebSocket.OPEN) {
-      // console.log('sending cmd ', cmd);
       this.socket.send(cmd);
       return this.getResponse(); // return promise
     } else {
@@ -177,46 +192,52 @@ export class PianodService {
 
   // get response from incoming socket messages
   // see  documentation/protocal.md for pianod dataRequest protocol
-  private getResponse() {
-    const end$ = new Subject<any>();
+  private getResponse(): Promise<any> {
+    let end$ = new Subject<any>();
     let dataRequest = false;
     let dataPacket = [];
     let data = [];
     let msgs = [];
+
     // observe response from socket messages
     const response$ = Observable.fromEvent(this.socket, 'message');
+    // this works i think but breaks units
+    // const response$ = Observable.fromEvent(this.socket,
+    // 'message').timeout(this.responseTimeout);
+
     response$.map((msg: any) => new Message(msg.data))
         .takeUntil(end$)
-        .catch((err) => { return Promise.reject({error : err, msgs : msgs}); })
-        .subscribe((msg: Message) => {
-          msgs.push(msg); // for debugging purposes only
-          if (msg.error) {
-            end$.error({error : true, msg : msg.content, msgs : msgs});
-          } else if (msg.code === 203) { // start of data request
-            if (dataRequest) {           // Multiple data packets
-              data.push(dataPacket);
-            }
-            dataPacket = [];
-            dataRequest = true;
-          } else if (msg.code === 200) { // success
-            end$.next({error : msg.error, msg : msg.content});
-            // end$.next({msgs : msgs, msg : msg});
-            end$.complete();
-          } else if (msg.code === 204) { // end of data request
-            if (dataPacket.length > 0) {
-              data.push(dataPacket);
-            }
-            end$.next({error : msg.error, data : data});
-            end$.complete();
-          } else if (dataRequest) {
-            dataPacket.push(msg.data);
-          }
-        });
-
-    // setTimeout(() => {
-    //   end$.error({error : true, msg : 'ERROR: Response Timeout'});
-    //   return Promise.reject(msgs);
-    // }, this.responseTimeout);
+        .subscribe(
+            (msg: Message) => {
+              msgs.push(msg); // for debugging purposes only
+              if (msg.error) {
+                end$.next({error : true, msg : msg.content, msgs : msgs});
+                end$.complete();
+                // end$.error({error : true, msg : msg.content, msgs : msgs});
+              } else if (msg.code === 203) { // start of data request
+                if (dataRequest) {           // Multiple data packets
+                  data.push(dataPacket);
+                }
+                dataPacket = [];
+                dataRequest = true;
+              } else if (msg.code === 200) { // success
+                end$.next({error : msg.error, msg : msg.content});
+                // end$.next({msgs : msgs, msg : msg});
+                end$.complete();
+              } else if (msg.code === 204) { // end of data request
+                if (dataPacket.length > 0) {
+                  data.push(dataPacket);
+                }
+                end$.next({error : msg.error, data : data});
+                end$.complete();
+              } else if (dataRequest) {
+                dataPacket.push(msg.data);
+              }
+            },
+            error => {
+              end$.next({error : true, msg : error.name});
+              end$.complete();
+            });
 
     return end$.toPromise(); // async await with observables?
   }
@@ -241,20 +262,18 @@ export class PianodService {
     }
     // stationList changed
     if (msg.code === 135) {
-      this.getStations().then(
-          (stationList) => { this.stations.next(stationList); });
+      this.getStations().then(stationList => this.stations.next(stationList));
     }
     // mixList changed
     if (msg.code === 134) {
-      this.getMixList().then((mixList) => { this.mixList.next(mixList); });
+      this.getMixList().then(mixList => this.mixList.next(mixList));
     }
     // user logged in
     if (msg.code === 136) {
       this.userInfo.update(msg);
       this.user.next(this.userInfo);
-      this.getStations().then(
-          (stationList) => { this.stations.next(stationList); });
-      this.getMixList().then((mixList) => { this.mixList.next(mixList); });
+      this.getStations().then(stationList => this.stations.next(stationList));
+      this.getMixList().then(mixList => this.mixList.next(mixList));
     }
   }
 
