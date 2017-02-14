@@ -25,11 +25,11 @@ export class StationsComponent implements OnInit {
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.pianodService.user$.subscribe((user) => {
-      if (user.loggedIn) {
-        this.pianodService.updateStations();
-      }
-    });
+    // this.pianodService.user$.subscribe((user) => {
+    // if (user.loggedIn) {
+    //   this.pianodService.updateStations();
+    // }
+    // });
 
     this.pianodService.stations$.subscribe(
         (stations) => { this.stations = stations; });

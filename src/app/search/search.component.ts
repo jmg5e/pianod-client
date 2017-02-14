@@ -52,7 +52,7 @@ export class SearchComponent implements OnInit {
           if (!res.error) {
             this.stationsModified.emit('New seed was succesfully added to ' +
                                        stationName);
-            this.pianodService.updateStations();
+            // this.pianodService.updateStations();
           }
         });
   }

@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 
 // import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
@@ -15,7 +20,7 @@ import {User} from './user';
   styleUrls : [ './app.component.scss' ]
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   error;
   connected = false; // is set from child ConnectComponent
   playback;
@@ -48,6 +53,10 @@ export class AppComponent implements OnInit {
       }
       this.connected = state;
     });
+  }
+  ngOnDestroy() {
+    console.log('ngOn destroy');
+    this.error.unsubscribe();
   }
 
   disconnect() {
