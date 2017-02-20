@@ -15,13 +15,10 @@ import {PianodService} from '../shared/pianod.service';
 
 export class ConnectComponent implements OnInit {
 
-  // @Output() userConnected = new EventEmitter<boolean>();
-  public pianodUrl: string;
   connectForm;
-  connected = false;
-  connecting = true; // show conecting spinner
+  connecting = false; // show conecting spinner
   barConfig = new MdSnackBarConfig();
-
+  favorites: Array<any>;
   constructor(private pianodService: PianodService,
               private snackBar: MdSnackBar,
               private localStorageService: LocalStorageService,
@@ -32,37 +29,60 @@ export class ConnectComponent implements OnInit {
       host : [ null, Validators.required ],
       port : [ null, Validators.required ]
     });
+    this.favorites = this.localStorageService.getFavorites();
   }
 
-  ngOnInit() {
-    this.pianodUrl = this.localStorageService.get('pianodUrl');
-    if (this.pianodUrl && typeof this.pianodUrl === 'string') {
-      // console.log('auto connect');
-      this.connect(this.pianodUrl);
-    } else {
+  ngOnInit() { this.autoConnect(); }
+  private autoConnect() {
+    this.localStorageService.favorites.map(item => {
+      if (item.auto_connect) {
+        // console.log('auto connect');
+        // console.log(item);
+        this.connect(item.host, item.port);
+      }
+    });
+  }
+  submitForm(form) {
+    let url = `ws://${form.host.trim()}:${form.port}/pianod`;
+    this.connect(form.host, form.port);
+  }
+
+  addToFavorites(form) {
+    if (form.host && form.port) {
+      this.localStorageService.addToFavorites(form.host, form.port);
+      this.favorites = this.localStorageService.getFavorites();
+    }
+  }
+
+  toggleAutoConnect(item) {
+    this.localStorageService.toggleAutoConnect(item);
+    this.favorites = this.localStorageService.getFavorites();
+  }
+
+  removeFromFavorites(item) {
+    this.localStorageService.removeFromFavorites(item);
+    this.favorites = this.localStorageService.getFavorites();
+  }
+
+  connect(host, port) {
+    let url = `ws://${host.trim()}:${port}/pianod`;
+    this.connecting = false;
+    try {
+      this.pianodService.connect(url)
+          .then(res => {
+            this.connecting = false;
+            if (res.error) {
+              this.snackBar.open('failed to connect to pianod', '',
+                                 this.barConfig);
+            }
+          })
+          .catch(error => {
+            this.connecting = false;
+            this.snackBar.open('failed to connect to pianod', '',
+                               this.barConfig);
+          });
+    } catch (err) {
       this.connecting = false;
     }
-
-    this.pianodService.connected$.subscribe(connected => this.connected =
-                                                connected);
-  }
-
-  submitForm(form) {
-    this.pianodUrl = `ws://${form.host.trim()}:${form.port}/pianod`;
-    this.connect(this.pianodUrl);
-  }
-
-  connect(url) {
-    this.connecting = true;
-    this.pianodService.connect(url);
-
-    setTimeout(() => {
-      this.connecting = false; // no longer show spinner
-      if (this.connected === false) {
-        this.snackBar.open('failed to connect to pianod', '', this.barConfig);
-      } else {
-        this.localStorageService.save('pianodUrl', url);
-      }
-    }, 2000);
   }
 }
