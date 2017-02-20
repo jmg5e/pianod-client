@@ -2,8 +2,9 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {LocalStorageService} from '../shared/local-storage.service';
-import {PianodService} from '../shared/pianod.service';
 import {User} from '../shared/models/user';
+import {PianodService} from '../shared/pianod.service';
+
 import {LoginDialogComponent} from './login-dialog/login-dialog.component';
 
 @Component({
@@ -17,7 +18,7 @@ export class LoginComponent implements OnInit {
   loginInfo: LoginInfo;
   user: User = new User();
   connected = false;
-  @Output() userLogin = new EventEmitter<User>();
+  // @Output() userLogin = new EventEmitter<User>();
 
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService,
@@ -34,14 +35,11 @@ export class LoginComponent implements OnInit {
         }
       }
       this.connected = connected;
-
     });
 
     this.pianodService.user$.subscribe((user: User) => {
       this.user = user;
-      // this.userLogin.emit(user);
       if (user.loggedIn) {
-        // this.userLogin.emit(user);
         // TODO : passsword is stored in plain text in browser storage!
         // logInfo could potential be modified before event, potentially saving
         // incorrect login credientials

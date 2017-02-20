@@ -1,9 +1,10 @@
 <!-- {{user$ | async |json }} -->
-<button md-button (click)="openDialog()" *ngIf="!user.loggedIn">
+<button md-menu-item (click)="openDialog()" *ngIf="!user.loggedIn">
         <md-icon>fingerprint</md-icon>
         <span>Login</span>
 </button>
-<button md-button (click)="logout()" *ngIf="user.loggedIn">
+
+<button md-menu-item (click)="logout()" *ngIf="user.loggedIn">
         <md-icon>exit_to_app</md-icon>
         <span>Logout</span>
 </button>
