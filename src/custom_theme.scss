@@ -1,13 +1,31 @@
 @import '~@angular/material/core/theming/all-theme';
+
+// NOTE: Theming is currently experimental and not yet publically released!
+
 @include md-core();
 
-// Customizations go here, for instance:
-$app-primary: md-palette($md-teal);
-$app-accent:  md-palette($md-pink, A200, A100, A400);
-$app-warn:    md-palette($md-red);
+$primary: md-palette($md-deep-purple);
+$accent:  md-palette($md-amber, A200, A100, A400);
+$warn:  md-palette($md-red, A200, A100, A400);
 
-// Create the theme object (a Sass map containing all of the palettes).
-$app-theme: md-light-theme($app-primary, $app-accent, $app-warn);
+$theme: md-light-theme($primary, $accent);
+//
+// @include angular-material-theme($theme);
 
+// .m2app-dark {
+// $dark-primary:  md-palette($md-blue, A200, A100, A400);
+$dark-primary:  md-palette($md-blue, A700, A100, A400);
+$dark-accent: md-palette($md-grey, 800, 500, 900);
+$dark-warn:    md-palette($md-deep-orange);
 
-@include angular-material-theme($app-theme);
+$dark-theme: md-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+@include angular-material-theme($dark-theme);
+// }
+.red {
+    color: md-color($md-red, 500, 1);
+}
+
+.warn {
+   color: md-color($warn);
+}

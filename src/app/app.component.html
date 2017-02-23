@@ -1,5 +1,6 @@
-<div class="app-container">
-    <md-toolbar [color]="user.loggedIn ? 'primary' : 'warn'">
+<app-connect [hidden]="connected"> </app-connect>
+<div class="app-container" *ngIf="connected">
+    <md-toolbar [color]="user.loggedIn ? 'primary' : 'accent'">
         <span>Pianod Client</span>
         <span class="fill-space"></span>
         <md-menu #appMenu="mdMenu">
@@ -14,30 +15,26 @@
     </md-toolbar>
 
     <!-- <app&#45;connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app&#45;connect> -->
-    <app-connect *ngIf="!connected"> </app-connect>
-    <span *ngIf="connected">
-        <md-tab-group class="tab-container">
-            <md-tab>
-                <template md-tab-label>
+    <md-tab-group class="tab-container" *ngIf="connected">
+        <md-tab>
+            <template md-tab-label>
               <em>Now Playing</em>
             </template>
-                <app-now-playing> </app-now-playing>
-            </md-tab>
-            <md-tab *ngIf="user.loggedIn">
-                <template md-tab-label>
+            <app-now-playing class="tab-content"> </app-now-playing>
+        </md-tab>
+        <md-tab *ngIf="user.loggedIn">
+            <template md-tab-label>
               <em>Stations</em>
             </template>
-                <!-- <app&#45;stations [currentStation]="currentStation"> </app&#45;stations> -->
-                <app-stations (stationsModified)="snackBarMsg($event)"> </app-stations>
-            </md-tab>
-            <md-tab *ngIf="user.loggedIn">
-                <template md-tab-label>
+            <!-- <app&#45;stations [currentStation]="currentStation"> </app&#45;stations> -->
+            <app-stations (stationsModified)="snackBarMsg($event)" class="tab-content"> </app-stations>
+        </md-tab>
+        <md-tab *ngIf="user.loggedIn">
+            <template md-tab-label>
               <em>Search</em>
             </template>
-                <app-search (stationsModified)="snackBarMsg($event)"> </app-search>
-            </md-tab>
-        </md-tab-group>
-        <div class="fill"> </div>
-        <app-controls class="control-bar"> </app-controls>
-    </span>
+            <app-search (stationsModified)="snackBarMsg($event)"> </app-search>
+        </md-tab>
+    </md-tab-group>
+    <app-controls class="control-bar"> </app-controls>
 </div>

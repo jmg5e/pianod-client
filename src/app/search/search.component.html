@@ -1,48 +1,41 @@
-<div class="tab-content">
-    <div class="search-bar">
+<!-- <div class="tab&#45;content" style="height: 70vh; flex&#45;wrap:wrap;"> -->
+<div style="display:flex; flex-direction:column; height:65vh; width: 100%">
+    <md-toolbar style="padding-top:20px; margin-bottom:20px">
+        <md-input-container style="flex: 1 1 auto; margin-right: 15px;">
+            <input mdInput type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
+        </md-input-container>
+
         <md-select placeholder="category" [(ngModel)]="category" class="search-category">
             <md-option value="Any"> Any</md-option>
             <md-option value="Artist"> Artist </md-option>
             <md-option value="Genre"> Genre</md-option>
         </md-select>
-        <md-input-container class="search-input">
-            <input md-input type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
-        </md-input-container>
-        <button md-button class="search-btn" (click)="search(searchInput.value, category)"> Search</button>
-    </div>
-    <div class="selected-bar" disabled>
-        <button md-button (click)="addToStation(selectedSeed,selectedStation)" [disabled]="!selectedStation">
-            <span class="label-btn">Add To Station</span> 
-            <md-icon>input</md-icon>
-          </button>
-        <md-select [(ngModel)]="selectedStation" [disabled]="!selectedSeed ">
-            <md-option *ngFor="let station of stationList" [value]="station">{{station}}</md-option>
-        </md-select>
-        <span class="fill-space"></span>
-        <button md-button class="seed-bar-input" (click)="createStation(selectedSeed)" [disabled]="!selectedSeed"> 
-          <md-icon>fiber_new</md-icon>
-          <span class="label-btn">New Station</span></button>
-    </div>
-    <div class="search-container" *ngIf="searching">
-        <div class="connecting-spinner">
-            <md-progress-spinner mode="indeterminate" class="spinner">
-            </md-progress-spinner>
-        </div>
-    </div>
-    <div class="results-container" *ngIf="!searching">
-        <md-card *ngFor="let seed of results" (click)="selectSeed(seed.ID)" [ngClass]="{'selected': selectedSeed === seed.ID }">
-            <!-- {{item | json}} -->
-            <!-- <md&#45;card&#45;subtitle>{{item?.ID}}</md&#45;card&#45;subtitle> -->
-            <md-card-subtitle *ngIf="seed.Artist">Artist : {{seed?.Artist}}</md-card-subtitle>
-            <md-card-subtitle *ngIf="seed.Song"> Song : {{seed?.Song}}</md-card-subtitle>
-            <md-card-subtitle *ngIf="seed.Genre"> Genre : {{seed?.Genre}}</md-card-subtitle>
-            <!-- <md&#45;card&#45;actions> -->
-            <!--     <select #selectedStation> -->
-            <!--     <option *ngFor="let station of stationList" [value]="station">{{station}}</option> -->
-            <!--   </select> -->
-            <!--     <button md&#45;button (click)="addToStation(seed.ID,selectedStation.value)"> <md&#45;icon>input</md&#45;icon>Add To Station </button> -->
-            <!--     <button md&#45;button (click)="createStation(seed.ID)"> <md&#45;icon>fiber_new</md&#45;icon>New Station</button> -->
-            <!-- </md&#45;card&#45;actions> -->
-        </md-card>
+    </md-toolbar>
+
+    <div style="display:flex; flex 1 1 auto; flex-wrap:wrap; overflow-y:auto;">
+        <md-progress-spinner mode="indeterminate" *ngIf="searching" style="align-self:center; margin:auto;">
+        </md-progress-spinner>
+        <md-chip-list *ngIf="!searching">
+
+            <md-chip color="accent" *ngFor="let seed of results" style="margin:10px" (click)="selectSeed(seed.ID)" [ngClass]="{'selected': selectedSeed === seed.ID }">
+                <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+                <span *ngIf="seed.Song"> Song : {{seed?.Song}}</span>
+                <span *ngIf="seed.Genre"> Genre : {{seed?.Genre}}</span>
+            </md-chip>
+        </md-chip-list>
     </div>
 </div>
+<md-toolbar style="height:50px">
+    <md-select style="flex: 1 1 auto; margin-right: 15px;" [(ngModel)]="selectedStation" [disabled]="!selectedSeed ">
+        <md-option *ngFor="let station of stationList" [value]="station">{{station}}</md-option>
+    </md-select>
+    <button md-button-pressed (click)="addToStation(selectedSeed,selectedStation)" [disabled]="!selectedStation">
+            <md-icon>input</md-icon>
+            <span class="label-btn">Add To Station</span>
+          </button>
+    <span class="fill-space"></span>
+    <button md-button-pressed class="seed-bar-input" (click)="createStation(selectedSeed)" [disabled]="!selectedSeed"> 
+          <md-icon>fiber_new</md-icon>
+            <span class="label-btn">New Station</span></button>
+</md-toolbar>
+<!-- </div> -->

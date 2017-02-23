@@ -131,6 +131,7 @@ export class PianodService {
 
   public async search(searchTerm, category) {
     let response = await this.sendCmd(`FIND ${category} \"${searchTerm}\"`);
+    // map data packet of seed array into an object
     let results = response.data.map(
         (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
     return results;

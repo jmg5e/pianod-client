@@ -46,6 +46,15 @@ export class StationsComponent implements OnInit {
   }
 
   inMix(stationName) { return (this.mixList.indexOf(stationName) !== -1); }
+  isPlaying(stationName) {
+    if (this.inMix(stationName) && this.currentStation === 'mix QuickMix') {
+      return true;
+    } else if (stationName === this.currentStation) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   toggleInMix(stationName) {
     this.pianodService.sendCmd(`MIX TOGGLE \"${stationName}\"`);

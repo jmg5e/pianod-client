@@ -37,7 +37,6 @@ export class ControlsComponent implements OnInit {
       this.pianodService.sendCmd('PLAY MIX');
     } else {
       this.pianodService.sendCmd(`PLAY STATION \"${station}\"`);
-      // console.log('changing station to ', station);
     }
   }
 }

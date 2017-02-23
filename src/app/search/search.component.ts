@@ -1,5 +1,4 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-
 import {Seed} from '../shared/models/seed';
 import {PianodService} from '../shared/pianod.service';
 
@@ -10,13 +9,15 @@ import {PianodService} from '../shared/pianod.service';
 })
 
 export class SearchComponent implements OnInit {
+
   results: Array<Seed>;
   stationList: Array<string>;
-  category = 'Artist';
+  category = 'Any';
   searching = false;
   selectedSeed: string;
   selectedStation: string;
   @Output() stationsModified = new EventEmitter();
+
   constructor(private pianodService: PianodService) {}
 
   ngOnInit() {
@@ -30,7 +31,7 @@ export class SearchComponent implements OnInit {
     this.selectedSeed = null;
     this.pianodService.search(searchTerm, category)
         .then((results: any) => {
-          // console.log(results);
+          console.log(results);
           this.results = results;
           this.searching = false;
         })

@@ -6,12 +6,12 @@ import {
 } from '@angular/core';
 import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 
+import {LoginComponent} from './login/login.component';
 // import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {LocalStorageService} from './shared/local-storage.service';
-import {LoginComponent} from './login/login.component';
-import {PianodService} from './shared/pianod.service';
 import {User} from './shared/models/user';
+import {PianodService} from './shared/pianod.service';
 
 @Component({
   // changeDetection : ChangeDetectionStrategy.OnPush,
@@ -49,20 +49,20 @@ export class AppComponent implements OnInit, OnDestroy {
     this.pianodService.connected$.subscribe((state) => {
       // lost connection
       if (this.connected && state === false) {
-        this.snackBar.open('lost connection to pianod');
+        this.snackBar.open('lost connection to pianod', '', this.barConfig);
       }
       this.connected = state;
     });
   }
   ngOnDestroy() {
-    console.log('ngOn destroy');
-    this.error.unsubscribe();
+    // console.log('ngOn destroy');
+    // this.error.unsubscribe();
   }
 
   disconnect() {
-    this.localStorageService.remove('pianodUrl');
+    // this.localStorageService.remove('pianodUrl');
     this.pianodService.disconnect();
-    this.connected = false;
+    // this.connected = false;
   }
 
   //  event from child component

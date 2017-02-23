@@ -5,70 +5,55 @@
   }
 }
 
-.tab-content {
-    align-items: center;
-    /* align-content: center; */
-    // padding-top: 10px;
+.station-container {
+    display:flex; 
+    flex-direction:column;
+    background-color:#424242; 
+    color: white; 
+    width:100%; 
+    margin:10px
 }
-
-md-card {
-    height: auto;
-    margin: 20px;
-    padding: 20px;
-    width: 90%;
-}
-
-md-card> md-card-title {
-    text-align: center;
-}
-
-md-card-actions {
-    display: flex;
-    align-items: space-around;
-    justify-content: space-between;
-}
-
 .station-bar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    display:flex; 
+    flex:1 1 auto; 
+    flex-direction: row; 
+    width:100%;
+    align-items:center; 
+    justify-content:space-between;
 }
-
-.rename-station{
-    display: flex;
-    flex-direction: row;
-    // justify-content: space-between;
-    // align-items: stretch;
+.station-title {
+    align-self:center;
+    padding-left:10px
 }
-
-.rename-station > md-input-container{
-    display: flex;
-    flex: 1 1 auto;
+.station-options {
+    display:flex; 
+    flex-direction:row; 
+    flex-flow:column; 
+    background-color:#212121;
 }
-
-.delete-btn {
-    width: 100%;
-}
-
-.active {
-    color: green;
+.station-controls {
+    display:flex; 
+    flex-direction:row; 
+    width: 100%; 
+    flex-wrap: wrap;
+    align-items: center; 
+    justify-content: space-around; 
+    margin:10px;
 }
 
 .seed-row {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    flex: 1 1 auto;
+    margin:10px;
     justify-content: space-between;
     align-items: center;
 }
 
-.seed {
-    display: flex;
-    flex: 1 1 auto;
+.active {
+    color: #2962FF;
 }
 
-.deleteSeed-btn {
-    display: flex;
-    background-color: red;
+.active > md-icon, label-btn {
+    color: #2962FF;
 }

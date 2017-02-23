@@ -12,10 +12,10 @@
         <!-- <md&#45;card> -->
         <form (ngSubmit)="submitForm(connectForm.value)" [formGroup]="connectForm">
             <md-input-container style="width: 100%">
-                <input md-input type="text" formControlName="host" placeholder="Host">
+                <input mdInput type="text" formControlName="host" placeholder="Host">
             </md-input-container>
             <md-input-container style="width: 100%">
-                <input md-input type="number" required formControlName="port" placeholder="Port">
+                <input mdInput type="number" required formControlName="port" placeholder="Port">
             </md-input-container>
             <md-card-actions>
                 <!-- <div class="flex&#45;container" style="justify&#45;content: center"> -->
@@ -30,8 +30,8 @@
       <h2> favorites </h2>
       <md-toolbar class="favorites" *ngFor="let item of favorites">
         <span> {{item.host}}</span>
-        <span class="fill-space"></span>
-        <span> {{item.port}}</span>
+    <span class="fill-space"></span>
+    <span> {{item.port}}</span>
     <md-toolbar-row>
         <md-checkbox [ngModel]="item.auto_connect" (change)="toggleAutoConnect(item)">Auto Connect</md-checkbox>
         <span class="fill-space"></span>

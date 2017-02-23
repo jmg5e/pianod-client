@@ -7,10 +7,10 @@ import {MdSnackBar} from '@angular/material';
 import {AppComponent} from './app.component';
 import {ConnectComponent} from './connect/connect.component';
 import {ControlsComponent} from './controls/controls.component';
-import {LocalStorageService} from './local-storage.service';
+import {LocalStorageService} from './shared/local-storage.service';
 import {LoginComponent} from './login/login.component';
 import {NowPlayingComponent} from './now-playing/now-playing.component';
-import {PianodService} from './pianod.service';
+import {PianodService} from './shared/pianod.service';
 import {SearchComponent} from './search/search.component';
 import {StationsComponent} from './stations/stations.component';
 
@@ -28,10 +28,9 @@ describe('AppComponent', () => {
     TestBed.compileComponents();
   });
 
-  // I DONT KNOW WHY THIS BREAKS SERVICE TESTS
-  // fit('should create the app', async(() => {
-  //       const fixture = TestBed.createComponent(AppComponent);
-  //       const app = fixture.debugElement.componentInstance;
-  //       expect(app).toBeTruthy();
-  //     }));
+  it('should create the app', async(() => {
+        const fixture = TestBed.createComponent(AppComponent);
+        const app = fixture.debugElement.componentInstance;
+        expect(app).toBeTruthy();
+      }));
 });

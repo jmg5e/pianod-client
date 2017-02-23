@@ -1,61 +1,42 @@
-<div class="tab-content">
-    <md-card *ngFor="let station of stations">
-        <md-card-title class="station-bar">
-            <span>{{station?.Name}}</span>
-            <span class="fill-space"> </span>
-            <!-- <button md&#45;button [ngClass]="{'active': station.Name === currentStation}" (click)="playStation(station.Name)"> -->
-            <!--   <md&#45;icon>play_arrow</md&#45;icon>  -->
-            <!--   <span class="label&#45;btn">Mix</span> -->
-            <!-- </button> -->
-            <button md-button [ngClass]="{'active': inMix(station.Name)}" (click)="toggleInMix(station.Name)">
+<div *ngFor="let station of stations" class="station-container">
+    <span class="station-bar">
+          <span class="station-title" [ngClass]="{'active': isPlaying(station.Name)}"> {{station.Name}}</span>
+
+    <!-- <button md&#45;button [ngClass]="{'active': isPlaying(station.Name)}"> -->
+    <!--             <span class="label&#45;btn">Playing</span> -->
+    <!--             <md&#45;icon>play_arrow</md&#45;icon> -->
+    <!--     </button> -->
+    <button md-button [ngClass]="{'active': inMix(station.Name)}" (click)="toggleInMix(station.Name)">
                     <md-icon>playlist_add</md-icon>
                     <span class="label-btn">Mix</span>
             </button>
-            <md-button-toggle #showEditOptions>
-                <md-icon>settings</md-icon>
-            </md-button-toggle>
-            <!-- <button md&#45;button [mdMenuTriggerFor]="menu"><md&#45;icon>menu</md&#45;icon></button> -->
-            <!-- <md&#45;menu #menu="mdMenu"> -->
-            <!--     <button md&#45;menu&#45;item color="primary" (click)="playStation(station.Name)"><md&#45;icon>play_arrow</md&#45;icon> Play </button> -->
-            <!--     <button md&#45;menu&#45;item [ngClass]="{'active': inMix(station.Name)}" (click)="toggleInMix(station.Name)"> -->
-            <!--         <md&#45;icon>playlist_add</md&#45;icon> -->
-            <!--         Mix -->
-            <!--     </button> -->
-            <!-- </md&#45;menu> -->
-        </md-card-title>
-        <md-card-content *ngIf="showEditOptions.checked">
-            <md-list dense>
-                <md-list-item *ngFor="let seed of station.Seeds">
-                    <div class="seed-row">
-                        <span class="seed">
-                          <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
-                          <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
-                          <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
-                        </span>
-                        <!-- <md&#45;select disabled placeholder="rating"> -->
-                        <!--     <md&#45;option value="like"> -->
-                        <!--         like -->
-                        <!--     </md&#45;option> -->
-                        <!--     <md&#45;option value="nuetral"> -->
-                        <!--         neutral -->
-                        <!--     </md&#45;option> -->
-                        <!--     <md&#45;option value="dislike"> -->
-                        <!--         dislike -->
-                        <!--     </md&#45;option> -->
-                        <!-- </md&#45;select> -->
-                        <button md-button-icon class="deleteSeed-btn" (click)="deleteSeed(seed.ID)"><md-icon>delete</md-icon></button>
-                    </div>
-                </md-list-item>
-            </md-list>
-            <md-card-actions class="rename-station">
+
+    <input type="checkbox" style="display:none" #showOptions>
+
+    <button md-button (click)="showOptions.click()">
+          <md-icon *ngIf="!showOptions.checked" (click)="showOptions.click()">arrow_drop_down
+          </md-icon>
+          <md-icon *ngIf="showOptions.checked" (click)="showOptions.click()">arrow_drop_up</md-icon>
+          </button>
+    </span>
+    <div *ngIf="showOptions.checked" class="station-options">
+        <div *ngFor="let seed of station.Seeds" class="seed-row">
+            <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+            <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
+            <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
+            <button md-button (click)="deleteSeed(seed.ID)" style="color:red"><md-icon>delete</md-icon></button>
+        </div>
+        <div class="station-controls">
+            <span>
                 <md-input-container>
-                    <input md-input type="text" #newName [value]="station.Name" (keyup.enter)="renameStation(station.Name,newName.value)">
+                    <input mdInput placeholder="rename" type="text" #newName [value]="station.Name" (keyup.enter)="renameStation(station.Name,newName.value)">
                 </md-input-container>
-                <button md-button (click)="renameStation(station.Name,newName.value)">Rename</button>
-            </md-card-actions>
-            <md-card-actions>
-                <button md-button class="delete-btn" color="warn" (click)="openConfirmDialog(station.Name)">Delete</button>
-            </md-card-actions>
-        </md-card-content>
-    </md-card>
+                <button md-button-pressed (click)="renameStation(station.Name,newName.value)">Rename</button>
+              </span>
+            <!-- <span class="fill&#45;space"></span> -->
+            <span>
+                <button md-button-pressed color="warn" (click)="openConfirmDialog(station.Name)">Delete</button>
+                </span>
+        </div>
+    </div>
 </div>
