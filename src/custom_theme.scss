@@ -2,30 +2,29 @@
 
 // NOTE: Theming is currently experimental and not yet publically released!
 
-@include md-core();
+@include mat-core();
 
-$primary: md-palette($md-deep-purple);
-$accent:  md-palette($md-amber, A200, A100, A400);
-$warn:  md-palette($md-red, A200, A100, A400);
+$primary: mat-palette($mat-deep-purple);
+$accent:  mat-palette($mat-amber, A200, A100, A400);
+$warn:  mat-palette($mat-red, A200, A100, A400);
 
-$theme: md-light-theme($primary, $accent);
-//
-// @include angular-material-theme($theme);
+$primary:  mat-palette($mat-blue, A700, A100, A400);
+$accent: mat-palette($mat-grey, 800, 500, 900);
+$warn:    mat-palette($mat-deep-orange);
 
-// .m2app-dark {
-// $dark-primary:  md-palette($md-blue, A200, A100, A400);
-$dark-primary:  md-palette($md-blue, A700, A100, A400);
-$dark-accent: md-palette($md-grey, 800, 500, 900);
-$dark-warn:    md-palette($md-deep-orange);
+$dark-primary:  mat-palette($mat-blue, A700, A100, A400);
+$dark-accent: mat-palette($mat-grey, 800, 500, 900);
+$dark-warn:    mat-palette($mat-deep-orange);
 
-$dark-theme: md-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
-@include angular-material-theme($dark-theme);
-// }
+// $theme: mat-light-theme($primary, $accent, $warn);
+$dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+// @include angular-material-theme($dark-theme);
 .red {
-    color: md-color($md-red, 500, 1);
+    color: mat-color($mat-red, 500, 1);
 }
 
 .warn {
-   color: md-color($warn);
+   color: mat-color($warn);
 }
