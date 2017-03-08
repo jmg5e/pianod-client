@@ -2,21 +2,78 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class LocalStorageService {
-  public favorites: Array<any>;
-  // public pianodUrl; // auto connect
+  public storedConnections: Array<Connection>;
   constructor() {
-    // localStorage.clear();
-    let storedFavorites = this.get('favorites');
-    if (!storedFavorites) {
-      this.save('favorites', []);
-      this.favorites = [];
+    const storedConnections = this.get('storedConnections');
+    if (!storedConnections) {
+      this.save('storedConnections', []);
+      this.storedConnections = [];
     } else {
-      this.favorites = storedFavorites;
+      this.storedConnections = storedConnections;
     }
-    // this.pianodUrl = this.get('pianodUrl');
   }
 
-  save(name, data) {
+  public saveConnection(host: string, port: number) {
+    if (!this.connectionExists({host : host, port : port})) {
+      const storedConnections = this.get('storedConnections');
+      storedConnections.push({host : host, port : port, auto_connect : false});
+      this.save('storedConnections', storedConnections);
+      this.storedConnections = storedConnections;
+    }
+  }
+
+  public deleteSavedConnection(connection: Connection) {
+    this.storedConnections = this.storedConnections.filter(
+        x => x.port !== connection.port || x.host !== connection.host);
+    this.save('storedConnections', this.storedConnections);
+  }
+
+  public toggleAutoConnect(connection: Connection) {
+    this.storedConnections = this.storedConnections.map(x => {
+      if (x.port === connection.port && x.host === connection.host) {
+        x.auto_connect = !x.auto_connect;
+      } else {
+        x.auto_connect = false;
+      }
+      return x;
+    });
+    this.save('storedConnections', this.storedConnections);
+  }
+
+  public getStoredConnections() { return this.storedConnections; }
+
+  public setDefaultUser(connection: Connection, defaultUser: LoginInfo) {
+    if (this.connectionExists(connection)) {
+      this.storedConnections = this.storedConnections.map(cn => {
+        if (cn.host === connection.host && cn.port === connection.port) {
+          cn.defaultUser = defaultUser;
+        }
+        return cn;
+      });
+      this.save('storedConnections', this.storedConnections);
+    }
+  }
+
+  public removeDefaultUser(connection: Connection) {
+    if (this.connectionExists(connection)) {
+      this.storedConnections = this.storedConnections.map(cn => {
+        if (cn.host === connection.host && cn.port === connection.port) {
+          delete cn.defaultUser;
+        }
+        return cn;
+      });
+      this.save('storedConnections', this.storedConnections);
+    }
+  }
+  public getDefaultUser(connection: Connection) {
+    return this.storedConnections
+        .filter(cn =>
+                    cn.port === connection.port && cn.host === connection.host)
+        .map(cn => cn.defaultUser)
+        .reduce((defaultUser, user) => defaultUser = user);
+  }
+
+  private save(name, data) {
     let localData: any = window.localStorage.getItem('Pianod');
     if (localData) {
       localData = JSON.parse(localData);
@@ -29,8 +86,8 @@ export class LocalStorageService {
     window.localStorage.setItem('Pianod', JSON.stringify(localData));
   }
 
-  get(name) {
-    let data = JSON.parse(window.localStorage.getItem('Pianod'));
+  private get(name) {
+    const data = JSON.parse(window.localStorage.getItem('Pianod'));
     if (!data) {
       return undefined;
     }
@@ -45,8 +102,8 @@ export class LocalStorageService {
     return data;
   }
 
-  remove(name) {
-    let data = JSON.parse(window.localStorage.getItem('Pianod'));
+  private remove(name) {
+    const data = JSON.parse(window.localStorage.getItem('Pianod'));
     window.localStorage.removeItem('Pianod');
     if (data[name]) {
       delete data[name];
@@ -54,48 +111,26 @@ export class LocalStorageService {
     window.localStorage.setItem('Pianod', JSON.stringify(data));
   }
 
-  addToFavorites(host, port) {
-    if (!this.favoriteExists(host, port)) {
-      let favorites = this.get('favorites');
-      favorites.push({host : host, port : port, auto_connect : false});
-      this.save('favorites', favorites);
-      this.favorites = favorites;
-    }
-  }
-
-  removeFromFavorites(item) {
-    this.favorites = this.favorites.filter(x => x.port !== item.port ||
-                                                x.host !== item.host);
-    this.save('favorites', this.favorites);
-  }
-
-  toggleAutoConnect(item) {
-    item.auto_connect = !item.auto_connect;
-    // if (item.auto_connect) {
-    //   // this.pianodUrl = `ws://${item.host.trim()}:${item.port}/pianod`;
-    //   // this.save('pianodUrl', this.pianodUrl);
-    // } else {
-    //   this.remove('pianodUrl');
-    // }
-    this.favorites = this.favorites.map(x => {
-      if (x.port === item.port && x.host === item.host) {
-        x = item;
-      } else {
-        x.auto_connect = false;
-      }
-      return x;
-    });
-    this.save('favorites', this.favorites);
-  }
-
-  getFavorites() { return this.favorites; }
-
-  private favoriteExists(host, port) {
-    if (this.favorites.filter(x => x.port === port && x.host === host).length >
-        0) {
+  private connectionExists(connection: Connection) {
+    if (this.storedConnections
+            .filter(x => x.port === connection.port &&
+                         x.host === connection.host)
+            .length > 0) {
       return true;
     } else {
       return false;
     }
   }
+}
+
+export interface Connection {
+  port: number;
+  host: string;
+  auto_connect?: boolean;
+  defaultUser?: LoginInfo;
+}
+
+export interface LoginInfo {
+  username: string;
+  password: string;
 }

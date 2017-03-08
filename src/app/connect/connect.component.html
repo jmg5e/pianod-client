@@ -8,8 +8,6 @@
     </div>
     <span class="content" *ngIf="!connecting">
       <md-card>
-
-        <!-- <md&#45;card> -->
         <form (ngSubmit)="submitForm(connectForm.value)" [formGroup]="connectForm">
             <md-input-container style="width: 100%">
                 <input mdInput type="text" formControlName="host" placeholder="Host">
@@ -18,25 +16,29 @@
                 <input mdInput type="number" required formControlName="port" placeholder="Port">
             </md-input-container>
             <md-card-actions>
-                <!-- <div class="flex&#45;container" style="justify&#45;content: center"> -->
-                <button md-button type="button" (click)="addToFavorites(connectForm.value)"> Add To Favorites</button>
+                <button md-button type="button" (click)="saveConnection(connectForm.value)"> Save </button>
                 <button md-button type='submit'> Connect</button>
-                <!-- </div> -->
             </md-card-actions>
         </form>
     </md-card>
 
-    <md-card >
-      <h2> favorites </h2>
-      <md-toolbar class="favorites" *ngFor="let item of favorites">
-        <span> {{item.host}}</span>
+    <md-card>
+      <h2> Saved Connections</h2>
+      <md-toolbar class="storedConnectionList" *ngFor="let connection of storedConnections">
+        <span> {{connection.host}}</span>
     <span class="fill-space"></span>
-    <span> {{item.port}}</span>
+    <span> {{connection.port}}</span>
     <md-toolbar-row>
-        <md-checkbox [ngModel]="item.auto_connect" (change)="toggleAutoConnect(item)">Auto Connect</md-checkbox>
+        <span> Default User: {{connection?.defaultUser?.username}} </span>
         <span class="fill-space"></span>
-        <button (click)="removeFromFavorites(item)"> remove </button>
-        <button (click)="connect(item.host, item.port)"> connect </button>
+        <button md-button (click)="setDefaultUser(connection)"> set </button>
+        <button md-button (click)="removeDefaultUser(connection)"> remove </button>
+    </md-toolbar-row>
+    <md-toolbar-row>
+        <md-checkbox [ngModel]="connection.auto_connect" (change)="toggleAutoConnect(connection)">Auto Connect</md-checkbox>
+        <span class="fill-space"></span>
+        <button (click)="deleteSavedConnection(connection)"> remove </button>
+        <button (click)="connect(connection.host, connection.port)"> connect </button>
     </md-toolbar-row>
     </md-toolbar>
     </md-card>

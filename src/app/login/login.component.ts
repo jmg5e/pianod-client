@@ -1,51 +1,43 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
-import {LocalStorageService} from '../shared/local-storage.service';
+import {LocalStorageService, LoginInfo} from '../shared/local-storage.service';
+import {
+  LoginDialogComponent
+} from '../shared/login-dialog/login-dialog.component';
 import {User} from '../shared/models/user';
 import {PianodService} from '../shared/pianod.service';
 
-import {LoginDialogComponent} from './login-dialog/login-dialog.component';
-
-@Component({
-  selector : 'app-login',
-  templateUrl : './login.component.html'
-  // styleUrls : [ './login.component.scss' ]
-})
+@Component({selector : 'app-login', templateUrl : './login.component.html'})
 
 export class LoginComponent implements OnInit {
   dialogRef: MdDialogRef<LoginDialogComponent>;
   loginInfo: LoginInfo;
-  user: User = new User();
+  user$;
   connected = false;
-  // @Output() userLogin = new EventEmitter<User>();
 
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService,
               public dialog: MdDialog) {}
 
   ngOnInit() {
+    this.user$ = this.pianodService.user$;
     this.pianodService.connected$.subscribe((connected) => {
-      // need to know if connected!
+      // if connected for first time
       if (connected && !this.connected) {
-        this.loginInfo = this.localStorageService.get('userLogin');
-        if (this.loginInfo) {
-          // console.log('auto login');
-          this.login(this.loginInfo);
+        const defaultUser = this.getDefaultUser();
+        // auto login
+        if (defaultUser) {
+          this.login(defaultUser);
         }
       }
       this.connected = connected;
     });
+  }
 
-    this.pianodService.user$.subscribe((user: User) => {
-      this.user = user;
-      if (user.loggedIn) {
-        // TODO : passsword is stored in plain text in browser storage!
-        // logInfo could potential be modified before event, potentially saving
-        // incorrect login credientials
-        this.localStorageService.save('userLogin', this.loginInfo);
-      }
-    });
+  private getDefaultUser() {
+    const connectionInfo = this.pianodService.connectionInfo;
+    return this.localStorageService.getDefaultUser(connectionInfo);
   }
 
   openDialog() {
@@ -61,19 +53,10 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  login(loginData: LoginInfo) {
+  login(loginData) {
     this.pianodService.sendCmd(
         `user ${loginData.username} ${loginData.password}`);
   }
 
-  logout() {
-    this.localStorageService.remove('userLogin');
-    this.pianodService.logout();
-    // this.userLogin.emit(new User());
-  }
-}
-
-interface LoginInfo {
-  username: string;
-  password: string;
+  logout() { this.pianodService.logout(); }
 }

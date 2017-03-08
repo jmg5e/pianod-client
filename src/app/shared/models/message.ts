@@ -7,13 +7,18 @@ export class Message {
   data: any;
   error: boolean;
 
+  static isValid(packet: string) { return /^([0-9]{3})\s(.+)$/g.test(packet); }
+
   constructor(packet: string) {
+    if (!Message.isValid(packet)) {
+      throw new Error('invalid message: ' + packet);
+    }
     const obj = this.parseData(packet);
     this.code = obj.code;
 
     // get data property from Message contents
     // codes betwee 109 - 121 contain "key: value"
-    // is really alot more of these
+    // TODO check documention and include all codes with data values
     if (this.code > 108 && this.code < 121) {
       this.data = this.getData(obj.content);
     } else {
@@ -39,8 +44,9 @@ export class Message {
     }
   };
 
-  // extract code and content from line
+  // get code and content from line/packet
   private parseData(packet: string) {
+    // packet = packet.trim();
     const messageMatch = packet.match(new RegExp('([0-9]{3}) (.+)', 'i'));
     if (messageMatch !== null) {
       const code = parseInt(messageMatch[1], 10);

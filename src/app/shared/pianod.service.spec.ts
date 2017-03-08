@@ -1,8 +1,6 @@
-/* tslint:disable:no-unused-variable */
 import 'rxjs/Rx';
 
 import {async, fakeAsync, inject, TestBed, tick} from '@angular/core/testing';
-import {BehaviorSubject} from 'rxjs/Rx';
 import {ReplaySubject} from 'rxjs/Rx';
 import {Subject} from 'rxjs/Rx';
 import {TestScheduler} from 'rxjs/Rx';
@@ -11,7 +9,6 @@ import {Observable} from 'rxjs/Rx';
 import {PianodService} from './pianod.service';
 
 const testServer = global.config.testServer;
-const socketUrl = `ws://localhost:${testServer.port}/pianod`;
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 3000;
 
 describe('PianodService', () => {
@@ -21,9 +18,11 @@ describe('PianodService', () => {
   beforeEach(async(inject([ PianodService ], (s: PianodService) => {
     this.service = s;
 
-    this.service.connect(socketUrl).then(response => {
+    this.service.connect(testServer.host, testServer.port).then(response => {
       expect(response.error).toBeFalsy();
       expect(response.msg).toEqual('Connected');
+      expect(this.service.connectionInfo)
+          .toEqual({host : testServer.host, port : testServer.port});
     });
   })));
 
@@ -31,7 +30,7 @@ describe('PianodService', () => {
      () => { expect(this.service).toBeTruthy(); });
 
   it('pianod service should connect to mock pianod socket', (done) => {
-    let connectedResults = new ReplaySubject();
+    const connectedResults = new ReplaySubject();
     this.service.connected$.subscribe(connectedState => {
       connectedResults.next(connectedState);
       connectedResults.complete();
@@ -46,18 +45,21 @@ describe('PianodService', () => {
   });
 
   it('disconnect should update connected state', (done) => {
-    let connectedResults = new ReplaySubject();
+    const connectedResults = new ReplaySubject();
+    let sequenceLimit = 2;
     this.service.connected$.subscribe(connectedState => {
       connectedResults.next(connectedState);
-      if (connectedState === false) {
+      sequenceLimit--;
+      if (sequenceLimit <= 0) {
         connectedResults.complete();
       }
     });
 
     connectedResults.toArray()
         .toPromise()
-        .then(connectedState => {
-          expect(connectedState).toEqual([ true, false ]);
+        .then(connectedStateSequence => {
+          expect(connectedStateSequence).toEqual([ true, false ]);
+          expect(this.service.connectionInfo).toBeUndefined();
           done();
         })
         .catch(err => console.log(err));
@@ -65,7 +67,7 @@ describe('PianodService', () => {
   });
 
   it('playback should initially be set to PAUSED', (done) => {
-    let playbackResults = new ReplaySubject();
+    const playbackResults = new ReplaySubject();
     this.service.playback$.subscribe(playback => {
       playbackResults.next(playback);
       playbackResults.complete();
@@ -80,7 +82,7 @@ describe('PianodService', () => {
   });
 
   it('current station should initially be set to station1', (done) => {
-    let currentStationResults = new ReplaySubject();
+    const currentStationResults = new ReplaySubject();
     this.service.currentStation$.subscribe(station => {
       currentStationResults.next(station);
       currentStationResults.complete();
@@ -95,7 +97,7 @@ describe('PianodService', () => {
   });
 
   it('should initiallly get empty user that is not loggedIn', (done) => {
-    let userResults = new ReplaySubject();
+    const userResults = new ReplaySubject();
     this.service.user$.subscribe(user => {
       userResults.next(user);
       userResults.complete();
@@ -117,7 +119,7 @@ describe('PianodService', () => {
   });
 
   it('login with invalid credientials should response with error', (done) => {
-    this.service.sendCmd('user invalid').then(response => {
+    this.service.sendCmd('user userName invalidPass').then(response => {
       expect(response.error).toBeTruthy();
       expect(response.msg).toEqual('Invalid login or password');
       done();
@@ -127,16 +129,23 @@ describe('PianodService', () => {
   it('login with valid credientials should send correct response and new user',
      (done) => {
 
-       let userResults = new ReplaySubject();
-       this.service.user$.skip(1).subscribe(user => {
+       const userResults = new ReplaySubject();
+       let sequenceLimit = 2;
+       this.service.user$.subscribe(user => {
          userResults.next(user);
-         userResults.complete();
+         sequenceLimit--;
+         if (sequenceLimit <= 0) {
+           userResults.complete();
+         }
        });
 
-       userResults.toPromise()
-           .then(user => {
-             expect(user.loggedIn).toBeTruthy();
-             expect(user.privileges).toEqual({
+       userResults.toArray()
+           .toPromise()
+           .then(users => {
+             expect(users.length).toEqual(2);
+             expect(users[0].loggedIn).toBeFalsy();
+             expect(users[1].loggedIn).toBeTruthy();
+             expect(users[1].privileges).toEqual({
                admin : true,
                owner : true,
                service : true,
@@ -146,52 +155,52 @@ describe('PianodService', () => {
              done();
            })
            .catch(err => console.log(err));
-       this.service.sendCmd('user valid').then(response => {
+       this.service.sendCmd('user userName validPass').then(response => {
          expect(response.error).toBeFalsy();
        });
      });
 
   it('should get correct list of stations after loggin', (done) => {
-      const expectedStations = [{
-            Name : 'station1',
-            Seeds : [{
-                ID: 'a01'
-                Artist: 'Taylor Swift',
-                Rating: 'artistseed'
-            },
-            {
-                ID: 'a02',
-                Title: 'Thriller',
-                Rating: 'artistseed'
-            }]},
-            {
-            Name: 'station2',
-            Seeds : [
-            {
-              ID: 'b01',
-              Genre: 'Medieval Rock',
-              Rating: 'artistseed'}
-          }];
-                let stationResults = new ReplaySubject();
-                this.service.stations$.subscribe(stations => {
-                  stationResults.next(stations);
-                  stationResults.complete();
-                });
+        const expectedStations = [{
+        Name: 'station1',
+        Seeds: [{
+            ID: 'a01'
+            Artist: 'Taylor Swift',
+            Rating: 'artistseed'
+        }, {
+            ID: 'a02',
+            Title: 'Thriller',
+            Rating: 'artistseed'
+        }]
+        }, {
+        Name: 'station2',
+        Seeds: [{
+            ID: 'b01',
+            Genre: 'Medieval Rock',
+            Rating: 'artistseed'
+        }]
+        }];
 
-                stationResults.toPromise()
-                    .then(stations => {
-                      expect(stations.length).toEqual(2);
-                      expect(stations).toEqual(expectedStations);
-                      done();
-                    })
-                    .catch(err => console.log(err));
-                this.service.sendCmd('user valid').then(response => {
-                  expect(response.error).toBeFalsy();
-                });
+            const stationResults = new ReplaySubject();
+            this.service.stations$.subscribe(stations => {
+              stationResults.next(stations);
+              stationResults.complete();
+            });
+
+            stationResults.toPromise()
+                .then(stations => {
+                  expect(stations.length).toEqual(2);
+                  expect(stations).toEqual(expectedStations);
+                  done();
+                })
+                .catch(err => console.log(err));
+            this.service.sendCmd('user userName validPass').then(response => {
+              expect(response.error).toBeFalsy();
+            });
   });
 
   it('should get correct mixlist on login', (done) => {
-    let mixListResults = new ReplaySubject();
+    const mixListResults = new ReplaySubject();
     this.service.mixList$.subscribe(mixList => {
       mixListResults.next(mixList);
       mixListResults.complete();
@@ -203,12 +212,12 @@ describe('PianodService', () => {
              done();
         })
         .catch(err => console.log(err));
-    this.service.sendCmd('user valid').then(response => {
+    this.service.sendCmd('user userName validPass').then(response => {
       expect(response.error).toBeFalsy();
     });
   });
 
-  // it('get response should eventually timeout with error', (done) => {
+  // xit('get response should eventually timeout with error', (done) => {
   //   this.service.sendCmd('null').then(response => {
   //     expect(response.error).toBeTruthy();
   //     expect(response.msg).toEqual('TimeoutError');
@@ -225,18 +234,20 @@ describe('PianodService', () => {
   });
 
   it('command play should set playback to PLAYING', (done) => {
-    let playbackResults = new ReplaySubject();
-    this.service.playback$.take(2).subscribe(playback => {
+    const playbackResults = new ReplaySubject();
+    let sequenceLimit = 2;
+    this.service.playback$.subscribe(playback => {
       playbackResults.next(playback);
-      if (playback === 'PLAYING') {
+      sequenceLimit--;
+      if (sequenceLimit <= 0) {
         playbackResults.complete();
       }
     });
 
     playbackResults.toArray()
         .toPromise()
-        .then(playback => {
-          expect(playback).toEqual([ 'PAUSED', 'PLAYING' ]);
+        .then(playbackSequence => {
+          expect(playbackSequence).toEqual([ 'PAUSED', 'PLAYING' ]);
           done();
         })
         .catch(err => console.log(err));
@@ -247,10 +258,12 @@ describe('PianodService', () => {
   });
 
   it('command pause should set playback to PAUSED', (done) => {
-    let playbackResults = new ReplaySubject();
-    this.service.playback$.skip(1).subscribe(playback => {
+    const playbackResults = new ReplaySubject();
+    let sequenceLimit = 2;
+    this.service.playback$.subscribe(playback => {
       playbackResults.next(playback);
-      if (playback === 'PAUSED') {
+      sequenceLimit--;
+      if (sequenceLimit <= 0) {
         playbackResults.complete();
       }
     });
@@ -268,18 +281,21 @@ describe('PianodService', () => {
   });
 
   it('command stop should set playback to STOPPED', (done) => {
-    let playbackResults = new ReplaySubject();
+    const playbackResults = new ReplaySubject();
+    let sequenceLimit = 2;
     this.service.playback$.subscribe(playback => {
       playbackResults.next(playback);
-      if (playback === 'STOPPED') {
+      sequenceLimit--;
+      if (sequenceLimit <= 0) {
+
         playbackResults.complete();
       }
     });
 
     playbackResults.toArray()
         .toPromise()
-        .then(playback => {
-          expect(playback).toEqual([ 'PAUSED', 'STOPPED' ]);
+        .then(playbackSequence => {
+          expect(playbackSequence).toEqual([ 'PAUSED', 'STOPPED' ]);
           done();
         })
         .catch(err => console.log(err));
@@ -290,15 +306,20 @@ describe('PianodService', () => {
   });
 
   it('command stop should unset currentStation', (done) => {
-    let currentStationResults = new ReplaySubject();
-    this.service.currentStation$.skip(1).subscribe(station => {
+    const currentStationResults = new ReplaySubject();
+    let sequenceLimit = 2;
+    this.service.currentStation$.subscribe(station => {
       currentStationResults.next(station);
-      currentStationResults.complete();
+      sequenceLimit--;
+      if (sequenceLimit <= 0) {
+        currentStationResults.complete();
+      }
     });
 
-    currentStationResults.toPromise()
-        .then(station => {
-          expect(station).toEqual('');
+    currentStationResults.toArray()
+        .toPromise()
+        .then(currentStationSequence => {
+          expect(currentStationSequence).toEqual([ 'station1', '' ]);
           done();
         })
         .catch(err => console.log(err));
@@ -307,26 +328,5 @@ describe('PianodService', () => {
       expect(response.msg).toEqual('Success');
     });
   });
-});
 
-// describe('PianodService non async', () => {
-//   beforeEach(() => {
-//     TestBed.configureTestingModule({providers : [ PianodService ]});
-//   });
-//   beforeEach(inject([ PianodService ], (s: PianodService) => {
-//     this.service = s;
-//
-//     this.service.connect(socketUrl).then(response => {
-//       expect(response.error).toBeFalsy();
-//       expect(response.msg).toEqual('Connected');
-//     });
-//   }));
-//
-//   it('get response should eventually timeout with error', (done) => {
-//     this.service.sendCmd('null').then(response => {
-//       expect(response.error).toBeTruthy();
-//       expect(response.msg).toEqual('TimeoutError');
-//       done();
-//     });
-//   });
-// });
+});

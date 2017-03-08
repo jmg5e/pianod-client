@@ -1,4 +1,4 @@
-<h1 md-dialog-title>Login</h1>
+<h1 md-dialog-title>User</h1>
 <md-dialog-actions>
     <form (ngSubmit)="submitForm(loginForm.value)" [formGroup]="loginForm">
         <md-input-container style="width: 100%">
@@ -7,12 +7,9 @@
         <md-input-container style="width: 100%">
             <input mdInput type="password" required formControlName="password" placeholder="Password">
         </md-input-container>
-
-        <md-checkbox formControlName="saveLoginInfo">Save</md-checkbox>
-        <div class="flex-container" style="justify-content: space-around;">
-            <!-- dont know why this is causing page refresh \/ -->
-            <!-- <button md&#45;button md&#45;dialog&#45;close>Cancel</button> -->
-            <button md-button type='submit'> Login </button>
+        <div style="display: flex; justify-content: space-around;">
+            <button md-button (click)="dialogRef.close()">Cancel</button>
+            <button md-button type='submit'> Submit</button>
         </div>
     </form>
 </md-dialog-actions>

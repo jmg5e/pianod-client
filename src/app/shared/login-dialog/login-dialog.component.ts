@@ -13,26 +13,21 @@ export class LoginDialogComponent implements OnInit {
   loginForm;
   username: string;
   password: string;
-  saveLoginInfo: boolean;
   config: MdDialogConfig = new MdDialogConfig();
 
   constructor(public dialogRef: MdDialogRef<LoginDialogComponent>,
               fb: FormBuilder) {
     this.loginForm = fb.group({
       username : [ null, Validators.required ],
-      password : [ null, Validators.required ],
-
-      saveLoginInfo : [ null ]
+      password : [ null, Validators.required ]
     });
-    // this.config.disableClose = true;
-    // config.viewContainerRef = LoginComponent;
   }
 
   ngOnInit() {}
 
   submitForm(form: any) {
     this.dialogRef.close(
-        {username : form.username.trim(), password : form.password, saveLoginInfo: form.saveLoginInfo});
+        {username : form.username.trim(), password : form.password});
   }
 
   close() { this.dialogRef.close(false); }

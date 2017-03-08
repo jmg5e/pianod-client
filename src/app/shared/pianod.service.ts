@@ -1,14 +1,15 @@
-import 'rxjs/add/operator/delay';
+// import 'rxjs/add/operator/delay';
 import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/timeout';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
+// import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/catch';
 
 import {Injectable} from '@angular/core';
 import * as Async from 'async';
-// import * as d3 from 'd3-queue';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
@@ -20,6 +21,7 @@ import {User} from './models/user';
 @Injectable()
 export class PianodService {
   public responseTimeout = 2000;
+  public connectionInfo;
   public connected$: Observable<boolean>;
   public error$: Observable<string>;
   public playback$: Observable<string>;
@@ -28,7 +30,7 @@ export class PianodService {
   public stations$: Observable<any>;
   public mixList$: Observable<any>;
   public currentStation$: Observable<string>;
-
+  public pianodMessages$: Observable<Message>;
   private connected = new BehaviorSubject<boolean>(false);
   private playback = new BehaviorSubject<string>('STOPPED');
   private error = new Subject<string>();
@@ -60,10 +62,13 @@ export class PianodService {
 
   // connect to websocket
   // should get a response when first connecting to pianod
-  public async connect(url) {
-    const self = this;
+  public async connect(host, port) {
+    const url = `ws://${host}:${port}/pianod`;
     this.socket = new WebSocket(url);
-    // this.socket.onerror = function(err) { console.log(err); };
+    // this.socket.onerror = function(err) {
+    //   console.log('error');
+    //   console.log(err);
+    // };
     // has to be a better way
     setTimeout(() => {
       if (this.socket.readyState !== 1) {
@@ -71,8 +76,9 @@ export class PianodService {
       }
     }, 100);
 
-    let response = await this.getResponse();
+    const response = await this.getResponse();
     if (!response.error && response.msg === 'Connected') {
+      this.connectionInfo = {host : host, port : port};
       this.connected.next(true);
       this.user.next(new User());
     }
@@ -86,8 +92,17 @@ export class PianodService {
   // just reconnect to socket, pianod service should handle everthing
   public logout() {
     if (this.socket.OPEN && this.socket.url) {
-      this.connect(this.socket.url);
+      this.connect(this.connectionInfo.host, this.connectionInfo.port);
+      // this.connect(this.socket.url);
     }
+  }
+
+  // get all incoming socket messages
+  public getMessages() {
+    const response$ = Observable.fromEvent(this.socket, 'message');
+
+    return response$.filter((event: any) => Message.isValid(event.data))
+        .map((msg: any) => new Message(msg.data));
   }
 
   // sendCmd -> pushes cmd to queue -> doSendCmd() -> getResponse
@@ -96,18 +111,18 @@ export class PianodService {
         (resolve, reject) => { this.q.push(cmd, (res) => { resolve(res); }); });
   }
 
-  // there is no event when adding/deleting station seeds
-  // temporary fix... alow components to update stations
-  public updateStations() {
-    this.getStations().then(
-        (stationList) => { this.stations.next(stationList); });
+  // pianod event station list updated is not affected by adding/deleting
+  // station seeds. Components update stations for now
+  public async updateStations() {
+    const stationList = await this.getStations();
+    this.stations.next(stationList);
   }
 
   private async getStations() {
     // get list of stations
-    let response = await this.sendCmd('stations');
+    const response = await this.sendCmd('stations');
 
-    // get list of stations from dataPacket and rename property
+    // get list of stations from dataPacket and rename Station property
     let stations =
         response.data.reduce((results, dataPacket) => dataPacket.map(
                                  station => ({Name : station.Station})),
@@ -116,7 +131,7 @@ export class PianodService {
     // get seeds for each station
     stations = Promise.all(stations.map(async(station) => {
       let seeds: any;
-      let seedResponse: any =
+      const seedResponse: any =
           await this.sendCmd(`station seeds \"${station.Name}\"`);
       // get seeds for station, transform seed array into a single object
       seeds = seedResponse.data.map(
@@ -130,19 +145,19 @@ export class PianodService {
   }
 
   public async search(searchTerm, category) {
-    let response = await this.sendCmd(`FIND ${category} \"${searchTerm}\"`);
+    const response = await this.sendCmd(`FIND ${category} \"${searchTerm}\"`);
     // map data packet of seed array into an object
-    let results = response.data.map(
+    const results = response.data.map(
         (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
     return results;
   }
 
   private async getMixList() {
     // get list of stations
-    let response = await this.sendCmd('mix list');
+    const response = await this.sendCmd('mix list');
 
     // get list of stations from dataPacket and rename property
-    let mixList =
+    const mixList =
         response.data.reduce((results, dataPacket) => dataPacket.map(
                                  station => ({Name : station.Station})),
                              []);
@@ -160,15 +175,27 @@ export class PianodService {
     }
   }
 
-  // listen for ALL incoming socket messaged and update pianod
-  // ignore dataRequests
+  // listen for ALL incoming socket messaged
   private listen() {
-    const self = this;
+    this.pianodMessages$ =
+        Observable.fromEvent(this.socket, 'message')
+            .filter((event: any) => Message.isValid(event.data))
+            .map((msg: any) => new Message(msg.data));
+    this.handleRuntime();
+    this.socket.onclose = () => {
+      this.connectionInfo = undefined;
+      this.connected.next(false);
+      this.user.next(new User());
+    };
+  }
+
+  // pass message to update pianod state unless message is an error or is a data
+  // request
+  private handleRuntime() {
     let dataRequest = false;
-    this.socket.onmessage = function(event) {
-      const msg = new Message(event.data);
+    this.pianodMessages$.subscribe((msg: Message) => {
       if (msg.error) {
-        self.error.next(msg.content);
+        this.error.next(msg.content);
         dataRequest = false;
       }
       if (msg.code === 203) {
@@ -178,35 +205,30 @@ export class PianodService {
         dataRequest = false;
       }
       if (!dataRequest) {
-        self.updatePianod(msg);
+        this.updatePianod(msg);
       }
-    };
-
-    this.socket.onclose = function() {
-      // console.log('socket closed');
-      self.connected.next(false);
-      self.user.next(new User());
-      // retry connection
-      // setTimeout(() => { self.connect(url); }, 2000);
-    };
+    });
   }
 
   // get response from incoming socket messages
   // see  documentation/protocal.md for pianod dataRequest protocol
   private getResponse(): Promise<any> {
-    let end$ = new Subject<any>();
+    const end$ = new Subject<any>();
     let dataRequest = false;
     let dataPacket = [];
-    let data = [];
-    let msgs = [];
+    const data = [];
+    const msgs = [];
 
     // observe response from socket messages
     const response$ = Observable.fromEvent(this.socket, 'message');
-    // this works i think but breaks units
+    // .filter((event: any) => event.data !== undefined);
+    // this works i think but breaks unit tests
     // const response$ = Observable.fromEvent(this.socket,
-    // 'message').timeout(this.responseTimeout);
+    // 'message').timeout(this.responseTimeout, Promise.resolve({error: true,
+    // msg: 'TimeoutError'});
 
-    response$.map((msg: any) => new Message(msg.data))
+    response$.filter((event: any) => Message.isValid(event.data))
+        .map((event: any) => new Message(event.data))
         .takeUntil(end$)
         .subscribe(
             (msg: Message) => {
@@ -222,7 +244,7 @@ export class PianodService {
                 dataPacket = [];
                 dataRequest = true;
               } else if (msg.code === 200) { // success
-                end$.next({error : msg.error, msg : msg.content});
+                end$.next({error : msg.error, msg : msg.content, msgs : msgs});
                 // end$.next({msgs : msgs, msg : msg});
                 end$.complete();
               } else if (msg.code === 204) { // end of data request
@@ -240,10 +262,17 @@ export class PianodService {
               end$.complete();
             });
 
-    return end$.toPromise(); // async await with observables?
+    // const timeoutPromise = new Promise((resolve, reject) => {
+    //   setTimeout(resolve, this.responseTimeout,
+    //              {error : true, msg : 'TimeoutError'});
+    // });
+    //
+    // return Promise.race([ timeoutPromise, end$.toPromise() ]);
+
+    return end$.toPromise();
   }
 
-  // update pianod
+  // update pianod state from a message
   private updatePianod(msg: Message) {
     if (msg.data) {
       this.songInfo.update(msg.data);
