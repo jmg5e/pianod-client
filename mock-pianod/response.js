@@ -12,8 +12,8 @@ module.exports = {
     '115 Station: station1',
   ],
 
-  'user invalid' : [ '406 Invalid login or password' ],
-  'user valid' : [
+  'user userName invalidPass' : [ '406 Invalid login or password' ],
+  'user userName validPass' : [
     '132 admin signed in', '120 UserRating: neutral', '200 Success',
     '136 Privileges: admin owner service influence tuner'
   ],
@@ -23,7 +23,7 @@ module.exports = {
   ],
   'stop' : [
     '132 admin stopped the player', '108 No station selected', '103 Stopped',
-    ' 200 Success'
+    '200 Success'
   ],
   'stations' : [
     '203 Data request ok', '115 Station: station1', '115 Station: station2',

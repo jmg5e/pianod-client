@@ -10,7 +10,6 @@ interface Privileges {
 export class User {
   name: string;
   loggedIn = false;
-
   privileges: any;
 
   constructor() {
@@ -27,14 +26,12 @@ export class User {
   update(msg: Message) {
     if (msg.code === 136) {
       this.loggedIn = true;
-      // let credentials = Message.getData(msg.content);
       // msg.content is just a string with all user privileges
-      let credentials = msg.content;
-      this.privileges.admin = credentials.includes('admin');
-      this.privileges.owner = credentials.includes('owner');
-      this.privileges.service = credentials.includes('service');
-      this.privileges.influence = credentials.includes('influence');
-      this.privileges.tuner = credentials.includes('tuner');
+      this.privileges.admin = msg.content.includes('admin');
+      this.privileges.owner = msg.content.includes('owner');
+      this.privileges.service = msg.content.includes('service');
+      this.privileges.influence = msg.content.includes('influence');
+      this.privileges.tuner = msg.content.includes('tuner');
     }
   }
 }

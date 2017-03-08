@@ -1,42 +1,49 @@
-<div *ngFor="let station of stations" class="station-container">
-    <span class="station-bar">
-          <span class="station-title" [ngClass]="{'active': isPlaying(station.Name)}"> {{station.Name}}</span>
+<div style="display:flex; margin-top:30px; justify-content: space-around; width: 100%;">
+    <button md-button disabled style="background-color:white" color="accent">
+        <md-icon>play_circle_filled</md-icon>
+        Play Station</button>
+    <button md-button (click)="playMix()" style="background-color:white" [color]="currentStation=='mix QuickMix' ? 'primary' : 'accent'">
+        <md-icon>playlist_add</md-icon>
+        Play Mix</button>
+</div>
 
-    <!-- <button md&#45;button [ngClass]="{'active': isPlaying(station.Name)}"> -->
-    <!--             <span class="label&#45;btn">Playing</span> -->
-    <!--             <md&#45;icon>play_arrow</md&#45;icon> -->
-    <!--     </button> -->
-    <button md-button [ngClass]="{'active': inMix(station.Name)}" (click)="toggleInMix(station.Name)">
-                    <md-icon>playlist_add</md-icon>
-                    <span class="label-btn">Mix</span>
-            </button>
-
-    <input type="checkbox" style="display:none" #showOptions>
-
-    <button md-button (click)="showOptions.click()">
+<div style="display: flex; flex-direction: column; flex: 1 1 auto; align-items: center;justify-content: center; width: 100%;">
+    <div *ngFor="let station of stations" class="station-container">
+        <span class="station-bar">
+          <span class="station-title" style="flex-grow:2; text-align:center" [ngClass]="{'active': isPlaying(station.Name)}"> {{station.Name}}</span>
+        <button md-button [ngClass]="{'active': station.Name==currentStation}" (click)="playStation(station.Name)">
+            <md-icon>play_circle_outline</md-icon>
+            <span class="label-btn">Play</span>
+          </button>
+        <button md-button [ngClass]="{'active': inMix(station.Name)}" (click)="toggleInMix(station.Name)">
+            <md-icon>playlist_add</md-icon>
+            <span class="label-btn">Mix</span>
+          </button>
+        <input type="checkbox" style="display:none" #showOptions>
+        <button md-button (click)="showOptions.click()" style="align-self:flex-end">
           <md-icon *ngIf="!showOptions.checked" (click)="showOptions.click()">arrow_drop_down
           </md-icon>
           <md-icon *ngIf="showOptions.checked" (click)="showOptions.click()">arrow_drop_up</md-icon>
           </button>
-    </span>
-    <div *ngIf="showOptions.checked" class="station-options">
-        <div *ngFor="let seed of station.Seeds" class="seed-row">
-            <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
-            <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
-            <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
-            <button md-button (click)="deleteSeed(seed.ID)" style="color:red"><md-icon>delete</md-icon></button>
-        </div>
-        <div class="station-controls">
-            <span>
+        </span>
+        <div *ngIf="showOptions.checked" class="station-options">
+            <div *ngFor="let seed of station.Seeds" class="seed-row">
+                <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+                <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
+                <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
+                <button md-button (click)="deleteSeed(seed.ID)" style="color:red"><md-icon>delete</md-icon></button>
+            </div>
+            <div class="station-controls">
+                <span>
                 <md-input-container>
                     <input mdInput placeholder="rename" type="text" #newName [value]="station.Name" (keyup.enter)="renameStation(station.Name,newName.value)">
                 </md-input-container>
                 <button md-button-pressed (click)="renameStation(station.Name,newName.value)">Rename</button>
-              </span>
-            <!-- <span class="fill&#45;space"></span> -->
-            <span>
+            </span>
+                <span>
                 <button md-button-pressed color="warn" (click)="openConfirmDialog(station.Name)">Delete</button>
-                </span>
+            </span>
+            </div>
         </div>
     </div>
 </div>

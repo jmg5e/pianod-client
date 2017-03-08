@@ -1,4 +1,4 @@
-<md-toolbar color="primary">
+<md-toolbar [color]="loggedIn ? 'primary' : 'warn'">
     <button md-button (click)="play()" [color]="playback==='PLAYING' ? 'default' : 'accent'">
       <md-icon class="md-24">play_arrow</md-icon>
     </button>

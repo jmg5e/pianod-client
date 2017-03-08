@@ -4,7 +4,7 @@ import {User} from '../shared/models/user';
 import {PianodService} from '../shared/pianod.service';
 import {
   ConfirmDialogComponent
-} from './confirm-dialog/confirm-dialog.component';
+} from '../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector : 'app-stations',
@@ -14,7 +14,6 @@ import {
 
 export class StationsComponent implements OnInit {
   confirmDialogRef: MdDialogRef<ConfirmDialogComponent>;
-
   currentStation: string;
   stations = [];
   mixList: Array<string> = [];
@@ -23,11 +22,6 @@ export class StationsComponent implements OnInit {
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    // this.pianodService.user$.subscribe((user) => {
-    // if (user.loggedIn) {
-    //   this.pianodService.updateStations();
-    // }
-    // });
 
     this.pianodService.stations$.subscribe(stations => this.stations =
                                                stations);
@@ -40,6 +34,7 @@ export class StationsComponent implements OnInit {
     this.pianodService.currentStation$.subscribe(
         currentStation => this.currentStation = currentStation);
   }
+  playMix() { this.pianodService.sendCmd('PLAY MIX'); }
 
   playStation(stationName) {
     this.pianodService.sendCmd(`PLAY STATION \"${stationName}\"`);
@@ -73,7 +68,6 @@ export class StationsComponent implements OnInit {
   deleteSeed(seedId) {
     this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then(res => {
       if (!res.error) {
-        // this.pianodService.updateStations();
         this.stations = this.stations.map(station => {
           station.Seeds = station.Seeds.filter(seed => seed.ID !== seedId);
           return station;

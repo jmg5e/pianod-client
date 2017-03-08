@@ -1,8 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css'; 
-// @import './custom_theme.scss';
-/* @import '~@angular/material/core/theming/prebuilt/indigo-pink.css'; */
+// @import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css'; 
+@import './custom_theme.scss';
+// @import '~@angular/material/core/theming/prebuilt/indigo-pink.css'; 
 
 html,
 body,
@@ -13,28 +13,37 @@ body,
     height: 100vh;
 }
 body {
+    // background-image: url("./assets/rockywall.png");
+    background-color: #212121;
+}
+.mat-tab-header {
+    background-color: white;
     background-image: url("./assets/rockywall.png");
 }
 .tab-container{
     display: flex;
     flex: 1 1 auto;
 }
-// md-tab-header {
-    // background-color: purple;
-// }
+
 .tab-content {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
     -webkit-overflow-scrolling: touch;
 }
-
-.tab-content:not(md-tab-header) {
+.mat-tab-body-wrapper {
+   display: flex;
+   flex: 1 1 auto;
+   // align-items: center;
+   // justify-content: center;
+}
+.tab-content {
     display: flex;
     flex: 1 1 auto;
-    align-items: center;
-    height: 70vh;
-    justify-content:center;
+    flex-direction: column;
+    // align-items: center;
+    // justify-content:center;
+    height: calc(100vh - 200px);
     -webkit-overflow-scrolling: touch;
 }
 
@@ -58,6 +67,7 @@ body {
     display: flex;
     width: 100%;
     height:50px;
+    margin-bottom: 25px;
 }
 
 .active {

@@ -1,31 +1,29 @@
-<!-- <div class="tab&#45;content" style="height: 70vh; flex&#45;wrap:wrap;"> -->
-<div style="display:flex; flex-direction:column; height:65vh; width: 100%">
-    <md-toolbar style="padding-top:20px; margin-bottom:20px">
-        <md-input-container style="flex: 1 1 auto; margin-right: 15px;">
-            <input mdInput type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
-        </md-input-container>
+<md-toolbar style="padding-top:20px; align-self: center;margin: 20px; width: 90%">
+    <md-input-container style="flex: 1 1 auto; margin-right: 15px;">
+        <input mdInput type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
+    </md-input-container>
 
-        <md-select placeholder="category" [(ngModel)]="category" class="search-category">
-            <md-option value="Any"> Any</md-option>
-            <md-option value="Artist"> Artist </md-option>
-            <md-option value="Genre"> Genre</md-option>
-        </md-select>
-    </md-toolbar>
+    <md-select placeholder="category" [(ngModel)]="category" class="search-category">
+        <md-option value="Any"> Any</md-option>
+        <md-option value="Artist"> Artist </md-option>
+        <md-option value="Genre"> Genre</md-option>
+    </md-select>
+</md-toolbar>
 
-    <div style="display:flex; flex 1 1 auto; flex-wrap:wrap; overflow-y:auto;">
-        <md-progress-spinner mode="indeterminate" *ngIf="searching" style="align-self:center; margin:auto;">
-        </md-progress-spinner>
-        <md-chip-list *ngIf="!searching">
-
-            <md-chip color="accent" *ngFor="let seed of results" style="margin:10px" (click)="selectSeed(seed.ID)" [ngClass]="{'selected': selectedSeed === seed.ID }">
-                <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
-                <span *ngIf="seed.Song"> Song : {{seed?.Song}}</span>
-                <span *ngIf="seed.Genre"> Genre : {{seed?.Genre}}</span>
-            </md-chip>
-        </md-chip-list>
-    </div>
+<div style="display:flex; flex:  1 1 auto; width:90%; align-self:center; flex-wrap:wrap; overflow-y:auto;">
+    <md-progress-spinner mode="indeterminate" *ngIf="searching" style="align-self:center; margin:auto;">
+    </md-progress-spinner>
+    <md-chip-list *ngIf="!searching">
+        <md-chip color="accent" *ngFor="let seed of results" style="padding:25px; margin:10px" (click)="selectSeed(seed.ID)" [ngClass]="{'selected': selectedSeed === seed.ID }">
+            <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+            <span *ngIf="seed.Song"> Song : {{seed?.Song}}</span>
+            <span *ngIf="seed.Genre"> Genre : {{seed?.Genre}}</span>
+        </md-chip>
+    </md-chip-list>
 </div>
-<md-toolbar style="height:50px">
+
+<!-- <md&#45;toolbar [ngClass]="{'disabled&#45;toolbar': !selectedSeed}"> -->
+<md-toolbar>
     <md-select style="flex: 1 1 auto; margin-right: 15px;" [(ngModel)]="selectedStation" [disabled]="!selectedSeed ">
         <md-option *ngFor="let station of stationList" [value]="station">{{station}}</md-option>
     </md-select>
@@ -38,4 +36,3 @@
           <md-icon>fiber_new</md-icon>
             <span class="label-btn">New Station</span></button>
 </md-toolbar>
-<!-- </div> -->

@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
   song;
   user = new User();
   loggedIn = false;
-  // currentStation: string;
+  stationList: Array<string>;
   barConfig = new MdSnackBarConfig();
   // SWIPE_ACTION = {LEFT : 'swipeleft', RIGHT : 'swiperight'};
   // selectedTab: number = 0;
@@ -35,40 +35,33 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService,
               private snackBar: MdSnackBar) {
-    // window.localStorage.clear();
     this.barConfig.duration = 3000;
   }
 
   ngOnInit() {
-    this.error = this.pianodService.error$.subscribe(
-        (err) => { this.snackBar.open(err, '', this.barConfig); });
-    // this.pianodService.currentStation$.subscribe(
-    //     currentStation => this.currentStation = currentStation);
+    this.error =
+        this.pianodService.error$.subscribe(err => this.showSnackBarMsg(err));
+
     this.pianodService.user$.subscribe(user => this.user = user);
 
-    this.pianodService.connected$.subscribe((state) => {
+    this.pianodService.connected$.subscribe(connectedState => {
       // lost connection
-      if (this.connected && state === false) {
-        this.snackBar.open('lost connection to pianod', '', this.barConfig);
+      if (this.connected && connectedState === false) {
+        this.showSnackBarMsg('Disconnected from pianod socket.');
       }
-      this.connected = state;
+      this.connected = connectedState;
+    });
+
+    this.pianodService.stations$.subscribe(stations => {
+      this.stationList = stations.map(station => station.Name);
     });
   }
+
   ngOnDestroy() {
-    // console.log('ngOn destroy');
     // this.error.unsubscribe();
   }
 
-  disconnect() {
-    // this.localStorageService.remove('pianodUrl');
-    this.pianodService.disconnect();
-    // this.connected = false;
-  }
+  disconnect() { this.pianodService.disconnect(); }
 
-  //  event from child component
-  //  TODO bug after losing connection connect component should be rendered
-  // userConnected(state) { this.connected = state; }
-
-  // userLogin(user) { this.user = user; }
-  snackBarMsg(msg: string) { this.snackBar.open(msg, '', this.barConfig); }
+  showSnackBarMsg(msg: string) { this.snackBar.open(msg, '', this.barConfig); }
 }

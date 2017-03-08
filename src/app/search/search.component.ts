@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, Input} from '@angular/core';
 import {Seed} from '../shared/models/seed';
 import {PianodService} from '../shared/pianod.service';
 
@@ -11,7 +11,7 @@ import {PianodService} from '../shared/pianod.service';
 export class SearchComponent implements OnInit {
 
   results: Array<Seed>;
-  stationList: Array<string>;
+  @Input() stationList: Array<string>;
   category = 'Any';
   searching = false;
   selectedSeed: string;
@@ -21,9 +21,9 @@ export class SearchComponent implements OnInit {
   constructor(private pianodService: PianodService) {}
 
   ngOnInit() {
-    this.pianodService.stations$.subscribe(stations => {
-      this.stationList = stations.map(station => station.Name);
-    });
+    // this.pianodService.stations$.subscribe(stations => {
+    //   this.stationList = stations.map(station => station.Name);
+    // });
   }
 
   search(searchTerm, category) {
@@ -31,7 +31,6 @@ export class SearchComponent implements OnInit {
     this.selectedSeed = null;
     this.pianodService.search(searchTerm, category)
         .then((results: any) => {
-          console.log(results);
           this.results = results;
           this.searching = false;
         })
@@ -51,7 +50,6 @@ export class SearchComponent implements OnInit {
     this.pianodService
         .sendCmd(`ADD SEED FROM SUGGESTION ${seedId} TO \"${stationName}\"`)
         .then((res) => {
-          console.log(res);
           if (!res.error) {
             this.stationsModified.emit('New seed was succesfully added to ' +
                                        stationName);

@@ -1,10 +1,9 @@
 <app-connect [hidden]="connected"> </app-connect>
 <div class="app-container" *ngIf="connected">
-    <md-toolbar [color]="user.loggedIn ? 'primary' : 'accent'">
+    <md-toolbar [color]="user.loggedIn ? 'primary' : 'warn'">
         <span>Pianod Client</span>
         <span class="fill-space"></span>
         <md-menu #appMenu="mdMenu">
-            <!-- <app&#45;login (userLogin)="userLogin($event)"> </app&#45;login> -->
             <app-login> </app-login>
             <button md-menu-item (click)="disconnect()"> Disconect </button>
         </md-menu>
@@ -14,27 +13,32 @@
         </button>
     </md-toolbar>
 
-    <!-- <app&#45;connect (userConnected)="userConnected($event)" *ngIf="!connected"> </app&#45;connect> -->
     <md-tab-group class="tab-container" *ngIf="connected">
         <md-tab>
             <template md-tab-label>
               <em>Now Playing</em>
             </template>
-            <app-now-playing class="tab-content"> </app-now-playing>
+            <app-now-playing class="tab-content center"> </app-now-playing>
         </md-tab>
         <md-tab *ngIf="user.loggedIn">
             <template md-tab-label>
               <em>Stations</em>
             </template>
-            <!-- <app&#45;stations [currentStation]="currentStation"> </app&#45;stations> -->
             <app-stations (stationsModified)="snackBarMsg($event)" class="tab-content"> </app-stations>
         </md-tab>
         <md-tab *ngIf="user.loggedIn">
             <template md-tab-label>
               <em>Search</em>
             </template>
-            <app-search (stationsModified)="snackBarMsg($event)"> </app-search>
+            <app-search [stationList]="stationList" (stationsModified)="snackBarMsg($event)" class="tab-content"> </app-search>
+        </md-tab>
+
+        <md-tab *ngIf="user.loggedIn">
+            <template md-tab-label>
+              <em>Command Line</em>
+            </template>
+            <app-command-line class="tab-content center"> </app-command-line>
         </md-tab>
     </md-tab-group>
-    <app-controls class="control-bar"> </app-controls>
+    <app-controls class="control-bar" [loggedIn]="user.loggedIn"> </app-controls>
 </div>

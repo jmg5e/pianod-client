@@ -11,6 +11,7 @@ export class ControlsComponent implements OnInit {
   playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
   currentStation: string;
   stationList: Array<string>;
+  @Input() loggedIn;
   constructor(private pianodService: PianodService) {
     this.pianodService.playback$.subscribe(playback => this.playback =
                                                playback);
