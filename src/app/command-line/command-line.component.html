@@ -1,27 +1,28 @@
-<!-- <h1> command line </h1> -->
-
-<md-toolbar style="display: flex; align-items:space-between;justify-content: space-between">
+<md-toolbar>
+    <button md-raised-button (click)="clearMessages()"> clear </button>
+    <span class="fill-space"> </span>
     <md-checkbox [checked]="showCodes" (change)="showCodes = !showCodes">Show Codes</md-checkbox>
-    <md-checkbox>Show Data Request Messages</md-checkbox>
-    <md-checkbox>Hide Data</md-checkbox>
-    <md-input-container>
-        <input mdInput type="number" placeholder="Buffer Limit" [(ngModel)]="bufferLimit">
-    </md-input-container>
+    <!-- <md&#45;input&#45;container style="margin&#45;left:15px"> -->
+    <!--     <input mdInput type="number" placeholder="Buffer Limit" [(ngModel)]="messagesLimit"> -->
+    <!-- </md&#45;input&#45;container> -->
 </md-toolbar>
-<div #scrollMe style="margin-top: 10px; display:flex; flex-direction:column; flex: 1 1 0; width:90%; overflow-y:scroll;background:grey ">
+
+<md-toolbar class="command-bar">
+    <md-input-container class="command-input">
+        <input mdInput type="text" #commandInput (keyup.enter)="sendCommand(commandInput)" placeholder="Command...">
+    </md-input-container>
+    <md-icon class="help-icon" mdTooltip="type help to see available commands">
+        info </md-icon>
+</md-toolbar>
+<div #messageList class="message-container">
     <md-list dense *ngFor="let message of pianodMessages" style="">
         <md-list-item>
-            <span *ngIf="showCodes" style="padding-right:10px"> {{message.code}} </span>
+            <span *ngIf="showCodes" class="message"> {{message.code}} </span>
             <span> {{ message?.content}} {{message?.data | json}} </span>
         </md-list-item>
     </md-list>
 </div>
-
-<md-toolbar style="padding-top:20px; margin-bottom:20px; width:90%">
-    <md-input-container style="flex: 1 1 auto; margin: 15px;">
-        <input mdInput type="text" #commandInput (keyup.enter)="sendCommand(commandInput.value)" placeholder="Command...">
-    </md-input-container>
-    <md-icon style="align-self: center"> info </md-icon>
-</md-toolbar>
-<span> showCodes = {{showCodes}} </span>
-<span> bufferLimit = {{bufferLimit}} </span>
+<!-- <p style="color:white"> -->
+<!--     <span> showCodes = {{showCodes}} </span> -->
+<!--     <span> bufferLimit = {{messagesLimit}} </span> -->
+<!-- </p> -->

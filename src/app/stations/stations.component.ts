@@ -1,10 +1,19 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
-import {User} from '../shared/models/user';
-import {PianodService} from '../shared/pianod.service';
+
 import {
   ConfirmDialogComponent
 } from '../shared/confirm-dialog/confirm-dialog.component';
+import {User} from '../shared/models/user';
+import {PianodService} from '../shared/pianod.service';
+import {
+  StationSelectDialogComponent
+} from '../shared/station-select-dialog/station-select-dialog.component';
+
+import {ManageSeedsComponent} from './manage-seeds/manage-seeds.component';
+import {
+  RenameDialogComponent
+} from './rename-station-dialog/rename-dialog.component';
 
 @Component({
   selector : 'app-stations',
@@ -14,17 +23,21 @@ import {
 
 export class StationsComponent implements OnInit {
   confirmDialogRef: MdDialogRef<ConfirmDialogComponent>;
+  selectStationDialogRef: MdDialogRef<StationSelectDialogComponent>;
+  renameDialogRef: MdDialogRef<RenameDialogComponent>;
+  manageSeedsRef: MdDialogRef<ManageSeedsComponent>;
   currentStation: string;
-  stations = [];
+  // stations = [];
+  stationList: Array<string> = [];
   mixList: Array<string> = [];
   @Output() stationsModified = new EventEmitter();
 
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-
-    this.pianodService.stations$.subscribe(stations => this.stations =
-                                               stations);
+    this.pianodService.stations$.subscribe(stationList => {
+      this.stationList = stationList;
+    });
 
     this.pianodService.mixList$.subscribe((mixList) => {
       this.mixList =
@@ -39,7 +52,6 @@ export class StationsComponent implements OnInit {
   playStation(stationName) {
     this.pianodService.sendCmd(`PLAY STATION \"${stationName}\"`);
   }
-
   inMix(stationName) { return (this.mixList.indexOf(stationName) !== -1); }
   isPlaying(stationName) {
     if (this.inMix(stationName) && this.currentStation === 'mix QuickMix') {
@@ -65,19 +77,39 @@ export class StationsComponent implements OnInit {
         });
   }
 
-  deleteSeed(seedId) {
-    this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then(res => {
-      if (!res.error) {
-        this.stations = this.stations.map(station => {
-          station.Seeds = station.Seeds.filter(seed => seed.ID !== seedId);
-          return station;
-        });
-        this.stationsModified.emit(
-            'Seed was successfully deleted from station.');
-      }
-    });
+  // deleteSeed(seedId) {
+  //   this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then(res => {
+  //     if (!res.error) {
+  //       this.stations = this.stations.map(station => {
+  //         station.Seeds = station.Seeds.filter(seed => seed.ID !== seedId);
+  //         return station;
+  //       });
+  //       this.stationsModified.emit(
+  //           'Seed was successfully deleted from station.');
+  //     }
+  //   });
+  // }
+
+  openManageSeeds(stationName) {
+    this.manageSeedsRef =
+        this.dialog.open(ManageSeedsComponent, {disableClose : false});
+    this.manageSeedsRef.componentInstance.station = stationName;
+    this.manageSeedsRef.afterClosed().subscribe(
+        results => { this.manageSeedsRef = null; });
   }
 
+  openRenameDialog(stationName) {
+    this.renameDialogRef =
+        this.dialog.open(RenameDialogComponent, {disableClose : true});
+    this.renameDialogRef.componentInstance.station = stationName;
+    this.renameDialogRef.afterClosed().subscribe((newName: string) => {
+      if (newName) {
+        // console.log(newName);
+        this.renameStation(stationName, newName);
+      }
+      this.renameDialogRef = null;
+    });
+  }
   renameStation(stationName, newName) {
     this.pianodService.sendCmd(
         `RENAME STATION \"${stationName}\" TO \"${newName}\"`);
@@ -87,12 +119,27 @@ export class StationsComponent implements OnInit {
     this.confirmDialogRef =
         this.dialog.open(ConfirmDialogComponent, {disableClose : true});
 
-    this.confirmDialogRef.componentInstance.station = stationName;
+    this.confirmDialogRef.componentInstance.title =
+        `Are your sure you want to delete station ${stationName}?`;
     this.confirmDialogRef.afterClosed().subscribe((result: boolean) => {
       if (result === true) {
         this.deleteStation(stationName);
       }
       this.confirmDialogRef = null;
     });
+  }
+
+  selectStation() {
+    this.selectStationDialogRef =
+        this.dialog.open(StationSelectDialogComponent);
+    this.selectStationDialogRef.componentInstance.stationList =
+        this.stationList;
+    this.selectStationDialogRef.afterClosed().subscribe(
+        (selectedStation: string) => {
+          if (selectedStation) {
+            this.playStation(selectedStation);
+          }
+          this.selectStationDialogRef = null;
+        });
   }
 }
