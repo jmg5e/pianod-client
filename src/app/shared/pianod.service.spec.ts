@@ -161,9 +161,28 @@ describe('PianodService', () => {
      });
 
   it('should get correct list of stations after loggin', (done) => {
-        const expectedStations = [{
-        Name: 'station1',
-        Seeds: [{
+    const stationResults = new ReplaySubject();
+    this.service.stations$.subscribe(stations => {
+      stationResults.next(stations);
+      stationResults.complete();
+    });
+
+    stationResults.toPromise()
+        .then(stations => {
+          expect(stations.length).toEqual(2);
+          expect(stations).toEqual([ 'station1', 'station2' ]);
+          done();
+        })
+        .catch(err => console.log(err));
+    this.service.sendCmd('user userName validPass').then(response => {
+      expect(response.error).toBeFalsy();
+    });
+  });
+
+  it('getStationSeeds should return correct results', async(done) => {
+    const station1Seeds = await this.service.getStationSeeds('station1');
+    expect(station1Seeds).toEqual([
+        {
             ID: 'a01'
             Artist: 'Taylor Swift',
             Rating: 'artistseed'
@@ -171,32 +190,13 @@ describe('PianodService', () => {
             ID: 'a02',
             Title: 'Thriller',
             Rating: 'artistseed'
-        }]
-        }, {
-        Name: 'station2',
-        Seeds: [{
-            ID: 'b01',
-            Genre: 'Medieval Rock',
-            Rating: 'artistseed'
-        }]
         }];
 
-            const stationResults = new ReplaySubject();
-            this.service.stations$.subscribe(stations => {
-              stationResults.next(stations);
-              stationResults.complete();
-            });
-
-            stationResults.toPromise()
-                .then(stations => {
-                  expect(stations.length).toEqual(2);
-                  expect(stations).toEqual(expectedStations);
-                  done();
-                })
-                .catch(err => console.log(err));
-            this.service.sendCmd('user userName validPass').then(response => {
-              expect(response.error).toBeFalsy();
-            });
+    const station2Seeds = await this.service.getStationSeeds('station2');
+    expect(station2Seeds).toEqual([
+              {ID : 'b01', Genre : 'Medieval Rock', Rating : 'artistseed'}
+            ];
+    done();
   });
 
   it('should get correct mixlist on login', (done) => {
@@ -217,13 +217,14 @@ describe('PianodService', () => {
     });
   });
 
-  // xit('get response should eventually timeout with error', (done) => {
-  //   this.service.sendCmd('null').then(response => {
-  //     expect(response.error).toBeTruthy();
-  //     expect(response.msg).toEqual('TimeoutError');
-  //     done();
-  //   });
-  // });
+  xit('get response should eventually timeout with error', (done) => {
+    this.service.sendCmd('null').then(response => {
+      console.log(response);
+      expect(response.error).toBeTruthy();
+      expect(response.msg).toEqual('TimeoutError');
+      done();
+    });
+  });
 
   it('invalid command should respond with error', (done) => {
     this.service.sendCmd('blah').then(response => {
@@ -328,5 +329,4 @@ describe('PianodService', () => {
       expect(response.msg).toEqual('Success');
     });
   });
-
 });

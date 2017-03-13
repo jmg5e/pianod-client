@@ -1,10 +1,8 @@
-// import 'rxjs/add/operator/delay';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/timeout';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-// import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/catch';
 
@@ -69,7 +67,7 @@ export class PianodService {
     //   console.log('error');
     //   console.log(err);
     // };
-    // has to be a better way
+    // TODO  refactor this
     setTimeout(() => {
       if (this.socket.readyState !== 1) {
         return Promise.reject(`websocket failed to connect ${url}`);
@@ -89,11 +87,10 @@ export class PianodService {
 
   public disconnect() { this.socket.close(); }
 
-  // just reconnect to socket, pianod service should handle everthing
+  // just reconnect to socket without elevated permissions
   public logout() {
     if (this.socket.OPEN && this.socket.url) {
       this.connect(this.connectionInfo.host, this.connectionInfo.port);
-      // this.connect(this.socket.url);
     }
   }
 
@@ -108,38 +105,54 @@ export class PianodService {
   // sendCmd -> pushes cmd to queue -> doSendCmd() -> getResponse
   public sendCmd(cmd): Promise<any> {
     return new Promise(
-        (resolve, reject) => { this.q.push(cmd, (res) => { resolve(res); }); });
+        (resolve, reject) => { this.q.push(cmd, (res) => resolve(res)); });
   }
 
   // pianod event station list updated is not affected by adding/deleting
-  // station seeds. Components update stations for now
+  // station seeds. Let Components update stations for now
   public async updateStations() {
-    const stationList = await this.getStations();
-    this.stations.next(stationList);
+    const station = await this.getStations();
+    this.stations.next(station);
+  }
+
+  public async getStationSeeds(stationName) {
+    // let seeds: any;
+    const seedResponse: any =
+        await this.sendCmd(`station seeds \"${stationName}\"`);
+    // get seeds for station, transform seed array into a single object
+    const seeds = seedResponse.data.map(
+        (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
+    return seeds;
   }
 
   private async getStations() {
     // get list of stations
     const response = await this.sendCmd('stations');
 
+    const stations = response.data.reduce(
+        (results, dataPacket) => dataPacket.map(station => station.Station),
+        []);
     // get list of stations from dataPacket and rename Station property
-    let stations =
-        response.data.reduce((results, dataPacket) => dataPacket.map(
-                                 station => ({Name : station.Station})),
-                             []);
+    // const stations =
+    //     response.data.reduce((results, dataPacket) => dataPacket.map(
+    //                              station => ({Name : station.Station})),
+    //                          []);
 
+    // this.stationList = stations.map(station => station.Name);
+    //
     // get seeds for each station
-    stations = Promise.all(stations.map(async(station) => {
-      let seeds: any;
-      const seedResponse: any =
-          await this.sendCmd(`station seeds \"${station.Name}\"`);
-      // get seeds for station, transform seed array into a single object
-      seeds = seedResponse.data.map(
-          (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
-
-      Object.assign(station, {Seeds : seeds});
-      return station;
-    }));
+    // stations = Promise.all(stations.map(async(station) => {
+    //   let seeds: any;
+    //   const seedResponse: any =
+    //       await this.sendCmd(`station seeds \"${station.Name}\"`);
+    //   // get seeds for station, transform seed array into a single object
+    //   seeds = seedResponse.data.map(
+    //       (seed) => seed.reduce((obj, item) => Object.assign(obj, item),
+    //       {}));
+    //
+    //   Object.assign(station, {Seeds : seeds});
+    //   return station;
+    // }));
 
     return stations;
   }
@@ -213,29 +226,29 @@ export class PianodService {
   // get response from incoming socket messages
   // see  documentation/protocal.md for pianod dataRequest protocol
   private getResponse(): Promise<any> {
-    const end$ = new Subject<any>();
+    const response$ = new Subject<any>();
     let dataRequest = false;
     let dataPacket = [];
     const data = [];
     const msgs = [];
 
     // observe response from socket messages
-    const response$ = Observable.fromEvent(this.socket, 'message');
-    // .filter((event: any) => event.data !== undefined);
+    const pianodMsgs$ = Observable.fromEvent(this.socket, 'message');
+
     // this works i think but breaks unit tests
-    // const response$ = Observable.fromEvent(this.socket,
+    // const pianodMsgs$= Observable.fromEvent(this.socket,
     // 'message').timeout(this.responseTimeout, Promise.resolve({error: true,
     // msg: 'TimeoutError'});
 
-    response$.filter((event: any) => Message.isValid(event.data))
+    pianodMsgs$.filter((event: any) => Message.isValid(event.data))
         .map((event: any) => new Message(event.data))
-        .takeUntil(end$)
+        .takeUntil(response$)
         .subscribe(
             (msg: Message) => {
               msgs.push(msg); // for debugging purposes only
               if (msg.error) {
-                end$.next({error : true, msg : msg.content, msgs : msgs});
-                end$.complete();
+                response$.next({error : true, msg : msg.content, msgs : msgs});
+                response$.complete();
                 // end$.error({error : true, msg : msg.content, msgs : msgs});
               } else if (msg.code === 203) { // start of data request
                 if (dataRequest) {           // Multiple data packets
@@ -244,32 +257,30 @@ export class PianodService {
                 dataPacket = [];
                 dataRequest = true;
               } else if (msg.code === 200) { // success
-                end$.next({error : msg.error, msg : msg.content, msgs : msgs});
+                response$.next(
+                    {error : msg.error, msg : msg.content, msgs : msgs});
                 // end$.next({msgs : msgs, msg : msg});
-                end$.complete();
+                response$.complete();
               } else if (msg.code === 204) { // end of data request
                 if (dataPacket.length > 0) {
                   data.push(dataPacket);
                 }
-                end$.next({error : msg.error, data : data});
-                end$.complete();
+                response$.next({error : msg.error, data : data});
+                response$.complete();
               } else if (dataRequest) {
                 dataPacket.push(msg.data);
               }
             },
             error => {
-              end$.next({error : true, msg : error.name});
-              end$.complete();
+              response$.next({error : true, msg : error.name});
+              response$.complete();
             });
 
-    // const timeoutPromise = new Promise((resolve, reject) => {
-    //   setTimeout(resolve, this.responseTimeout,
-    //              {error : true, msg : 'TimeoutError'});
-    // });
+    // setTimeout(response$.error('TimoutError'), this.responseTimeout);
     //
     // return Promise.race([ timeoutPromise, end$.toPromise() ]);
 
-    return end$.toPromise();
+    return response$.toPromise();
   }
 
   // update pianod state from a message
@@ -292,6 +303,7 @@ export class PianodService {
     }
     // stationList changed
     if (msg.code === 135) {
+      // console.log('station list changed');
       this.getStations().then(stationList => this.stations.next(stationList));
     }
     // mixList changed
