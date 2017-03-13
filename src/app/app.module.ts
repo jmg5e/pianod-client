@@ -6,12 +6,8 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 
-// import {
-//   HAMMER_GESTURE_CONFIG,
-//   HammerGestureConfig
-// } from '@angular/platform-browser';
-
 import {AppComponent} from './app.component';
+import {CommandLineComponent} from './command-line/command-line.component';
 import {ConnectComponent} from './connect/connect.component';
 import {ControlsComponent} from './controls/controls.component';
 import {LoginComponent} from './login/login.component';
@@ -25,23 +21,28 @@ import {
   LoginDialogComponent
 } from './shared/login-dialog/login-dialog.component';
 import {PianodService} from './shared/pianod.service';
+import {
+  StationSelectDialogComponent
+} from './shared/station-select-dialog/station-select-dialog.component';
+import {
+  ManageSeedsComponent
+} from './stations/manage-seeds/manage-seeds.component';
+import {
+  RenameDialogComponent
+} from './stations/rename-station-dialog/rename-dialog.component';
 import {StationsComponent} from './stations/stations.component';
-import { CommandLineComponent } from './command-line/command-line.component';
 
 @NgModule({
   declarations : [
-    AppComponent,
-    NowPlayingComponent,
-    LoginComponent,
-    ConnectComponent,
-    ControlsComponent,
-    StationsComponent,
-    LoginDialogComponent,
-    SearchComponent,
-    ConfirmDialogComponent,
-    CommandLineComponent,
+    AppComponent, NowPlayingComponent, LoginComponent, ConnectComponent,
+    ControlsComponent, StationsComponent, LoginDialogComponent, SearchComponent,
+    ConfirmDialogComponent, CommandLineComponent, StationSelectDialogComponent,
+    RenameDialogComponent, ManageSeedsComponent
   ],
-  entryComponents : [ LoginDialogComponent, ConfirmDialogComponent ],
+  entryComponents : [
+    LoginDialogComponent, ConfirmDialogComponent, StationSelectDialogComponent,
+    ManageSeedsComponent, RenameDialogComponent
+  ],
   imports : [
     BrowserModule, MaterialModule.forRoot(), FormsModule, ReactiveFormsModule
   ],

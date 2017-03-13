@@ -7,12 +7,10 @@
             <app-login> </app-login>
             <button md-menu-item (click)="disconnect()"> Disconect </button>
         </md-menu>
-
         <button md-icon-button [mdMenuTriggerFor]="appMenu">
           <md-icon>more_vert</md-icon>
         </button>
     </md-toolbar>
-
     <md-tab-group class="tab-container" *ngIf="connected">
         <md-tab>
             <template md-tab-label>
@@ -24,15 +22,14 @@
             <template md-tab-label>
               <em>Stations</em>
             </template>
-            <app-stations (stationsModified)="snackBarMsg($event)" class="tab-content"> </app-stations>
+            <app-stations (stationsModified)="showSnackBarMsg($event)" class="tab-content"> </app-stations>
         </md-tab>
         <md-tab *ngIf="user.loggedIn">
             <template md-tab-label>
               <em>Search</em>
             </template>
-            <app-search [stationList]="stationList" (stationsModified)="snackBarMsg($event)" class="tab-content"> </app-search>
+            <app-search (stationsModified)="showSnackBarMsg($event)" class="tab-content"> </app-search>
         </md-tab>
-
         <md-tab *ngIf="user.loggedIn">
             <template md-tab-label>
               <em>Command Line</em>

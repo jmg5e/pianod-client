@@ -1,7 +1,4 @@
-/* tslint:disable:no-unused-variable */
-
 import {async, inject, TestBed} from '@angular/core/testing';
-
 import {LocalStorageService} from './local-storage.service';
 
 describe('LocalStorageService', () => {
@@ -142,6 +139,5 @@ describe('LocalStorageService', () => {
          storedConnections :
              [ {host : 'testHost', port : 1, auto_connect : false} ]
        });
-
      }));
 });

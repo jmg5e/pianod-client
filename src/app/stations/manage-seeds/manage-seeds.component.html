@@ -1,0 +1,8 @@
+<h2> {{station}} Seeds </h2>
+<md-toolbar *ngFor="let seed of seeds">
+    <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+    <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
+    <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
+    <span class="fill-space"> </span>
+    <button md-button (click)="deleteSeed(seed.ID)" color="warn"><md-icon>delete</md-icon></button>
+</md-toolbar>

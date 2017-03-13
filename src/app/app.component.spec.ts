@@ -5,13 +5,14 @@ import {MaterialModule} from '@angular/material';
 import {MdSnackBar} from '@angular/material';
 
 import {AppComponent} from './app.component';
+import {CommandLineComponent} from './command-line/command-line.component';
 import {ConnectComponent} from './connect/connect.component';
 import {ControlsComponent} from './controls/controls.component';
-import {LocalStorageService} from './shared/local-storage.service';
 import {LoginComponent} from './login/login.component';
 import {NowPlayingComponent} from './now-playing/now-playing.component';
-import {PianodService} from './shared/pianod.service';
 import {SearchComponent} from './search/search.component';
+import {LocalStorageService} from './shared/local-storage.service';
+import {PianodService} from './shared/pianod.service';
 import {StationsComponent} from './stations/stations.component';
 
 describe('AppComponent', () => {
@@ -20,7 +21,8 @@ describe('AppComponent', () => {
       imports : [ MaterialModule.forRoot(), FormsModule, ReactiveFormsModule ],
       declarations : [
         AppComponent, LoginComponent, ConnectComponent, NowPlayingComponent,
-        ControlsComponent, StationsComponent, SearchComponent
+        ControlsComponent, StationsComponent, SearchComponent,
+        CommandLineComponent
       ],
       providers : [ PianodService, LocalStorageService, MdSnackBar ]
     });
@@ -29,8 +31,8 @@ describe('AppComponent', () => {
   });
 
   it('should create the app', async(() => {
-        const fixture = TestBed.createComponent(AppComponent);
-        const app = fixture.debugElement.componentInstance;
-        expect(app).toBeTruthy();
-      }));
+       const fixture = TestBed.createComponent(AppComponent);
+       const app = fixture.debugElement.componentInstance;
+       expect(app).toBeTruthy();
+     }));
 });

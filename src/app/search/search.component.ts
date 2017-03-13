@@ -1,6 +1,11 @@
-import {Component, EventEmitter, OnInit, Output, Input} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+
 import {Seed} from '../shared/models/seed';
 import {PianodService} from '../shared/pianod.service';
+import {
+  StationSelectDialogComponent
+} from '../shared/station-select-dialog/station-select-dialog.component';
 
 @Component({
   selector : 'app-search',
@@ -10,35 +15,33 @@ import {PianodService} from '../shared/pianod.service';
 
 export class SearchComponent implements OnInit {
 
-  results: Array<Seed>;
-  @Input() stationList: Array<string>;
+  searchResults: Array<Seed>;
+  // @Input() stationList: Array<string>;
+  stationList: Array<string>;
   category = 'Any';
   searching = false;
-  selectedSeed: string;
-  selectedStation: string;
+  selectStationDialogRef: MdDialogRef<StationSelectDialogComponent>;
   @Output() stationsModified = new EventEmitter();
 
-  constructor(private pianodService: PianodService) {}
+  constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    // this.pianodService.stations$.subscribe(stations => {
-    //   this.stationList = stations.map(station => station.Name);
-    // });
+    this.pianodService.stations$.subscribe(
+        stationList => { this.stationList = stationList; });
   }
 
   search(searchTerm, category) {
     this.searching = true;
-    this.selectedSeed = null;
     this.pianodService.search(searchTerm, category)
         .then((results: any) => {
-          this.results = results;
+          this.searchResults = results;
           this.searching = false;
         })
         .catch((err) => { this.searching = false; });
   }
 
-  createStation(seedId) {
-    this.pianodService.sendCmd(`CREATE STATION FROM SUGGESTION ${seedId}`)
+  createStation(seed: Seed) {
+    this.pianodService.sendCmd(`CREATE STATION FROM SUGGESTION ${seed.ID}`)
         .then(res => {
           if (!res.error) {
             this.stationsModified.emit('New station was succesfully created.');
@@ -46,7 +49,21 @@ export class SearchComponent implements OnInit {
         });
   }
 
-  addToStation(seedId, stationName) {
+  addToStation(seed) {
+    this.selectStationDialogRef =
+        this.dialog.open(StationSelectDialogComponent);
+    this.selectStationDialogRef.componentInstance.stationList =
+        this.stationList;
+    this.selectStationDialogRef.afterClosed().subscribe(
+        (selectedStation: string) => {
+          if (selectedStation) {
+            this.addSeedToStation(seed.ID, selectedStation);
+          }
+          this.selectStationDialogRef = null;
+        });
+  }
+
+  addSeedToStation(seedId, stationName) {
     this.pianodService
         .sendCmd(`ADD SEED FROM SUGGESTION ${seedId} TO \"${stationName}\"`)
         .then((res) => {
@@ -57,7 +74,4 @@ export class SearchComponent implements OnInit {
           }
         });
   }
-
-  selectSeed(seedId) { this.selectedSeed = seedId; }
-  // removeSelection() { this.selectedSeed = null; }
 }

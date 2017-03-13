@@ -2,12 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MdDialogConfig, MdDialogRef} from '@angular/material';
 
-// import {LoginComponent} from '../login.component';
 @Component({
   selector : 'app-login-dialog',
   templateUrl : './login-dialog.component.html'
-  // styleUrls : [ './login-dialog.component.scss' ]
 })
+
 export class LoginDialogComponent implements OnInit {
 
   loginForm;
