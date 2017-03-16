@@ -3,7 +3,16 @@
     margin-top:20px; 
     width:90%
 }
+.error {
+    color: red;
+}
+.success {
+    color: green;
+}
 
+.data {
+    color: brown;
+}
 .command-input {
     flex: 1 1 auto;
     margin: 15px;

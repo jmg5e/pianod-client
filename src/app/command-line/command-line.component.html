@@ -1,6 +1,8 @@
 <md-toolbar>
     <button md-raised-button (click)="clearMessages()"> clear </button>
     <span class="fill-space"> </span>
+    <md-checkbox [checked]="showColors" (change)="showColors = !showColors ">Show Colors</md-checkbox>
+    <span class="fill-space"> </span>
     <md-checkbox [checked]="showCodes" (change)="showCodes = !showCodes">Show Codes</md-checkbox>
     <!-- <md&#45;input&#45;container style="margin&#45;left:15px"> -->
     <!--     <input mdInput type="number" placeholder="Buffer Limit" [(ngModel)]="messagesLimit"> -->
@@ -18,7 +20,8 @@
     <md-list dense *ngFor="let message of pianodMessages" style="">
         <md-list-item>
             <span *ngIf="showCodes" class="message"> {{message.code}} </span>
-            <span> {{ message?.content}} {{message?.data | json}} </span>
+            <span *ngIf="showColors" [ngClass]="{'error' : message.error, 'success' : message.code === 200, 'data' : message.data }"> {{ message | display_message}} </span>
+            <span *ngIf="!showColors"> {{ message | display_message}} </span>
         </md-list-item>
     </md-list>
 </div>

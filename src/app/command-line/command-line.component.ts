@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-
+import {MessagePipe} from './message.pipe';
 import {Message} from '../shared/models/message';
 import {PianodService} from '../shared/pianod.service';
 
@@ -18,6 +18,7 @@ import {PianodService} from '../shared/pianod.service';
 
 export class CommandLineComponent implements OnInit, AfterViewChecked {
   @ViewChild('messageList') private scrollContainer: ElementRef;
+  showColors = true;
   showCodes = true;
   messagesLimit = 50;
   pianodMessages: Array<Message>;
