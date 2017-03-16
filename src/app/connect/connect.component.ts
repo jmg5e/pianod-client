@@ -13,7 +13,6 @@ import {
   LoginDialogComponent
 } from '../shared/login-dialog/login-dialog.component';
 import {PianodService} from '../shared/pianod.service';
-// import 'rxjs/add/observable/interval';
 
 @Component({
   selector : 'app-connect',
@@ -32,6 +31,7 @@ export class ConnectComponent implements OnInit {
               private snackBar: MdSnackBar, public dialog: MdDialog,
               private localStorageService: LocalStorageService,
               private fb: FormBuilder) {
+
     this.barConfig.duration = 3000;
 
     this.connectForm = fb.group({

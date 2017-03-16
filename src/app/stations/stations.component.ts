@@ -10,10 +10,8 @@ import {
   StationSelectDialogComponent
 } from '../shared/station-select-dialog/station-select-dialog.component';
 
-import {ManageSeedsComponent} from './manage-seeds/manage-seeds.component';
-import {
-  RenameDialogComponent
-} from './rename-station-dialog/rename-dialog.component';
+import {ManageSeedsComponent} from './dialogs/manage-seeds.component';
+import {RenameDialogComponent} from './dialogs/rename-dialog.component';
 
 @Component({
   selector : 'app-stations',
@@ -35,9 +33,8 @@ export class StationsComponent implements OnInit {
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.pianodService.stations$.subscribe(stationList => {
-      this.stationList = stationList;
-    });
+    this.pianodService.stations$.subscribe(
+        stationList => { this.stationList = stationList; });
 
     this.pianodService.mixList$.subscribe((mixList) => {
       this.mixList =
@@ -134,6 +131,7 @@ export class StationsComponent implements OnInit {
         this.dialog.open(StationSelectDialogComponent);
     this.selectStationDialogRef.componentInstance.stationList =
         this.stationList;
+    this.selectStationDialogRef.componentInstance.dialogTitle = 'Play Station';
     this.selectStationDialogRef.afterClosed().subscribe(
         (selectedStation: string) => {
           if (selectedStation) {

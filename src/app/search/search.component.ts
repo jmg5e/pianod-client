@@ -54,6 +54,8 @@ export class SearchComponent implements OnInit {
         this.dialog.open(StationSelectDialogComponent);
     this.selectStationDialogRef.componentInstance.stationList =
         this.stationList;
+
+    this.selectStationDialogRef.componentInstance.dialogTitle = 'Add Seed To Station';
     this.selectStationDialogRef.afterClosed().subscribe(
         (selectedStation: string) => {
           if (selectedStation) {

@@ -3,8 +3,14 @@ import {MdDialogConfig, MdDialogRef} from '@angular/material';
 import {PianodService} from '../../shared/pianod.service';
 @Component({
   selector : 'app-manage-seeds',
-  templateUrl : './manage-seeds.component.html',
-  styleUrls : [ './manage-seeds.component.scss' ]
+  template : `<h2 md-dialog-title> Station: {{station}}</h2>
+    <md-toolbar *ngFor="let seed of seeds">
+        <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+        <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
+        <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
+        <span class="fill-space"> </span>
+        <button md-button (click)="deleteSeed(seed.ID)" color="warn"><md-icon>delete</md-icon></button>
+    </md-toolbar>`
 })
 export class ManageSeedsComponent implements OnInit {
 

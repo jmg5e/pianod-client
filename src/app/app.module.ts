@@ -26,10 +26,10 @@ import {
 } from './shared/station-select-dialog/station-select-dialog.component';
 import {
   ManageSeedsComponent
-} from './stations/manage-seeds/manage-seeds.component';
+} from './stations/dialogs/manage-seeds.component';
 import {
   RenameDialogComponent
-} from './stations/rename-station-dialog/rename-dialog.component';
+} from './stations/dialogs/rename-dialog.component';
 import {StationsComponent} from './stations/stations.component';
 
 @NgModule({

@@ -16,8 +16,8 @@
                 <input mdInput type="number" required formControlName="port" placeholder="Port">
             </md-input-container>
             <md-card-actions>
-                <button md-button type="button" (click)="saveConnection(connectForm.value)"> Save </button>
-                <button md-button type='submit'> Connect</button>
+                <button md-raised-button type="button" (click)="saveConnection(connectForm.value)"> Save </button>
+                <button md-raised-button type='submit'> Connect</button>
             </md-card-actions>
         </form>
     </md-card>
@@ -31,14 +31,14 @@
     <md-toolbar-row>
         <span> Default User: {{connection?.defaultUser?.username}} </span>
         <span class="fill-space"></span>
-        <button md-button (click)="setDefaultUser(connection)"> set </button>
-        <button md-button (click)="removeDefaultUser(connection)"> remove </button>
+        <button md-raised-button (click)="setDefaultUser(connection)"> set </button>
+        <button md-raised-button (click)="removeDefaultUser(connection)"> remove </button>
     </md-toolbar-row>
     <md-toolbar-row>
         <md-checkbox [ngModel]="connection.auto_connect" (change)="toggleAutoConnect(connection)">Auto Connect</md-checkbox>
         <span class="fill-space"></span>
-        <button (click)="deleteSavedConnection(connection)"> remove </button>
-        <button (click)="connect(connection.host, connection.port)"> connect </button>
+        <button md-raised-button (click)="deleteSavedConnection(connection)"> remove </button>
+        <button md-raised-button (click)="connect(connection.host, connection.port)"> connect </button>
     </md-toolbar-row>
     </md-toolbar>
     </md-card>
