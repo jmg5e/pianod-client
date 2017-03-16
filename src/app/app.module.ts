@@ -31,13 +31,14 @@ import {
   RenameDialogComponent
 } from './stations/dialogs/rename-dialog.component';
 import {StationsComponent} from './stations/stations.component';
+import { MessagePipe } from './command-line/message.pipe';
 
 @NgModule({
   declarations : [
     AppComponent, NowPlayingComponent, LoginComponent, ConnectComponent,
     ControlsComponent, StationsComponent, LoginDialogComponent, SearchComponent,
     ConfirmDialogComponent, CommandLineComponent, StationSelectDialogComponent,
-    RenameDialogComponent, ManageSeedsComponent
+    RenameDialogComponent, ManageSeedsComponent, MessagePipe
   ],
   entryComponents : [
     LoginDialogComponent, ConfirmDialogComponent, StationSelectDialogComponent,
