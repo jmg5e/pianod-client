@@ -6,6 +6,7 @@ import {MdSnackBar} from '@angular/material';
 
 import {AppComponent} from './app.component';
 import {CommandLineComponent} from './command-line/command-line.component';
+import {MessagePipe} from './command-line/message.pipe';
 import {ConnectComponent} from './connect/connect.component';
 import {ControlsComponent} from './controls/controls.component';
 import {LoginComponent} from './login/login.component';
@@ -22,7 +23,7 @@ describe('AppComponent', () => {
       declarations : [
         AppComponent, LoginComponent, ConnectComponent, NowPlayingComponent,
         ControlsComponent, StationsComponent, SearchComponent,
-        CommandLineComponent
+        CommandLineComponent, MessagePipe
       ],
       providers : [ PianodService, LocalStorageService, MdSnackBar ]
     });

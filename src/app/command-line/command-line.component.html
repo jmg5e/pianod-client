@@ -17,11 +17,13 @@
         info </md-icon>
 </md-toolbar>
 <div #messageList class="message-container">
-    <md-list dense *ngFor="let message of pianodMessages" style="">
+    <md-list dense *ngFor="let message of pianodMessages">
         <md-list-item>
             <span *ngIf="showCodes" class="message"> {{message.code}} </span>
-            <span *ngIf="showColors" [ngClass]="{'error' : message.error, 'success' : message.code === 200, 'data' : message.data }"> {{ message | display_message}} </span>
-            <span *ngIf="!showColors"> {{ message | display_message}} </span>
+            <span *ngIf="showColors" class="message" [ngClass]="{'error' : message.error, 'success' : message.code === 200, 'data' : message.data, 
+              'data-req-tags' : message.code == 203 || message.code == 204 }"> 
+              {{ message | display_message }} </span>
+            <span *ngIf="!showColors" class="message default"> {{ message | display_message}} </span>
         </md-list-item>
     </md-list>
 </div>

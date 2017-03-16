@@ -132,27 +132,6 @@ export class PianodService {
     const stations = response.data.reduce(
         (results, dataPacket) => dataPacket.map(station => station.Station),
         []);
-    // get list of stations from dataPacket and rename Station property
-    // const stations =
-    //     response.data.reduce((results, dataPacket) => dataPacket.map(
-    //                              station => ({Name : station.Station})),
-    //                          []);
-
-    // this.stationList = stations.map(station => station.Name);
-    //
-    // get seeds for each station
-    // stations = Promise.all(stations.map(async(station) => {
-    //   let seeds: any;
-    //   const seedResponse: any =
-    //       await this.sendCmd(`station seeds \"${station.Name}\"`);
-    //   // get seeds for station, transform seed array into a single object
-    //   seeds = seedResponse.data.map(
-    //       (seed) => seed.reduce((obj, item) => Object.assign(obj, item),
-    //       {}));
-    //
-    //   Object.assign(station, {Seeds : seeds});
-    //   return station;
-    // }));
 
     return stations;
   }
@@ -163,6 +142,10 @@ export class PianodService {
     const results = response.data.map(
         (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
     return results;
+  }
+
+  public getSongRemainingTime(): Observable<any> {
+    return this.songInfo.getSongRemainingTime();
   }
 
   private async getMixList() {
@@ -291,6 +274,9 @@ export class PianodService {
     }
     if (msg.code > 100 && msg.code < 107) { // playback
       this.updatePlayback(msg);
+      if (msg.code === 101) {
+        this.songInfo.setTime(msg.content);
+      }
     }
     // no station selected
     if (msg.code === 108) {
@@ -323,12 +309,15 @@ export class PianodService {
     switch (msg.code) {
     case 101:
       this.playback.next('PLAYING');
+      this.songInfo.startTimer();
       break;
     case 102:
       this.playback.next('PAUSED');
+      this.songInfo.stopTimer();
       break;
     case 103:
       this.playback.next('STOPPED');
+      this.songInfo.stopTimer();
       break;
     };
   }

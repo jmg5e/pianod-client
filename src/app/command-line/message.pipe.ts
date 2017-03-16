@@ -7,7 +7,8 @@ export class MessagePipe implements PipeTransform {
     if (msg.data) {
       const keyName = Object.getOwnPropertyNames(msg.data);
       const value = msg.data[keyName.toString()];
-      return `${keyName}  : ${value}`;
+      const output = `${keyName}: ${value}`;
+      return output;
     } else if (msg.content) {
       return msg.content;
     } else {

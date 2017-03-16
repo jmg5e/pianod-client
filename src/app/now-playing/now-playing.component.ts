@@ -12,11 +12,21 @@ import {PianodService} from '../shared/pianod.service';
 export class NowPlayingComponent implements OnInit {
   // @Input() songInfo: SongInfo;
   // @Input() playback: string;
+  remainingTime$;
   // playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
   song: SongInfo;
+  song$;
   constructor(private pianodService: PianodService) {
-    this.pianodService.song$.subscribe(songInfo => this.song = songInfo);
+    // this.pianodService.playback$( playback => {
+    //
+    // });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.remainingTime$ = this.pianodService.getSongRemainingTime();
+    // this.pianodService.getSongRemainingTime().subscribe(
+    //     result => { console.log(result); });
+    this.song$ =
+        this.pianodService.song$.subscribe(songInfo => this.song = songInfo);
+  }
 }

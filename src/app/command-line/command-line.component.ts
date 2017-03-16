@@ -18,8 +18,8 @@ import {PianodService} from '../shared/pianod.service';
 
 export class CommandLineComponent implements OnInit, AfterViewChecked {
   @ViewChild('messageList') private scrollContainer: ElementRef;
-  showColors = true;
-  showCodes = true;
+  showColors = false;
+  showCodes = false;
   messagesLimit = 50;
   pianodMessages: Array<Message>;
   // history: Array<string>;
