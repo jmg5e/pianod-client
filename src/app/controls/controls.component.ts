@@ -12,18 +12,16 @@ export class ControlsComponent implements OnInit {
   currentStation: string;
   stationList: Array<string>;
   @Input() loggedIn;
-  constructor(private pianodService: PianodService) {
-    this.pianodService.playback$.subscribe(playback => this.playback =
-                                               playback);
+  constructor(private pianodService: PianodService) {}
 
-    this.pianodService.stations$.subscribe(stations => this.stationList =
-                                               stations);
-
-    this.pianodService.currentStation$.subscribe(
+  ngOnInit() {
+    this.pianodService.getPlayback().subscribe(playback => this.playback =
+                                                   playback);
+    this.pianodService.getStations().subscribe(stations => this.stationList =
+                                                   stations);
+    this.pianodService.getCurrentStation().subscribe(
         currentStation => this.currentStation = currentStation);
   }
-
-  ngOnInit() {}
   play() {
     if (this.loggedIn) {
       this.pianodService.sendCmd('PLAY');

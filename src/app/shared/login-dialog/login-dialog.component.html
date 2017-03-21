@@ -8,8 +8,8 @@
             <input mdInput type="password" required formControlName="password" placeholder="Password">
         </md-input-container>
         <div style="display: flex; justify-content: space-around;">
-            <button md-button (click)="dialogRef.close()">Cancel</button>
-            <button md-button type='submit'> Submit</button>
+            <button md-raised-button (click)="dialogRef.close()">Cancel</button>
+            <button md-raised-button type="submit" [disabled]="!loginForm.valid"> Submit</button>
         </div>
     </form>
 </md-dialog-actions>

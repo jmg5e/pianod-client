@@ -38,12 +38,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.error =
-        this.pianodService.error$.subscribe(err => this.showSnackBarMsg(err));
+    this.error = this.pianodService.getErrors().subscribe(
+        err => this.showSnackBarMsg(err));
 
-    this.pianodService.user$.subscribe(user => this.user = user);
+    this.pianodService.getUser().subscribe(user => this.user = user);
 
-    this.pianodService.connected$.subscribe(connectedState => {
+    this.pianodService.getConnectionState().subscribe(connectedState => {
       // lost connection
       if (this.connected && connectedState === false) {
         this.showSnackBarMsg('Disconnected from pianod socket.');
@@ -51,9 +51,9 @@ export class AppComponent implements OnInit, OnDestroy {
       this.connected = connectedState;
     });
 
-    this.pianodService.stations$.subscribe(stations => {
-      this.stationList = stations.map(station => station.Name);
-    });
+    // this.pianodService.stations$.subscribe(stations => {
+    //   this.stationList = stations.map(station => station.Name);
+    // });
   }
 
   ngOnDestroy() {

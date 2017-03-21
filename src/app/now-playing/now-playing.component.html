@@ -8,8 +8,9 @@
     </md-card-title-group>
     <md-card-content>
         <h3>
-            <span>{{song.totalTime?.minutes}}:{{song.totalTime?.seconds}} / </span>
-            <span> {{(remainingTime$ | async)?.minutes}}:{{(remainingTime$ | async)?.seconds}} </span>
+            <span>{{song.totalTime?.toString()}} / </span>
+            <!-- <span> {{(remainingTime$ | async)?.minutes}}:{{(remainingTime$ | async)?.seconds}} </span> -->
+            <span> {{remainingTime$ | async}}</span>
         </h3>
     </md-card-content>
 </md-card>

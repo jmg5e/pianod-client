@@ -13,44 +13,29 @@ import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
 import {Message} from './models/message';
-import {SongInfo} from './models/song-info';
+import {Seed} from './models/seed';
+import {Song, SongInfo} from './models/song';
 import {User} from './models/user';
 
 @Injectable()
 export class PianodService {
-  public responseTimeout = 2000;
-  public connectionInfo;
-  public connected$: Observable<boolean>;
-  public error$: Observable<string>;
-  public playback$: Observable<string>;
-  public song$: Observable<SongInfo>;
-  public user$: Observable<User>;
-  public stations$: Observable<any>;
-  public mixList$: Observable<any>;
-  public currentStation$: Observable<string>;
-  public pianodMessages$: Observable<Message>;
+  responseTimeout = 2000;
+  connectionInfo;
+  pianodMessages$: Observable<Message>;
   private connected = new BehaviorSubject<boolean>(false);
   private playback = new BehaviorSubject<string>('STOPPED');
   private error = new Subject<string>();
   private currentStation = new BehaviorSubject<string>('');
   private stations = new Subject<any>();
   private mixList = new Subject<any>();
-  private song = new BehaviorSubject<SongInfo>(new SongInfo());
   private user = new BehaviorSubject<User>(new User());
-  private songInfo: SongInfo = new SongInfo();
+  private song: Song = new Song();
+  private songInfo = new BehaviorSubject<SongInfo>(this.song.data);
   private userInfo: User = new User();
   private socket: WebSocket;
   private q;
 
   constructor() {
-    this.connected$ = this.connected.asObservable();
-    this.playback$ = this.playback.asObservable();
-    this.error$ = this.error.asObservable();
-    this.song$ = this.song.asObservable();
-    this.user$ = this.user.asObservable();
-    this.stations$ = this.stations.asObservable();
-    this.mixList$ = this.mixList.asObservable();
-    this.currentStation$ = this.currentStation.asObservable();
     // limit concurrency of socket commands to 1
     // using libarary async js queue to solve this problem
     this.q = Async.queue((cmd, done) => {
@@ -58,8 +43,16 @@ export class PianodService {
     }, 1);
   }
 
-  // connect to websocket
-  // should get a response when first connecting to pianod
+  public getConnectionState() { return this.connected.asObservable(); }
+  public getPlayback() { return this.playback.asObservable(); }
+  public getErrors() { return this.error.asObservable(); }
+  public getSong() { return this.songInfo.asObservable(); }
+  public getUser() { return this.user.asObservable(); }
+  public getCurrentStation() { return this.currentStation.asObservable(); }
+  public getStations() { return this.stations.asObservable(); }
+  public getMixList() { return this.mixList.asObservable(); }
+
+  // should get a response when first connecting to socket
   public async connect(host, port) {
     const url = `ws://${host}:${port}/pianod`;
     this.socket = new WebSocket(url);
@@ -67,7 +60,7 @@ export class PianodService {
     //   console.log('error');
     //   console.log(err);
     // };
-    // TODO  refactor this
+    // TODO I dont like this but works
     setTimeout(() => {
       if (this.socket.readyState !== 1) {
         return Promise.reject(`websocket failed to connect ${url}`);
@@ -85,7 +78,10 @@ export class PianodService {
     return response;
   };
 
-  public disconnect() { this.socket.close(); }
+  public async disconnect() {
+    await this.sendCmd('QUIT');
+    this.socket.close();
+  }
 
   // just reconnect to socket without elevated permissions
   public logout() {
@@ -95,12 +91,7 @@ export class PianodService {
   }
 
   // get all incoming socket messages
-  public getMessages() {
-    const response$ = Observable.fromEvent(this.socket, 'message');
-
-    return response$.filter((event: any) => Message.isValid(event.data))
-        .map((msg: any) => new Message(msg.data));
-  }
+  public getMessages() { return this.pianodMessages$; }
 
   // sendCmd -> pushes cmd to queue -> doSendCmd() -> getResponse
   public sendCmd(cmd): Promise<any> {
@@ -108,24 +99,16 @@ export class PianodService {
         (resolve, reject) => { this.q.push(cmd, (res) => resolve(res)); });
   }
 
-  // pianod event station list updated is not affected by adding/deleting
-  // station seeds. Let Components update stations for now
-  public async updateStations() {
-    const station = await this.getStations();
-    this.stations.next(station);
-  }
-
   public async getStationSeeds(stationName) {
-    // let seeds: any;
     const seedResponse: any =
         await this.sendCmd(`station seeds \"${stationName}\"`);
     // get seeds for station, transform seed array into a single object
-    const seeds = seedResponse.data.map(
+    const seeds: Array<Seed> = seedResponse.data.map(
         (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
     return seeds;
   }
 
-  private async getStations() {
+  private async updateStations() {
     // get list of stations
     const response = await this.sendCmd('stations');
 
@@ -145,10 +128,10 @@ export class PianodService {
   }
 
   public getSongRemainingTime(): Observable<any> {
-    return this.songInfo.getSongRemainingTime();
+    return this.song.getSongRemainingTime();
   }
 
-  private async getMixList() {
+  private async updateMixList() {
     // get list of stations
     const response = await this.sendCmd('mix list');
 
@@ -242,7 +225,6 @@ export class PianodService {
               } else if (msg.code === 200) { // success
                 response$.next(
                     {error : msg.error, msg : msg.content, msgs : msgs});
-                // end$.next({msgs : msgs, msg : msg});
                 response$.complete();
               } else if (msg.code === 204) { // end of data request
                 if (dataPacket.length > 0) {
@@ -269,13 +251,14 @@ export class PianodService {
   // update pianod state from a message
   private updatePianod(msg: Message) {
     if (msg.data) {
-      this.songInfo.update(msg.data);
-      this.song.next(this.songInfo);
+      this.song.update(msg.data);
+      this.songInfo.next(this.song.data);
     }
+
     if (msg.code > 100 && msg.code < 107) { // playback
       this.updatePlayback(msg);
       if (msg.code === 101) {
-        this.songInfo.setTime(msg.content);
+        this.song.setTime(msg.content);
       }
     }
     // no station selected
@@ -289,19 +272,20 @@ export class PianodService {
     }
     // stationList changed
     if (msg.code === 135) {
-      // console.log('station list changed');
-      this.getStations().then(stationList => this.stations.next(stationList));
+      this.updateStations().then(stationList =>
+                                     this.stations.next(stationList));
     }
     // mixList changed
     if (msg.code === 134) {
-      this.getMixList().then(mixList => this.mixList.next(mixList));
+      this.updateMixList().then(mixList => this.mixList.next(mixList));
     }
     // user logged in
     if (msg.code === 136) {
       this.userInfo.update(msg);
       this.user.next(this.userInfo);
-      this.getStations().then(stationList => this.stations.next(stationList));
-      this.getMixList().then(mixList => this.mixList.next(mixList));
+      this.updateStations().then(stationList =>
+                                     this.stations.next(stationList));
+      this.updateMixList().then(mixList => this.mixList.next(mixList));
     }
   }
 
@@ -309,15 +293,17 @@ export class PianodService {
     switch (msg.code) {
     case 101:
       this.playback.next('PLAYING');
-      this.songInfo.startTimer();
+      this.song.startTimer();
       break;
     case 102:
       this.playback.next('PAUSED');
-      this.songInfo.stopTimer();
+      this.song.stopTimer();
       break;
     case 103:
       this.playback.next('STOPPED');
-      this.songInfo.stopTimer();
+      this.song.clearTime();
+      // clear song info
+      this.songInfo.next(this.song.clearSong());
       break;
     };
   }

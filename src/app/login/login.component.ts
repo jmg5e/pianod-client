@@ -21,8 +21,8 @@ export class LoginComponent implements OnInit {
               public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.user$ = this.pianodService.user$;
-    this.pianodService.connected$.subscribe((connected) => {
+    this.user$ = this.pianodService.getUser();
+    this.pianodService.getConnectionState().subscribe((connected) => {
       // if connected for first time
       if (connected && !this.connected) {
         const defaultUser = this.getDefaultUser();

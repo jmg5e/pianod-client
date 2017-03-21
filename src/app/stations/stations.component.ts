@@ -33,15 +33,13 @@ export class StationsComponent implements OnInit {
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.pianodService.stations$.subscribe(
+    this.pianodService.getStations().subscribe(
         stationList => { this.stationList = stationList; });
 
-    this.pianodService.mixList$.subscribe((mixList) => {
-      this.mixList =
-          mixList.map(station => station.Name.replace('Station', '').trim());
-    });
+    this.pianodService.getMixList().subscribe((mixList) => this.mixList =
+                                                  mixList);
 
-    this.pianodService.currentStation$.subscribe(
+    this.pianodService.getCurrentStation().subscribe(
         currentStation => this.currentStation = currentStation);
   }
   playMix() { this.pianodService.sendCmd('PLAY MIX'); }

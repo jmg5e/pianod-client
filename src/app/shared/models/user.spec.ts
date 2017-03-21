@@ -1,4 +1,4 @@
-import {async, fakeAsync, inject, TestBed} from '@angular/core/testing';
+import {inject, TestBed} from '@angular/core/testing';
 
 import {Message} from './message';
 import {User} from './user';

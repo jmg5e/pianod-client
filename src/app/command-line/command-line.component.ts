@@ -28,7 +28,7 @@ export class CommandLineComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.pianodService.pianodMessages$.subscribe(msg => {
+    this.pianodService.getMessages().subscribe(msg => {
       if (this.pianodMessages.length >= this.messagesLimit) {
         this.pianodMessages.shift();
       }

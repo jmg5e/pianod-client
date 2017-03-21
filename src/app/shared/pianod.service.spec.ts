@@ -11,14 +11,15 @@ import {PianodService} from './pianod.service';
 const testServer = global.config.testServer;
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 3000;
 
-describe('PianodService', () => {
+fdescribe('PianodService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({providers : [ PianodService ]});
   });
+
   beforeEach(async(inject([ PianodService ], (s: PianodService) => {
     this.service = s;
 
-    this.service.connect(testServer.host, testServer.port).then(response => {
+    return this.service.connect(testServer.host, testServer.port).then(response => {
       expect(response.error).toBeFalsy();
       expect(response.msg).toEqual('Connected');
       expect(this.service.connectionInfo)
@@ -31,7 +32,7 @@ describe('PianodService', () => {
 
   it('pianod service should connect to mock pianod socket', (done) => {
     const connectedResults = new ReplaySubject();
-    this.service.connected$.subscribe(connectedState => {
+    this.service.getConnectionState().subscribe(connectedState => {
       connectedResults.next(connectedState);
       connectedResults.complete();
     });
@@ -47,7 +48,7 @@ describe('PianodService', () => {
   it('disconnect should update connected state', (done) => {
     const connectedResults = new ReplaySubject();
     let sequenceLimit = 2;
-    this.service.connected$.subscribe(connectedState => {
+    this.service.getConnectionState().subscribe(connectedState => {
       connectedResults.next(connectedState);
       sequenceLimit--;
       if (sequenceLimit <= 0) {
@@ -68,7 +69,7 @@ describe('PianodService', () => {
 
   it('playback should initially be set to PAUSED', (done) => {
     const playbackResults = new ReplaySubject();
-    this.service.playback$.subscribe(playback => {
+    this.service.getPlayback().subscribe(playback => {
       playbackResults.next(playback);
       playbackResults.complete();
     });
@@ -83,7 +84,7 @@ describe('PianodService', () => {
 
   it('current station should initially be set to station1', (done) => {
     const currentStationResults = new ReplaySubject();
-    this.service.currentStation$.subscribe(station => {
+    this.service.getCurrentStation().subscribe(station => {
       currentStationResults.next(station);
       currentStationResults.complete();
     });
@@ -98,7 +99,7 @@ describe('PianodService', () => {
 
   it('should initiallly get empty user that is not loggedIn', (done) => {
     const userResults = new ReplaySubject();
-    this.service.user$.subscribe(user => {
+    this.service.getUser().subscribe(user => {
       userResults.next(user);
       userResults.complete();
     });
@@ -131,7 +132,7 @@ describe('PianodService', () => {
 
        const userResults = new ReplaySubject();
        let sequenceLimit = 2;
-       this.service.user$.subscribe(user => {
+       this.service.getUser().subscribe(user => {
          userResults.next(user);
          sequenceLimit--;
          if (sequenceLimit <= 0) {
@@ -162,7 +163,7 @@ describe('PianodService', () => {
 
   it('should get correct list of stations after loggin', (done) => {
     const stationResults = new ReplaySubject();
-    this.service.stations$.subscribe(stations => {
+    this.service.getStations().subscribe(stations => {
       stationResults.next(stations);
       stationResults.complete();
     });
@@ -201,7 +202,7 @@ describe('PianodService', () => {
 
   it('should get correct mixlist on login', (done) => {
     const mixListResults = new ReplaySubject();
-    this.service.mixList$.subscribe(mixList => {
+    this.service.getMixList().subscribe(mixList => {
       mixListResults.next(mixList);
       mixListResults.complete();
     });
@@ -237,7 +238,7 @@ describe('PianodService', () => {
   it('command play should set playback to PLAYING', (done) => {
     const playbackResults = new ReplaySubject();
     let sequenceLimit = 2;
-    this.service.playback$.subscribe(playback => {
+    this.service.getPlayback().subscribe(playback => {
       playbackResults.next(playback);
       sequenceLimit--;
       if (sequenceLimit <= 0) {
@@ -261,7 +262,7 @@ describe('PianodService', () => {
   it('command pause should set playback to PAUSED', (done) => {
     const playbackResults = new ReplaySubject();
     let sequenceLimit = 2;
-    this.service.playback$.subscribe(playback => {
+    this.service.getPlayback().subscribe(playback => {
       playbackResults.next(playback);
       sequenceLimit--;
       if (sequenceLimit <= 0) {
@@ -284,7 +285,7 @@ describe('PianodService', () => {
   it('command stop should set playback to STOPPED', (done) => {
     const playbackResults = new ReplaySubject();
     let sequenceLimit = 2;
-    this.service.playback$.subscribe(playback => {
+    this.service.getPlayback().subscribe(playback => {
       playbackResults.next(playback);
       sequenceLimit--;
       if (sequenceLimit <= 0) {
@@ -309,7 +310,7 @@ describe('PianodService', () => {
   it('command stop should unset currentStation', (done) => {
     const currentStationResults = new ReplaySubject();
     let sequenceLimit = 2;
-    this.service.currentStation$.subscribe(station => {
+    this.service.getCurrentStation().subscribe(station => {
       currentStationResults.next(station);
       sequenceLimit--;
       if (sequenceLimit <= 0) {

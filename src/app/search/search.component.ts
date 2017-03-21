@@ -26,7 +26,7 @@ export class SearchComponent implements OnInit {
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.pianodService.stations$.subscribe(
+    this.pianodService.getStations().subscribe(
         stationList => { this.stationList = stationList; });
   }
 
@@ -55,7 +55,8 @@ export class SearchComponent implements OnInit {
     this.selectStationDialogRef.componentInstance.stationList =
         this.stationList;
 
-    this.selectStationDialogRef.componentInstance.dialogTitle = 'Add Seed To Station';
+    this.selectStationDialogRef.componentInstance.dialogTitle =
+        'Add Seed To Station';
     this.selectStationDialogRef.afterClosed().subscribe(
         (selectedStation: string) => {
           if (selectedStation) {
@@ -72,7 +73,6 @@ export class SearchComponent implements OnInit {
           if (!res.error) {
             this.stationsModified.emit('New seed was succesfully added to ' +
                                        stationName);
-            this.pianodService.updateStations();
           }
         });
   }

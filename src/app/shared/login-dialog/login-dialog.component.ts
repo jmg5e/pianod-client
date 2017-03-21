@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MdDialogConfig, MdDialogRef} from '@angular/material';
 
 @Component({
@@ -14,15 +14,18 @@ export class LoginDialogComponent implements OnInit {
   password: string;
   config: MdDialogConfig = new MdDialogConfig();
 
-  constructor(public dialogRef: MdDialogRef<LoginDialogComponent>,
-              fb: FormBuilder) {
-    this.loginForm = fb.group({
-      username : [ null, Validators.required ],
-      password : [ null, Validators.required ]
+  constructor(public dialogRef: MdDialogRef<LoginDialogComponent>) {}
+
+  ngOnInit() {
+    // this.loginForm = this.fb.group({
+    //   username : [ null, Validators.required ],
+    //   password : [ null, Validators.required ]
+    // });
+    this.loginForm = new FormGroup({
+      username : new FormControl(null, Validators.required),
+      password : new FormControl(null, Validators.required)
     });
   }
-
-  ngOnInit() {}
 
   submitForm(form: any) {
     this.dialogRef.close(
