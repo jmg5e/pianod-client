@@ -136,10 +136,10 @@ export class PianodService {
     const response = await this.sendCmd('mix list');
 
     // get list of stations from dataPacket and rename property
-    const mixList =
-        response.data.reduce((results, dataPacket) => dataPacket.map(
-                                 station => ({Name : station.Station})),
-                             []);
+    const mixList = response.data.reduce(
+        (results, dataPacket) => dataPacket.map(station => station.Station),
+        []);
+
     return mixList;
   }
 
