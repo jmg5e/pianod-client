@@ -25,7 +25,6 @@ export class AppComponent implements OnInit, OnDestroy {
   playback;
   song;
   user = new User();
-  loggedIn = false;
   stationList: Array<string>;
   barConfig = new MdSnackBarConfig();
   // SWIPE_ACTION = {LEFT : 'swipeleft', RIGHT : 'swiperight'};
@@ -50,14 +49,12 @@ export class AppComponent implements OnInit, OnDestroy {
       }
       this.connected = connectedState;
     });
-
-    // this.pianodService.stations$.subscribe(stations => {
-    //   this.stationList = stations.map(station => station.Name);
-    // });
   }
 
   ngOnDestroy() {
-    // this.error.unsubscribe();
+    if (this.error) {
+      this.error.unsubscribe();
+    }
   }
 
   disconnect() { this.pianodService.disconnect(); }

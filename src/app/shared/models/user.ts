@@ -1,16 +1,7 @@
 import {Message} from './message';
-interface Privileges {
-  admin: boolean;
-  owner: boolean;
-  service: boolean;
-  influence: boolean;
-  tuner: boolean;
-}
 
 export class User {
-  name: string;
-  loggedIn = false;
-  privileges: any;
+  private privileges: Privileges;
 
   constructor() {
 
@@ -25,7 +16,6 @@ export class User {
 
   update(msg: Message) {
     if (msg.code === 136) {
-      this.loggedIn = true;
       // msg.content is just a string with all user privileges
       this.privileges.admin = msg.content.includes('admin');
       this.privileges.owner = msg.content.includes('owner');
@@ -34,4 +24,12 @@ export class User {
       this.privileges.tuner = msg.content.includes('tuner');
     }
   }
+}
+
+export interface Privileges {
+  admin: boolean;
+  owner: boolean;
+  service: boolean;
+  influence: boolean;
+  tuner: boolean;
 }
