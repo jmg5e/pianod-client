@@ -1,6 +1,6 @@
 <app-connect [hidden]="connected"> </app-connect>
 <div class="app-container" *ngIf="connected">
-    <md-toolbar [color]="user.loggedIn ? 'primary' : 'warn'">
+    <md-toolbar [color]="user.privileges?.admin ? 'primary' : 'warn'">
         <span>Pianod Client</span>
         <span class="fill-space"></span>
         <md-menu #appMenu="mdMenu">
@@ -18,7 +18,7 @@
             </template>
             <app-now-playing class="tab-content center"> </app-now-playing>
         </md-tab>
-        <md-tab *ngIf="user.loggedIn">
+        <md-tab *ngIf="user.privileges?.admin">
             <template md-tab-label>
               <em>Stations</em>
             </template>
@@ -30,12 +30,12 @@
             </template>
             <app-search (stationsModified)="showSnackBarMsg($event)" class="tab-content"> </app-search>
         </md-tab>
-        <md-tab *ngIf="user.loggedIn">
+        <md-tab *ngIf="user.privileges?.admin">
             <template md-tab-label>
               <em>Command Line</em>
             </template>
             <app-command-line class="tab-content center"> </app-command-line>
         </md-tab>
     </md-tab-group>
-    <app-controls class="control-bar" [loggedIn]="user.loggedIn"> </app-controls>
+    <app-controls class="control-bar" [privileges]="user.privileges"> </app-controls>
 </div>

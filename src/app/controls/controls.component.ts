@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+
 import {PianodService} from '../shared/pianod.service';
 
 @Component({
@@ -11,7 +12,8 @@ export class ControlsComponent implements OnInit {
   playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
   currentStation: string;
   stationList: Array<string>;
-  @Input() loggedIn;
+  @Input() privileges;
+
   constructor(private pianodService: PianodService) {}
 
   ngOnInit() {
@@ -23,31 +25,31 @@ export class ControlsComponent implements OnInit {
         currentStation => this.currentStation = currentStation);
   }
   play() {
-    if (this.loggedIn) {
+    if (this.privileges.admin) {
       this.pianodService.sendCmd('PLAY');
     }
   }
 
   pause() {
-    if (this.loggedIn) {
+    if (this.privileges.admin) {
       this.pianodService.sendCmd('PAUSE');
     }
   }
 
   stop() {
-    if (this.loggedIn) {
+    if (this.privileges.admin) {
       this.pianodService.sendCmd('STOP NOW');
     }
   }
 
   playMix() {
-    if (this.loggedIn) {
+    if (this.privileges.admin) {
       this.pianodService.sendCmd('PLAY MIX');
     }
   }
 
   changeStation(station) {
-    if (this.loggedIn) {
+    if (this.privileges.admin) {
       if (station === 'mix QuickMix') {
         this.pianodService.sendCmd('PLAY MIX');
       } else {
