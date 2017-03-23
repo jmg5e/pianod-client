@@ -11,7 +11,7 @@ import {PianodService} from './pianod.service';
 const testServer = global.config.testServer;
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 3000;
 
-fdescribe('PianodService', () => {
+describe('PianodService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({providers : [ PianodService ]});
   });
@@ -19,12 +19,13 @@ fdescribe('PianodService', () => {
   beforeEach(async(inject([ PianodService ], (s: PianodService) => {
     this.service = s;
 
-    return this.service.connect(testServer.host, testServer.port).then(response => {
-      expect(response.error).toBeFalsy();
-      expect(response.msg).toEqual('Connected');
-      expect(this.service.connectionInfo)
-          .toEqual({host : testServer.host, port : testServer.port});
-    });
+    return this.service.connect(testServer.host, testServer.port)
+        .then(response => {
+          expect(response.error).toBeFalsy();
+          expect(response.msg).toEqual('Connected');
+          expect(this.service.connectionInfo)
+              .toEqual({host : testServer.host, port : testServer.port});
+        });
   })));
 
   it('should inject PianodService',
@@ -97,7 +98,7 @@ fdescribe('PianodService', () => {
         .catch(err => console.log(err));
   });
 
-  it('should initiallly get empty user that is not loggedIn', (done) => {
+  it('should initiallly get empty user with no privileges', (done) => {
     const userResults = new ReplaySubject();
     this.service.getUser().subscribe(user => {
       userResults.next(user);
@@ -106,7 +107,6 @@ fdescribe('PianodService', () => {
 
     userResults.toPromise()
         .then(user => {
-          expect(user.loggedIn).toBeFalsy();
           expect(user.privileges).toEqual({
             admin : false,
             owner : false,
@@ -143,9 +143,13 @@ fdescribe('PianodService', () => {
        userResults.toArray()
            .toPromise()
            .then(users => {
-             expect(users.length).toEqual(2);
-             expect(users[0].loggedIn).toBeFalsy();
-             expect(users[1].loggedIn).toBeTruthy();
+             expect(users[0].privileges).toEqual({
+               admin : false,
+               owner : false,
+               service : false,
+               influence : false,
+               tuner : false
+             });
              expect(users[1].privileges).toEqual({
                admin : true,
                owner : true,
@@ -218,6 +222,7 @@ fdescribe('PianodService', () => {
     });
   });
 
+  // rxjs timeout throws error when async injecting pianod service
   xit('get response should eventually timeout with error', (done) => {
     this.service.sendCmd('null').then(response => {
       console.log(response);

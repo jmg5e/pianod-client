@@ -77,9 +77,8 @@ describe('Song', () => {
        song.setTime(timeMessage);
        song.startTimer();
 
-       song.getSongRemainingTime().skip(4).subscribe(newRemainingTime => {
+       song.getSongRemainingTime().skip(1).subscribe(newRemainingTime => {
          remainingTime = newRemainingTime;
-         expect(newRemainingTime).toEqual('2:19');
        });
 
        tick(3000);
@@ -98,12 +97,8 @@ describe('Song', () => {
        song.startTimer();
        tick(22000);
        expect(remainingTime).toEqual('2:00');
-       // expect(remainingTime.minutes).toEqual(2);
-       // expect(remainingTime.seconds).toEqual(0);
        tick(68000); // 90 seconds or 1 minute 30 seconds passed
        expect(remainingTime).toEqual('0:52');
-       // expect(remainingTime.minutes).toEqual(0);
-       // expect(remainingTime.seconds).toEqual(52);
        discardPeriodicTasks();
      })));
 
@@ -117,42 +112,37 @@ describe('Song', () => {
 
        song.startTimer();
        tick(22000);
-       // expect(remainingTime).toEqual({minutes : 2, seconds : 0});
        expect(remainingTime).toEqual('2:00');
-       // expect(remainingTime.minutes).toEqual(2);
-       // expect(remainingTime.seconds).toEqual(0);
        song.stopTimer();
        tick(68000); // 90 seconds or 1 minute 30 seconds passed
-       // expect(remainingTime).toEqual({minutes : 2, seconds : 0});
        expect(remainingTime).toEqual('2:00');
-       // expect(remainingTime.minutes).toEqual(2);
-       // expect(remainingTime.seconds).toEqual(0);
        discardPeriodicTasks();
      })));
 
-  // seems to work fine, not exactly sure why test fails
-  xit('RemainingTime should be correct after a given amount of time with muiltiple starts and stops',
-      fakeAsync(inject([ Song ], (song: Song) => {
-        const timeMessage = '101 01:46/04:09/-02:22 Playing';
-        let remainingTime = {};
-        song.setTime(timeMessage);
-        song.getSongRemainingTime().subscribe(
-            newRemaingTime => { remainingTime = newRemaingTime; });
+  it('RemainingTime should be correct after a given amount of time with muiltiple starts and stops',
+     fakeAsync(inject([ Song ], (song: Song) => {
+       const timeMessage = '101 01:46/04:09/-02:22 Playing';
+       let remainingTime = {};
+       song.setTime(timeMessage);
+       song.getSongRemainingTime().subscribe(
+           newRemaingTime => { remainingTime = newRemaingTime; });
 
-        song.startTimer();
-        tick(22000);
-        song.stopTimer();
-        tick(12000);
-        song.startTimer();
-        tick(60000);
-        song.stopTimer();
-        tick(19000);
-        song.startTimer();
-        tick(58000);
-        console.log(remainingTime);
-        expect(remainingTime).toEqual({minutes : 0, seconds : 2});
-        discardPeriodicTasks();
-      })));
+       song.startTimer();
+       tick(22000);
+       song.stopTimer();
+       tick(12000);
+       expect(remainingTime).toEqual('2:00');
+       song.startTimer();
+       tick(60000);
+       expect(remainingTime).toEqual('1:00');
+       song.stopTimer();
+       tick(19000);
+       expect(remainingTime).toEqual('1:00');
+       song.startTimer();
+       tick(58000);
+       expect(remainingTime).toEqual('0:02');
+       discardPeriodicTasks();
+     })));
 
   it('remainingTime should never be negative',
      fakeAsync(inject([ Song ], (song: Song) => {
@@ -165,8 +155,6 @@ describe('Song', () => {
        tick(222000);
        tick(60000);
        expect(remainingTime).toEqual('0:00');
-       // expect(remainingTime.minutes).toEqual(0);
-       // expect(remainingTime.seconds).toEqual(0);
        discardPeriodicTasks();
      })));
 
