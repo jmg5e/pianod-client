@@ -213,7 +213,7 @@ describe('PianodService', () => {
 
     mixListResults.toPromise()
         .then(mixList => {
-             expect(mixList).toEqual([{Name : 'station1'});
+             expect(mixList).toEqual(['station1');
              done();
         })
         .catch(err => console.log(err));
