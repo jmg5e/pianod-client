@@ -12,20 +12,10 @@ import {SongTime} from './song-time';
 
 export class Song {
   data = {} as SongInfo;
-  ID: string;
-  Station: string;
-  Artist: string;
-  Album: string;
-  Title: string;
-  CoverArt: string;
-  SeeAlso: string;
-  UserRating: string;
-  SelectedStation: string;
-  Rating: string;
   private totalTime: SongTime;
   private playedTime: SongTime;
   private remainingTime: SongTime;
-  private remainingTime$: BehaviorSubject<string>;
+  private remainingTime$: BehaviorSubject<SongTime>;
   private isPlaying = false;
   public songCountDown: Subscription;
 
@@ -33,7 +23,7 @@ export class Song {
     this.totalTime = new SongTime();
     this.playedTime = new SongTime();
     this.remainingTime = new SongTime();
-    this.remainingTime$ = new BehaviorSubject(this.remainingTime.toString());
+    this.remainingTime$ = new BehaviorSubject(this.remainingTime);
     this.data.totalTime = this.totalTime.toString();
   }
 
@@ -46,19 +36,30 @@ export class Song {
   }
 
   public getSongRemainingTime(): Observable<string> {
-    return this.remainingTime$.asObservable();
+    return this.remainingTime$.asObservable().map(remainingTime =>
+                                                      remainingTime.toString());
   }
 
-  public startTimer() { this.isPlaying = true; }
+  public startTimer() {
+    if (!this.isPlaying) {
+      this.isPlaying = true;
+      this.updateRemainingTime();
+    }
+  }
 
-  public stopTimer() { this.isPlaying = false; }
+  public stopTimer() {
+    this.isPlaying = false;
+    this.remainingTime = this.remainingTime$.getValue();
+    // save played time, total time?
+  }
 
   public clearTime() {
     this.totalTime.clear();
     this.playedTime.clear();
     this.remainingTime.clear();
-    this.remainingTime$.next(this.remainingTime.toString());
+    this.remainingTime$.next(this.remainingTime);
   }
+
   // set played, remaining and total time from string
   // string should be the following format
   // played/total/remaining
@@ -97,8 +98,9 @@ export class Song {
               remainingTime.setTimeFromSeconds(timeInSeconds);
               return remainingTime;
             })
-            .subscribe(newRemainingTime => {
-              this.remainingTime$.next(newRemainingTime.toString());
+            .subscribe((newRemainingTime: SongTime) => {
+              this.remainingTime$.next(newRemainingTime);
+              // this.remainingTime = newRemainingTime;
             });
   }
 }

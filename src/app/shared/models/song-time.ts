@@ -28,7 +28,7 @@ export class SongTime {
   toSeconds(): number { return this.minutes * 60 + this.seconds; }
 
   setTimeFromSeconds(totalSeconds) {
-    this.minutes = Math.floor(totalSeconds / 60);
-    this.seconds = (totalSeconds - Math.floor(totalSeconds / 60) * 60);
+    this.minutes = Math.floor(totalSeconds / 60) % 60;
+    this.seconds = totalSeconds % 60;
   }
 }

@@ -26,8 +26,8 @@ describe('SongTime', function() {
 
   it('setTimeFromSeconds should set correct time', () => {
     const testTime = new SongTime();
-    testTime.setTimeFromSeconds(83);
-    expect(testTime.minutes).toEqual(1);
-    expect(testTime.seconds).toEqual(23);
+    testTime.setTimeFromSeconds(183);
+    expect(testTime.minutes).toEqual(3);
+    expect(testTime.seconds).toEqual(3);
   });
 });
