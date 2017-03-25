@@ -24,7 +24,7 @@
             </template>
             <app-stations (stationsModified)="showSnackBarMsg($event)" class="tab-content"> </app-stations>
         </md-tab>
-        <md-tab *ngIf="user.loggedIn">
+        <md-tab *ngIf="user.privileges?.admin">
             <template md-tab-label>
               <em>Search</em>
             </template>
