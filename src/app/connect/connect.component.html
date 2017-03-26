@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="connecting-container" *ngIf="connecting">
+        <div class="connecting-spinner">
+            <h1> CONNECTING </h1>
+            <md-progress-spinner mode="indeterminate" class="spinner">
+            </md-progress-spinner>
+        </div>
+    </div>
+    <span class="content" *ngIf="!connecting">
+      <md-card>
+        <form (ngSubmit)="submitForm(connectForm.value)" [formGroup]="connectForm">
+            <md-input-container style="width: 100%">
+                <input mdInput type="text" formControlName="host" placeholder="Host">
+            </md-input-container>
+            <md-input-container style="width: 100%">
+                <input mdInput type="number" required formControlName="port" placeholder="Port">
+            </md-input-container>
+            <md-card-actions>
+                <button md-raised-button type="button" (click)="saveConnection(connectForm.value)"> Save </button>
+                <button md-raised-button type='submit'> Connect</button>
+            </md-card-actions>
+        </form>
+    </md-card>
+
+    <md-card>
+      <h2> Saved Connections</h2>
+      <md-toolbar class="storedConnectionList" *ngFor="let connection of storedConnections">
+        <span> {{connection.host}}</span>
+    <span class="fill-space"></span>
+    <span> {{connection.port}}</span>
+    <md-toolbar-row>
+        <span> Default User: 
+        <span class="active">{{connection?.defaultUser?.username}}</span>
+        </span>
+        <span class="fill-space"></span>
+        <button md-icon-button (click)="setDefaultUser(connection)">
+            <md-icon>edit</md-icon>
+            <!-- <span>Set</span> -->
+          </button>
+        <button md-icon-button color="warn" (click)="removeDefaultUser(connection)">
+            <md-icon>delete</md-icon>
+            <!-- <span>delete</span> -->
+          </button>
+        <!-- <button md&#45;raised&#45;button (click)="setDefaultUser(connection)"> set </button> -->
+        <!-- <button md&#45;raised&#45;button (click)="removeDefaultUser(connection)"> remove </button> -->
+    </md-toolbar-row>
+    <md-toolbar-row>
+        <md-checkbox [ngModel]="connection.auto_connect" (change)="toggleAutoConnect(connection)">Auto Connect</md-checkbox>
+        <span class="fill-space"></span>
+        <button md-raised-button (click)="deleteSavedConnection(connection)"> Delete </button>
+        <button md-raised-button (click)="connect(connection.host, connection.port)"> Connect </button>
+    </md-toolbar-row>
+    </md-toolbar>
+    </md-card>
+    </span>
+</div>

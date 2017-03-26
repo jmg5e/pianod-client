@@ -1,0 +1,53 @@
+.command-bar {
+    padding-top:20px; 
+    margin-top:20px; 
+    width:90%
+}
+.error {
+    color: red;
+}
+.success {
+    color: green;
+}
+
+.data {
+    color: #2962ff;
+}
+.data-req-tags {
+    color: grey;
+}
+
+.message {
+    padding-right:10px
+}
+
+.message.default {
+    color: #2962ff;
+}
+
+.command-input {
+    flex: 1 1 auto;
+    margin: 15px;
+}
+
+.help-icon {
+    align-self: center
+}
+
+.message-container {
+    display:flex; 
+    flex-direction:column; 
+    flex: 1 1 0; 
+    margin-top: 10px; 
+    width:90%; 
+    min-width:90%;
+    overflow-y:scroll;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    background:#f6f6f6;
+}
+
+md-list-item {
+    // overide md-list dense height(40px)
+    height: 25px;
+}

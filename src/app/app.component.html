@@ -1,0 +1,29 @@
+<app-connect [hidden]="connected"> </app-connect>
+<div class="app-container" *ngIf="connected">
+    <md-toolbar [color]="user.privileges?.admin ? 'primary' : 'warn'">
+        <span>Pianod Client</span>
+        <span class="fill-space"></span>
+        <md-menu #appMenu="mdMenu">
+            <app-login> </app-login>
+            <button md-menu-item (click)="disconnect()"> Disconect </button>
+        </md-menu>
+        <button md-icon-button [mdMenuTriggerFor]="appMenu">
+          <md-icon>menu</md-icon>
+        </button>
+    </md-toolbar>
+    <md-tab-group class="tab-container" *ngIf="connected">
+        <md-tab>
+            <template md-tab-label>
+              <em>Now Playing</em>
+            </template>
+            <app-now-playing class="tab-content center"> </app-now-playing>
+        </md-tab>
+        <md-tab *ngIf="user.privileges?.admin">
+            <template md-tab-label>
+              <em>Command Line</em>
+            </template>
+            <app-command-line class="tab-content center"> </app-command-line>
+        </md-tab>
+    </md-tab-group>
+    <app-controls class="control-bar" [privileges]="user.privileges"> </app-controls>
+</div>

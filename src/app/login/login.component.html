@@ -1,0 +1,9 @@
+<button md-menu-item (click)="openDialog()" *ngIf="!(user$ | async)?.loggedIn">
+        <md-icon>fingerprint</md-icon>
+        <span>Login</span>
+</button>
+
+<button md-menu-item (click)="logout()" *ngIf="(user$ | async)?.loggedIn">
+        <md-icon>exit_to_app</md-icon>
+        <span>Logout</span>
+</button>

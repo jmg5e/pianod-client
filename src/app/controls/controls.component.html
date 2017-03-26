@@ -1,0 +1,27 @@
+<md-toolbar [color]="privileges.admin? 'primary' : 'warn'">
+    <button md-button (click)="play()" [color]="playback==='PLAYING' ? 'default' : 'accent'">
+      <md-icon class="md-24">play_arrow</md-icon>
+    </button>
+    <button md-button (click)="pause()" [color]="playback==='PAUSED' ? 'default' : 'accent'">
+      <md-icon class="md-24">pause</md-icon>
+    </button>
+    <button md-button (click)="stop()" [color]="playback==='STOPPED' ? 'default' : 'accent'">
+      <md-icon class="md-24">stop</md-icon>
+    </button>
+    <!-- {{currentStation}} -->
+    <span class="fill-space"> </span>
+    <span class="currentStation">{{currentStation}}</span>
+    <span class="fill-space"> </span>
+    <button md-icon-button [mdMenuTriggerFor]="menu">
+      <md-icon>more_vert</md-icon>
+    </button>
+    <md-menu #menu="mdMenu">
+        <button md-menu-item [ngClass]="{'active' : currentStation === 'mix QuickMix'}" (click)="playMix()">
+          <md-icon>playlist_add</md-icon>
+          <span>Mix</span>
+      </button>
+        <button md-menu-item *ngFor="let station of stationList" [ngClass]="{'active': station === currentStation}" (click)="changeStation(station)">
+          <span>{{station}}</span>
+        </button>
+    </md-menu>
+</md-toolbar>
