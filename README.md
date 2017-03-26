@@ -1,5 +1,7 @@
 # PianodClient
-Web App to control [pianod service](http://deviousfish.com/Pianod1/index.html)
+Web App to control [pianod service](http://deviousfish.com/pianod2/index.html)
+
+pianod2 is a Pandora music service client as a UNIX daemon. Which also provides support for http and websock protocols.
 
 This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.25.5.
 

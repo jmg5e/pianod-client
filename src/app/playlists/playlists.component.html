@@ -1,0 +1,26 @@
+<div class="playList-container">
+    <md-toolbar *ngFor="let playlist of playLists" class="station-bar">
+        <span class="fill-space center"> {{playlist.Name}}</span>
+        <button md-button>
+            <md-icon>playlist_add</md-icon>
+            <span class="label-btn">Mix</span>
+          </button>
+        <button md-icon-button [mdMenuTriggerFor]="playListMenu"><md-icon>menu</md-icon></button>
+        <md-menu #playListMenu="mdMenu">
+            <button md-menu-item>
+            <md-icon>play_arrow</md-icon>
+            <span>play</span>
+          </button>
+            <button md-menu-item>
+            <md-icon>playlist_add</md-icon>
+            <span>Mix</span>
+          </button>
+            <button md-menu-item (click)="getPlaylistSongs(playlist)">
+            <span>get songs</span>
+          </button>
+            <button md-menu-item (click)="getPlaylistSeeds(playlist)">
+            <span>get seeds</span>
+          </button>
+        </md-menu>
+    </md-toolbar>
+</div>

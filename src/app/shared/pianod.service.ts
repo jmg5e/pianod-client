@@ -26,6 +26,8 @@ export class PianodService {
   private playback = new BehaviorSubject<string>('STOPPED');
   private error = new Subject<string>();
   private song: Song = new Song();
+  private playlists = new Subject<any>();
+  private selectedPlaylist = new Subject<string>();
   private songInfo = new BehaviorSubject<SongInfo>(this.song.data);
   private userInfo: User = new User();
   private user;
@@ -41,12 +43,13 @@ export class PianodService {
     }, 1);
   }
 
+  public getPlaylists() { return this.playlists.asObservable(); }
   public getConnectionState() { return this.connected.asObservable(); }
   public getPlayback() { return this.playback.asObservable(); }
   public getErrors() { return this.error.asObservable(); }
   public getSong() { return this.songInfo.asObservable(); }
   public getUser() { return this.user.asObservable(); }
-
+  public getSelectedPlaylist() { return this.selectedPlaylist.asObservable(); }
   // should get a response when first connecting to socket
   public async connect(host, port) {
     const url = `ws://${host}:${port}/pianod`;
@@ -66,6 +69,8 @@ export class PianodService {
     if (!response.error && response.msg === 'Success') {
       this.connectionInfo = {host : host, port : port};
       this.connected.next(true);
+
+      this.updatePlaylists().then(playlists => this.playlists.next(playlists));
       // this.user.next(new User());
     }
 
@@ -94,13 +99,37 @@ export class PianodService {
         (resolve, reject) => { this.q.push(cmd, (res) => resolve(res)); });
   }
 
-  public async search(searchTerm, category) {
-    const response = await this.sendCmd(`FIND ${category} \"${searchTerm}\"`);
-    // map data packet of seed array into an object
-    const results = response.data.map(
-        (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
-    return results;
+  public async updatePlaylists() {
+    // get list of stations
+    const response = await this.sendCmd('PLAYLIST LIST');
+    const playlists =
+        response.data
+            .map((playlist) => playlist.reduce(
+                     (obj, item) => Object.assign(obj, item), {}))
+            .map(playlist => {
+              // rename Playlist property to Name
+              if (playlist.Playlist) {
+                Object.assign(playlist, {Name : playlist.Playlist});
+                delete playlist.Playlist;
+              }
+              return playlist;
+            });
+    return playlists;
+    // const playLists = response.data.reduce(
+    //     (results, dataPacket) => dataPacket.map(station => station.Playlist),
+    //     []);
+    //
+    // return playLists;
   }
+
+  // public async search(searchTerm, category) {
+  //   const response = await this.sendCmd(`FIND ${category}
+  //   \"${searchTerm}\"`);
+  //   // map data packet of seed array into an object
+  //   const results = response.data.map(
+  //       (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
+  //   return results;
+  // }
 
   public getSongRemainingTime(): Observable<any> {
     return this.song.getSongRemainingTime();
@@ -212,6 +241,20 @@ export class PianodService {
     // return Promise.race([ timeoutPromise, end$.toPromise() ]);
 
     return response$.toPromise();
+  }
+
+  public async getPlaylistSongList(playlistId) {
+    const response =
+        await this.sendCmd(`playlist song list where id=${playlistId}`);
+    console.log(response);
+    return response.data;
+  }
+
+  public async getPlaylistSeeds(playlistId) {
+    const response = await this.sendCmd(`seed list playlist id ${playlistId}`);
+    const seeds: Array<Seed> = response.data.map(
+        (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
+    return seeds;
   }
 
   // update pianod state from a message

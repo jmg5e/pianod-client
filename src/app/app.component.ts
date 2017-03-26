@@ -49,6 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
       this.connected = connectedState;
     });
+    this.pianodService.getPlaylists().subscribe(playlist => console.log(playlist));
   }
 
   ngOnDestroy() {

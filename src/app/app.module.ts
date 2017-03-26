@@ -21,12 +21,13 @@ import {
   LoginDialogComponent
 } from './shared/login-dialog/login-dialog.component';
 import {PianodService} from './shared/pianod.service';
+import { PlaylistsComponent } from './playlists/playlists.component';
 
 @NgModule({
   declarations : [
     AppComponent, NowPlayingComponent, LoginComponent, ConnectComponent,
     ControlsComponent, LoginDialogComponent, ConfirmDialogComponent,
-    CommandLineComponent, MessagePipe
+    CommandLineComponent, MessagePipe, PlaylistsComponent
   ],
   entryComponents : [ LoginDialogComponent, ConfirmDialogComponent ],
   imports : [

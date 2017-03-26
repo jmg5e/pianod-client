@@ -13,14 +13,14 @@ import {LoginComponent} from './login/login.component';
 import {NowPlayingComponent} from './now-playing/now-playing.component';
 import {LocalStorageService} from './shared/local-storage.service';
 import {PianodService} from './shared/pianod.service';
-
+import {PlaylistsComponent} from './playlists/playlists.component';
 describe('AppComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports : [ MaterialModule.forRoot(), FormsModule, ReactiveFormsModule ],
       declarations : [
         AppComponent, LoginComponent, ConnectComponent, NowPlayingComponent,
-        ControlsComponent,
+        ControlsComponent, PlaylistsComponent,
         CommandLineComponent, MessagePipe
       ],
       providers : [ PianodService, LocalStorageService, MdSnackBar ]

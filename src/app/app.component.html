@@ -18,6 +18,12 @@
             </template>
             <app-now-playing class="tab-content center"> </app-now-playing>
         </md-tab>
+        <md-tab>
+            <template md-tab-label>
+              <em>Playlists</em>
+            </template>
+            <app-playlists class="tab-content center"> </app-playlists>
+        </md-tab>
         <md-tab *ngIf="user.privileges?.admin">
             <template md-tab-label>
               <em>Command Line</em>
