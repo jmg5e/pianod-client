@@ -48,7 +48,7 @@ export class PianodService {
   public getPlayback() { return this.playback.asObservable(); }
   public getErrors() { return this.error.asObservable(); }
   public getSong() { return this.songInfo.asObservable(); }
-  public getUser() { return this.user.asObservable(); }
+  public getUser(): Observable<User> { return this.user.asObservable(); }
   public getSelectedPlaylist() { return this.selectedPlaylist.asObservable(); }
   // should get a response when first connecting to socket
   public async connect(host, port) {
@@ -246,8 +246,6 @@ export class PianodService {
   public async getPlaylistSongList(playlistId) {
     const response =
         await this.sendCmd(`playlist song list where id=${playlistId}`);
-    console.log(response);
-    return response.data;
   }
 
   public async getPlaylistSeeds(playlistId) {

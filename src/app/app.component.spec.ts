@@ -1,4 +1,4 @@
-import {async, injectAsync, TestBed} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import {FormsModule} from '@angular/forms';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';

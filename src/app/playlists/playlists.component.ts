@@ -17,14 +17,20 @@ export class PlaylistsComponent implements AfterViewChecked, OnInit {
                                                     playlists);
   }
   getPlaylistSongs(playlist) {
-    console.log('getting playlist songs');
-    this.pianodService.getPlaylistSongList(playlist.ID);
+    this.pianodService.getPlaylistSongList(playlist.ID)
+        .then(songs => console.log(songs));
   }
 
   getPlaylistSeeds(playlist) {
-    console.log('getting playlist seeds');
     this.pianodService.getPlaylistSeeds(playlist.ID)
         .then(seeds => console.log(seeds));
   }
-  play(playlist) { console.log('playing playlist'); }
+  selectPlaylist(playlist) {
+
+    // `SELECT` will choose a playlist but not alter the play state (if paused
+    // or stopped, it will remain paused).  `PLAY` chooses a playlist and starts
+    // the player, resuming a track in progress if there is one.
+    this.pianodService.sendCmd(`play playlist where ID=${playlist.ID}`)
+        .then(res => console.log(res));
+  }
 }

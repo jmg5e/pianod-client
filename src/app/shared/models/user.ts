@@ -1,7 +1,7 @@
 import {Message} from './message';
 
 export class User {
-  private privileges: Privileges;
+  public privileges: Privileges;
 
   constructor() {
 
