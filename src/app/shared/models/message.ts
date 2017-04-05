@@ -19,7 +19,7 @@ export class Message {
     // get data property from Message contents
     // codes betwee 109 - 121 contain "key: value"
     // TODO check documention and include all codes with data values
-    if (this.code > 108 && this.code < 121) {
+    if (this.code > 108 && this.code < 125) {
       this.data = this.getData(obj.content);
     } else {
       this.content = obj.content;

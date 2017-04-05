@@ -1,0 +1,52 @@
+@media screen and (max-width: 600px) {
+  .label-btn {
+    display: none;
+  }
+  .search-btn {
+    display: none;
+  }
+}
+.search-bar {
+    padding-top:20px; 
+    align-self: center;
+    margin: 20px; 
+    width: 90%
+}
+.search-input-container {
+    flex: 1 1 auto; 
+    margin-right: 15px;
+}
+.search-input {
+    display: flex;
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    flex-grow: 2;
+}
+
+.search-category {
+    display: flex;
+}
+
+.search-btn {
+    margin-left:20px;
+    margin-bottom:5px;
+    text-align: center;
+}
+.search-spinner {
+    align-self:center; 
+    margin:auto;
+}
+.search-results-container {
+    display:flex; 
+    flex:  1 1 auto; 
+    flex-flow: row wrap; 
+    width:90%; 
+    align-self:center; 
+    overflow-y:auto;
+}
+.search-result-item {
+    height: 50px; 
+    margin:25px; 
+    width:100%;
+}

@@ -1,0 +1,27 @@
+<!-- <md&#45;toolbar *ngFor="let source of sources | async" class="station&#45;bar"> -->
+<md-toolbar *ngFor="let source of sources" class="station-bar">
+    <span class="fill-space center"> {{source.Name}}</span>
+    <button md-button>
+            <md-icon>playlist_add</md-icon>
+            <span class="label-btn">Select</span>
+          </button>
+    <button md-icon-button [mdMenuTriggerFor]="sourceListMenu"><md-icon>menu</md-icon></button>
+    <md-menu #sourceListMenu="mdMenu">
+        <button md-menu-item (click)="selectSource(source)">
+            <md-icon>play_arrow</md-icon>
+            <span>Select</span>
+          </button>
+
+        <button md-menu-item (click)="enableSource(source)">
+            <md-icon>play_arrow</md-icon>
+            <span>Enable</span>
+          </button>
+    </md-menu>
+</md-toolbar>
+<p style="color: white">
+    {{ sources | json}}
+</p>
+
+<p style="color: white">
+    {{ availableSources| json}}
+</p>

@@ -33,4 +33,9 @@ export class PlaylistsComponent implements AfterViewChecked, OnInit {
     this.pianodService.sendCmd(`play playlist where ID=${playlist.ID}`)
         .then(res => console.log(res));
   }
+
+  deletePlaylist(playlist) {
+    this.pianodService.sendCmd(`PLAYLIST DELETE WHERE ID=${playlist.ID}`)
+        .then(res => console.log(res));
+  }
 }

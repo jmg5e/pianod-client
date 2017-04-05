@@ -21,6 +21,12 @@
             <button md-menu-item (click)="getPlaylistSeeds(playlist)">
             <span>get seeds</span>
           </button>
+            <button md-menu-item (click)="deletePlaylist(playlist)">
+            <span>delete</span>
+          </button>
         </md-menu>
     </md-toolbar>
+
+
+    <p style="color: white"> {{playLists | json }} </p>
 </div>

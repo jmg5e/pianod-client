@@ -1,6 +1,9 @@
-<app-connect [hidden]="connected"> </app-connect>
-<div class="app-container" *ngIf="connected">
-    <md-toolbar [color]="user.privileges?.admin ? 'primary' : 'warn'">
+<!-- <app&#45;connect [hidden]="connected"> </app&#45;connect> -->
+<app-connect [hidden]="(connected | async)"> </app-connect>
+<!-- <app&#45;connect *ngIf="!connected"> </app&#45;connect> -->
+<!-- <div class="app&#45;container" *ngIf="(connected | async)"> -->
+<div *ngIf="(connected | async)">
+    <md-toolbar [color]="(user | async)?.privileges.admin ? 'primary' : 'warn'">
         <span>Pianod Client</span>
         <span class="fill-space"></span>
         <md-menu #appMenu="mdMenu">
@@ -11,7 +14,7 @@
           <md-icon>menu</md-icon>
         </button>
     </md-toolbar>
-    <md-tab-group class="tab-container" *ngIf="connected">
+    <md-tab-group class="tab-container">
         <md-tab>
             <template md-tab-label>
               <em>Now Playing</em>
@@ -20,17 +23,35 @@
         </md-tab>
         <md-tab>
             <template md-tab-label>
+              <em>Queue</em>
+            </template>
+            <app-queue class="tab-content center"> </app-queue>
+        </md-tab>
+        <md-tab>
+            <template md-tab-label>
               <em>Playlists</em>
             </template>
             <app-playlists class="tab-content center"> </app-playlists>
         </md-tab>
-        <md-tab *ngIf="user.privileges?.admin">
+        <md-tab>
+            <template md-tab-label>
+              <em>Search</em>
+            </template>
+            <app-search class="tab-content center"> </app-search>
+        </md-tab>
+        <md-tab>
             <template md-tab-label>
               <em>Command Line</em>
             </template>
             <app-command-line class="tab-content center"> </app-command-line>
         </md-tab>
+        <md-tab *ngIf="(user | async).privileges?.admin">
+            <template md-tab-label>
+              <em>Settings</em>
+            </template>
+            <app-settings class="tab-content center"> </app-settings>
+        </md-tab>
     </md-tab-group>
-    <app-controls class="control-bar" [privileges]="user.privileges"> </app-controls>
+    <app-controls class="control-bar" [privileges]="(user | async).privileges"> </app-controls>
 
 </div>

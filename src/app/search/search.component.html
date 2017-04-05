@@ -1,0 +1,43 @@
+<md-toolbar class="search-bar">
+    <md-input-container class="search-input-container">
+        <input mdInput type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
+    </md-input-container>
+
+    <md-select placeholder="category" [(ngModel)]="category" class="search-category">
+        <md-option value="Any"> Any</md-option>
+        <md-option value="Artist"> Artist </md-option>
+        <md-option value="Genre"> Genre</md-option>
+    </md-select>
+    <button md-raised-button class="search-btn" color="primary"> Search </button>
+</md-toolbar>
+
+<md-progress-spinner mode="indeterminate" *ngIf="searching" class="search-spinner">
+</md-progress-spinner>
+
+<div *ngIf="!searching" class="search-results-container">
+    <md-toolbar *ngFor="let seed of searchResults" class="search-result-item">
+        <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
+        <span *ngIf="seed.Song"> Song : {{seed?.Song}}</span>
+        <span *ngIf="seed.Genre"> Genre : {{seed?.Genre}}</span>
+        <span class="fill-space"> </span>
+
+        <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>more_vert</md-icon></button>
+        <md-menu #menu="mdMenu">
+            <button md-menu-item (click)="addToQueue(seed)">
+            <md-icon>fiber_new</md-icon>
+            <span>Add to Queue</span>
+          </button>
+            <button md-menu-item (click)="createPlaylist(seed)">
+            <md-icon>fiber_new</md-icon>
+            <span>New Playlist</span>
+          </button>
+            <button md-menu-item (click)="addToPlaylist(seed)">
+            <md-icon>playlist_add</md-icon>
+            <span>Add To Playlist</span>
+          </button>
+        </md-menu>
+        <md-toolbar-row>
+            <p style="color:white"> {{seed | json }}</p>
+        </md-toolbar-row>
+    </md-toolbar>
+</div>

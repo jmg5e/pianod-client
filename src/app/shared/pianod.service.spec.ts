@@ -8,7 +8,11 @@ import {Observable} from 'rxjs/Rx';
 import {User} from './models/user';
 import {PianodService} from './pianod.service';
 
-const testServer = global.config.testServer;
+// const testServer = global.config.mockPianod;
+const mockPianod = {
+  port : 4201,
+  host : 'localhost'
+};
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 3000;
 
 describe('PianodService', () => {
@@ -19,11 +23,11 @@ describe('PianodService', () => {
   beforeEach(async(inject([ PianodService ], (s: PianodService) => {
     this.service = s;
 
-    this.service.connect(testServer.host, testServer.port).then(response => {
+    this.service.connect(mockPianod.host, mockPianod.port).then(response => {
       expect(response.error).toBeFalsy();
       expect(response.msg).toEqual('Success');
       expect(this.service.connectionInfo)
-          .toEqual({host : testServer.host, port : testServer.port});
+          .toEqual({host : mockPianod.host, port : mockPianod.port});
     });
   })));
 
@@ -31,79 +35,46 @@ describe('PianodService', () => {
      () => { expect(this.service).toBeTruthy(); });
 
   it('pianod service should connect to mock pianod socket', (done) => {
-    const connectedResults = new ReplaySubject();
-    this.service.getConnectionState().subscribe(connectedState => {
-      connectedResults.next(connectedState);
-      connectedResults.complete();
-    });
 
-    connectedResults.toPromise()
-        .then(connectedState => {
+    const subscription =
+        this.service.getConnectionState().take(1).subscribe(connectedState => {
           expect(connectedState).toEqual(true);
-          done();
-        })
-        .catch(err => console.log(err));
+        }, e => console.log('Error: %s', e), () => done());
   });
 
   it('disconnect should update connected state', (done) => {
-    const connectedResults = new ReplaySubject();
-    let sequenceLimit = 2;
-    this.service.getConnectionState().subscribe(connectedState => {
-      connectedResults.next(connectedState);
-      sequenceLimit--;
-      if (sequenceLimit <= 0) {
-        connectedResults.complete();
-      }
-    });
-
-    connectedResults.toArray()
-        .toPromise()
-        .then(connectedStateSequence => {
-          expect(connectedStateSequence).toEqual([ true, false ]);
-          expect(this.service.connectionInfo).toBeUndefined();
-          done();
-        })
-        .catch(err => console.log(err));
+    const subscription =
+        this.service.getConnectionState().take(2).toArray().subscribe(
+            connectedStateSequence => {
+              expect(connectedStateSequence).toEqual([ true, false ]);
+            },
+            e => console.log('Error: %s', e), () => done());
     this.service.disconnect();
   });
 
   it('playback should initially be set to PAUSED', (done) => {
-    const playbackResults = new ReplaySubject();
-    this.service.getPlayback().subscribe(playback => {
-      playbackResults.next(playback);
-      playbackResults.complete();
-    });
 
-    playbackResults.toPromise()
-        .then(playback => {
+    const subscription =
+        this.service.getPlayback().take(1).subscribe(playback => {
           expect(playback).toEqual('PAUSED');
-          done();
-        })
-        .catch(err => console.log(err));
+        }, e => console.log('Error: %s', e), () => done());
   });
-
+  //
   it('should initiallly get user with only listener privilege', (done) => {
-    const userResults = new ReplaySubject();
-    this.service.getUser().subscribe(user => {
-      userResults.next(user);
-      userResults.complete();
-    });
 
-    userResults.toPromise()
-        .then((user: User) => {
-          // expect(user.privileges).toEqual({
-          //   listener : true,
-          //   admin : false,
-          //   owner : false,
-          //   service : false,
-          //   influence : false,
-          //   tuner : false
-          // });
-          done();
-        })
-        .catch(err => console.log(err));
+    const subscription = this.service.getUser().take(1).subscribe(user => {
+
+      expect(user.privileges).toEqual({
+        listener : true,
+        admin : false,
+        owner : false,
+        service : false,
+        influence : false,
+        tuner : false
+      });
+    }, e => console.log('Error: %s', e), () => done());
   });
-
+  //
   it('login with invalid credientials should response with error', (done) => {
     this.service.sendCmd('user userName invalidPass').then(response => {
       expect(response.error).toBeTruthy();
@@ -111,50 +82,39 @@ describe('PianodService', () => {
       done();
     });
   });
-
-  it('login with valid credientials should send correct response and new user',
+  //
+  xit('login with valid credientials should send correct response and new user',
       (done) => {
 
-        const userResults = new ReplaySubject();
-        let sequenceLimit = 2;
-        this.service.getUser().subscribe((user: User) => {
-          userResults.next(user);
-          sequenceLimit--;
-          if (sequenceLimit <= 0) {
-            userResults.complete();
-          }
-        });
+        this.service.getUser().take(2).toArray().subscribe(user => {
 
-        userResults.toArray()
-            .toPromise()
-            .then((users: Array<User>) => {
-              // expect(users[0].privileges).toEqual({
-              //   listener : true,
-              //   admin : false,
-              //   owner : false,
-              //   service : false,
-              //   influence : false,
-              //   tuner : false
-              // });
-              // expect(users[1].privileges).toEqual({
-              //   listener : true,
-              //   admin : true,
-              //   owner : true,
-              //   service : true,
-              //   influence : true,
-              //   tuner : true
-              // });
-              done();
-            })
-            .catch(err => console.log(err));
+          // expect(user[0].privileges).toEqual({
+          //   listener : true,
+          //   admin : false,
+          //   owner : false,
+          //   service : false,
+          //   influence : false,
+          //   tuner : false
+          // });
+
+          expect(user[1].privileges).toEqual({
+            listener : true,
+            admin : true,
+            owner : true,
+            service : true,
+            influence : true,
+            tuner : true
+          });
+        }, e => console.log('Error: %s', e), () => done());
+
         this.service.sendCmd('user userName validPass').then(response => {
           expect(response.error).toBeFalsy();
         });
       });
 
-  // rxjs timeout throws error when async injecting pianod service
-  xit('get response should eventually timeout with error', (done) => {
+  it('get response should eventually timeout with error', (done) => {
     this.service.sendCmd('null').then(response => {
+      // console.log(response);
       expect(response.error).toBeTruthy();
       expect(response.msg).toEqual('TimeoutError');
       done();
@@ -170,46 +130,32 @@ describe('PianodService', () => {
   });
 
   it('command play should set playback to PLAYING', (done) => {
-    const playbackResults = new ReplaySubject();
-    let sequenceLimit = 2;
-    this.service.getPlayback().subscribe(playback => {
-      playbackResults.next(playback);
-      sequenceLimit--;
-      if (sequenceLimit <= 0) {
-        playbackResults.complete();
-      }
-    });
 
-    playbackResults.toArray()
-        .toPromise()
-        .then(playbackSequence => {
+    const subscription = this.service.getPlayback().take(2).toArray().subscribe(
+        playbackSequence => {
+
           expect(playbackSequence).toEqual([ 'PAUSED', 'PLAYING' ]);
-          done();
-        })
-        .catch(err => console.log(err));
+
+        },
+        e => console.log('Error: %s', e), () => done());
+
     this.service.sendCmd('play').then(response => {
       expect(response.error).toBeFalsy();
       expect(response.msg).toEqual('Success');
     });
   });
-
+  //
   it('command pause should set playback to PAUSED', (done) => {
-    const playbackResults = new ReplaySubject();
-    let sequenceLimit = 2;
-    this.service.getPlayback().subscribe(playback => {
-      playbackResults.next(playback);
-      sequenceLimit--;
-      if (sequenceLimit <= 0) {
-        playbackResults.complete();
-      }
-    });
 
-    playbackResults.toPromise()
-        .then(playback => {
-          expect(playback).toEqual('PAUSED');
-          done();
-        })
-        .catch(err => console.log(err));
+    // TODO should probably not update state unless changed
+    const subscription = this.service.getPlayback().take(2).toArray().subscribe(
+        playbackSequence => {
+
+          expect(playbackSequence).toEqual([ 'PAUSED', 'PAUSED' ]);
+
+        },
+        e => console.log('Error: %s', e), () => done());
+
     this.service.sendCmd('pause').then(response => {
       expect(response.error).toBeFalsy();
       expect(response.msg).toEqual('Success');
@@ -217,28 +163,18 @@ describe('PianodService', () => {
   });
 
   it('command stop should set playback to STOPPED', (done) => {
-    const playbackResults = new ReplaySubject();
-    let sequenceLimit = 2;
-    this.service.getPlayback().subscribe(playback => {
-      playbackResults.next(playback);
-      sequenceLimit--;
-      if (sequenceLimit <= 0) {
 
-        playbackResults.complete();
-      }
-    });
+    const subscription = this.service.getPlayback().take(2).toArray().subscribe(
+        playbackSequence => {
 
-    playbackResults.toArray()
-        .toPromise()
-        .then(playbackSequence => {
           expect(playbackSequence).toEqual([ 'PAUSED', 'STOPPED' ]);
-          done();
-        })
-        .catch(err => console.log(err));
+
+        },
+        e => console.log('Error: %s', e), () => done());
+
     this.service.sendCmd('stop').then(response => {
       expect(response.error).toBeFalsy();
       expect(response.msg).toEqual('Success');
     });
   });
-
 });

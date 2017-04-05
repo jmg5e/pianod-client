@@ -27,15 +27,16 @@ export class PianodService {
   private error = new Subject<string>();
   private song: Song = new Song();
   private playlists = new Subject<any>();
+  private sources = new Subject<any>();
+  private queueList = new Subject<any>();
   private selectedPlaylist = new Subject<string>();
   private songInfo = new BehaviorSubject<SongInfo>(this.song.data);
   private userInfo: User = new User();
-  private user;
+  private user = new BehaviorSubject<User>(this.userInfo);
   private socket: WebSocket;
   private q;
 
   constructor() {
-    this.user = new BehaviorSubject<User>(this.userInfo);
     // limit concurrency of socket commands to 1
     // using libarary async js queue to solve this problem
     this.q = Async.queue((cmd, done) => {
@@ -43,11 +44,14 @@ export class PianodService {
     }, 1);
   }
 
+  public getQueueList() { return this.queueList.asObservable(); }
+  public getSources() { return this.sources.asObservable(); }
   public getPlaylists() { return this.playlists.asObservable(); }
   public getConnectionState() { return this.connected.asObservable(); }
   public getPlayback() { return this.playback.asObservable(); }
   public getErrors() { return this.error.asObservable(); }
   public getSong() { return this.songInfo.asObservable(); }
+
   public getUser(): Observable<User> { return this.user.asObservable(); }
   public getSelectedPlaylist() { return this.selectedPlaylist.asObservable(); }
   // should get a response when first connecting to socket
@@ -69,8 +73,10 @@ export class PianodService {
     if (!response.error && response.msg === 'Success') {
       this.connectionInfo = {host : host, port : port};
       this.connected.next(true);
+      // this.updateSources();
 
-      this.updatePlaylists().then(playlists => this.playlists.next(playlists));
+      this.updatePlaylists();
+      this.updateQueueList();
       // this.user.next(new User());
     }
 
@@ -99,37 +105,69 @@ export class PianodService {
         (resolve, reject) => { this.q.push(cmd, (res) => resolve(res)); });
   }
 
-  public async updatePlaylists() {
+  public updatePlaylists() {
     // get list of stations
-    const response = await this.sendCmd('PLAYLIST LIST');
-    const playlists =
-        response.data
-            .map((playlist) => playlist.reduce(
-                     (obj, item) => Object.assign(obj, item), {}))
-            .map(playlist => {
-              // rename Playlist property to Name
-              if (playlist.Playlist) {
-                Object.assign(playlist, {Name : playlist.Playlist});
-                delete playlist.Playlist;
-              }
-              return playlist;
-            });
-    return playlists;
+    this.sendCmd('PLAYLIST LIST').then(response => {
+      if (!response.error && response.data) {
+        const playlists =
+            response.data
+                .map((playlist) => playlist.reduce(
+                         (obj, item) => Object.assign(obj, item), {}))
+                .map(playlist => {
+                  // rename Playlist property to Name
+                  if (playlist.Playlist) {
+                    Object.assign(playlist, {Name : playlist.Playlist});
+                    delete playlist.Playlist;
+                  }
+                  return playlist;
+                });
+        this.playlists.next(playlists);
+      }
+    });
     // const playLists = response.data.reduce(
-    //     (results, dataPacket) => dataPacket.map(station => station.Playlist),
+    //     (results, dataPacket) => dataPacket.map(station =>
+    //     station.Playlist),
     //     []);
     //
     // return playLists;
   }
 
-  // public async search(searchTerm, category) {
-  //   const response = await this.sendCmd(`FIND ${category}
-  //   \"${searchTerm}\"`);
-  //   // map data packet of seed array into an object
-  //   const results = response.data.map(
-  //       (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
-  //   return results;
+  private updateQueueList() {
+
+    // let sources = [];
+    this.sendCmd('QUEUE LIST').then(response => {
+      if (!response.error && response.data) {
+        const queueList = response.data.map(
+            (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
+        this.queueList.next(queueList);
+        return queueList;
+      }
+    });
+  }
+
+  // private async updateSources() {
+  //
+  //   let sourceList = [];
+  //   const response = await this.sendCmd('SOURCE LIST');
+  //   if (!response.error && response.data) {
+  //     sourceList =
+  //         response.data.map((playlist) => playlist.reduce(
+  //                               (obj, item) => Object.assign(obj, item),
+  //                               {}));
+  //   }
+  //
+  //   this.sources.next(sourceList);
+  //   return sourceList;
   // }
+
+  public async search(searchTerm, category, source) {
+    const response =
+        await this.sendCmd(`FIND SUGGESTION WHERE artist=\"${searchTerm}\"`);
+    // map data packet of seed array into an object
+    const results = response.data.map(
+        (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
+    return results;
+  }
 
   public getSongRemainingTime(): Observable<any> {
     return this.song.getSongRemainingTime();
@@ -163,7 +201,8 @@ export class PianodService {
     this.handleRuntime();
   }
 
-  // pass message to update pianod state unless message is an error or is a data
+  // pass message to update pianod state unless message is an error or is a
+  // data
   // request
   private handleRuntime() {
     let dataRequest = false;
@@ -187,19 +226,19 @@ export class PianodService {
   // get response from incoming socket messages
   // see  documentation/protocal.md for pianod dataRequest protocol
   private getResponse(): Promise<any> {
-    const response$ = new Subject<any>();
     let dataRequest = false;
     let dataPacket = [];
     const data = [];
     const msgs = [];
 
+    const response$ = new Subject<any>();
     // observe response from socket messages
-    const pianodMsgs$ = Observable.fromEvent(this.socket, 'message');
+    // const pianodMsgs$ = Observable.fromEvent(this.socket, 'message');
 
     // this works i think but breaks unit tests
-    // const pianodMsgs$= Observable.fromEvent(this.socket,
-    // 'message').timeout(this.responseTimeout, Promise.resolve({error: true,
-    // msg: 'TimeoutError'});
+    const pianodMsgs$ = Observable.fromEvent(this.socket, 'message')
+                            .timeout(this.responseTimeout);
+    // , Promise.resolve({error : true, msg : 'TimeoutError'});
 
     pianodMsgs$.filter((event: any) => Message.isValid(event.data))
         .map((event: any) => new Message(event.data))
@@ -246,6 +285,8 @@ export class PianodService {
   public async getPlaylistSongList(playlistId) {
     const response =
         await this.sendCmd(`playlist song list where id=${playlistId}`);
+
+    return response.data;
   }
 
   public async getPlaylistSeeds(playlistId) {
@@ -268,10 +309,21 @@ export class PianodService {
       }
       this.updatePlayback(msg);
     }
+    // if (msg.code === 24) {
+    //   // 024 Available sources have changed: ready for Source 3
+    //   this.updateSources();
+    // }
+    if (msg.code === 26) {
+      // this.updateQueueList().subscribe(queueList =>
+      //                                      this.queueList.next(queueList));
+      console.log('queue changed');
+      // 026 QueueChanged
+    }
     // user logged in
     if (msg.code === 136) {
       this.userInfo.update(msg);
       this.user.next(this.userInfo);
+      // this.updateSources();
     }
   }
 
@@ -293,4 +345,11 @@ export class PianodService {
       break;
     };
   }
+}
+
+export interface Response {
+  error: boolean;
+  msg: Message;
+  msgs: Array<any>;
+  data: Array<any>;
 }
