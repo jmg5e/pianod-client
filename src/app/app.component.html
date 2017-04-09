@@ -1,7 +1,4 @@
-<!-- <app&#45;connect [hidden]="connected"> </app&#45;connect> -->
 <app-connect [hidden]="(connected | async)"> </app-connect>
-<!-- <app&#45;connect *ngIf="!connected"> </app&#45;connect> -->
-<!-- <div class="app&#45;container" *ngIf="(connected | async)"> -->
 <div *ngIf="(connected | async)">
     <md-toolbar [color]="(user | async)?.privileges.admin ? 'primary' : 'warn'">
         <span>Pianod Client</span>
@@ -53,5 +50,4 @@
         </md-tab>
     </md-tab-group>
     <app-controls class="control-bar" [privileges]="(user | async).privileges"> </app-controls>
-
 </div>

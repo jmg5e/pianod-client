@@ -14,6 +14,7 @@ export class QueueComponent implements OnInit {
   ngOnInit() { this.queue = this.pianodService.getQueueList(); }
 
   removeItem(seed) {
+    console.log('removing seed ', seed);
     this.pianodService.sendCmd(`REQUEST CANCEL WHERE id=\"${seed.ID}\"`)
         .then(res => console.log(res));
   }

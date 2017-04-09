@@ -249,26 +249,33 @@ export class PianodService {
               if (msg.error) {
                 response$.next({error : true, msg : msg.content, msgs : msgs});
                 response$.complete();
-                // end$.error({error : true, msg : msg.content, msgs : msgs});
               } else if (msg.code === 203) { // start of data request
                 if (dataRequest) {           // Multiple data packets
                   data.push(dataPacket);
                 }
                 dataPacket = [];
                 dataRequest = true;
-              } else if (msg.code === 200) { // success
-                response$.next(
-                    {error : msg.error, msg : msg.content, msgs : msgs});
-                response$.complete();
-              } else if (msg.code === 204) { // end of data request
+              } else if (msg.code >= 200 && msg.code <= 299) { // success
                 if (dataPacket.length > 0) {
                   data.push(dataPacket);
                 }
-                response$.next({error : msg.error, data : data});
+                response$.next({
+                  error : msg.error,
+                  msg : msg.content,
+                  msgs : msgs,
+                  data : data
+                });
                 response$.complete();
               } else if (dataRequest) {
                 dataPacket.push(msg.data);
               }
+              // else if (msg.code === 204) { // end of data request
+              // if (dataPacket.length > 0) {
+              //   data.push(dataPacket);
+              // }
+              // response$.next({error : msg.error, data : data});
+              // response$.complete();
+              // }
             },
             error => {
               response$.next({error : true, msg : error.name});
@@ -314,9 +321,8 @@ export class PianodService {
     //   this.updateSources();
     // }
     if (msg.code === 26) {
-      // this.updateQueueList().subscribe(queueList =>
-      //                                      this.queueList.next(queueList));
       console.log('queue changed');
+      this.updateQueueList();
       // 026 QueueChanged
     }
     // user logged in

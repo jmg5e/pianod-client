@@ -1,6 +1,7 @@
 import 'hammerjs';
 
 import {NgModule} from '@angular/core';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
@@ -37,7 +38,7 @@ import {PianodService} from './shared/pianod.service';
   entryComponents : [ LoginDialogComponent, ConfirmDialogComponent ],
   imports : [
     BrowserModule, FormsModule, BrowserAnimationsModule, MaterialModule,
-    ReactiveFormsModule
+    FlexLayoutModule, ReactiveFormsModule
   ],
   providers : [ PianodService, LocalStorageService ],
   bootstrap : [ AppComponent ]

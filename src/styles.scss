@@ -14,7 +14,10 @@ body,
 }
 
 .app-container {
-    background-color: #212121;
+
+    min-width: 100%;
+    min-height: 100%;
+    // background-color: #212121;
 }
 
 .mat-tab-header {
@@ -25,7 +28,6 @@ body,
     display: flex;
     flex: 1 1 auto;
 }
-
 .mat-tab-body-wrapper {
    display: flex;
    flex: 1 1 auto;
@@ -61,6 +63,7 @@ body,
 
 .control-bar {
     display: flex;
+    align-self: flex-end;
     width: 100%;
     height:50px;
     margin-bottom: 25px;
