@@ -1,21 +1,19 @@
-<md-toolbar *ngFor="let item of queue | async ">
-    <span> {{item.Title}}</span>
-    <span class="fill-space"> </span>
+<div class="queue-container">
+    <!-- <h3 *ngIf="(queue | async).length===0"> There Are No Songs In Queue </h3> -->
 
-    <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>more_vert</md-icon></button>
-    <md-menu #menu="mdMenu">
-        <button md-menu-item (click)="removeItem(item)">
-            <span>remove</span>
-          </button>
-    </md-menu>
-    <md-toolbar-row>
-        <p> {{item.Artist }} </p>
-        <p> {{item.Album }} </p>
-    </md-toolbar-row>
-
-    <md-toolbar-row>
-        <p> {{item.Artist }} </p>
-        <p> {{item.Album }} </p>
-    </md-toolbar-row>
-</md-toolbar>
-<!-- <p style="color: white"> {{queue | async | json }} </p> -->
+    <md-card *ngFor="let song of queue | async">
+        <md-card-title-group>
+            <md-card-title>{{song?.Title}}</md-card-title>
+            <img md-card-md-image src="{{song?.CoverArt}}">
+            <md-card-subtitle><label> Artist : </label> {{song?.Artist}}</md-card-subtitle>
+            <md-card-subtitle><label> Album : </label> {{song?.Album}}</md-card-subtitle>
+            <md-card-subtitle><label> Playlist: </label> {{song?.Playlist}}</md-card-subtitle>
+        </md-card-title-group>
+        <md-card-content>
+            {{ song | json}}
+        </md-card-content>
+        <md-card-actions>
+            <button md-fab (click)="removeItem(song)" color="warn"><md-icon>clear</md-icon></button>
+        </md-card-actions>
+    </md-card>
+</div>

@@ -4,4 +4,5 @@ export interface Seed {
   Song: string;
   Genre: string;
   Source?: string;
+  Name?: string;
 }

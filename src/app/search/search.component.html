@@ -1,11 +1,17 @@
 <md-toolbar class="search-bar">
     <md-input-container class="search-input-container">
-        <input mdInput type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
+        <input mdInput type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category, manner)" placeholder="Search For..">
     </md-input-container>
 
+    <md-select placeholder="manner" [(ngModel)]="manner" class="search-category">
+        <md-option value="All"> All </md-option>
+        <md-option value="Request"> Files </md-option>
+        <md-option value="Suggestion"> Pandora </md-option>
+    </md-select>
     <md-select placeholder="category" [(ngModel)]="category" class="search-category">
-        <md-option value="Any"> Any</md-option>
+        <!-- <md&#45;option value="Any"> Any</md&#45;option> -->
         <md-option value="Artist"> Artist </md-option>
+        <md-option value="Album"> Album</md-option>
         <md-option value="Genre"> Genre</md-option>
     </md-select>
     <button md-raised-button class="search-btn" color="primary"> Search </button>
@@ -16,11 +22,13 @@
 
 <div *ngIf="!searching" class="search-results-container">
     <md-toolbar *ngFor="let seed of searchResults" class="search-result-item">
+        <span *ngIf="seed.Source=='pandora'"><md-icon>radio</md-icon></span>
+        <span *ngIf="seed.Source=='filesystem'"><md-icon>insert_drive_file</md-icon></span>
+
         <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
         <span *ngIf="seed.Song"> Song : {{seed?.Song}}</span>
         <span *ngIf="seed.Genre"> Genre : {{seed?.Genre}}</span>
         <span class="fill-space"> </span>
-
         <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>more_vert</md-icon></button>
         <md-menu #menu="mdMenu">
             <button md-menu-item (click)="addToQueue(seed)">
@@ -36,8 +44,8 @@
             <span>Add To Playlist</span>
           </button>
         </md-menu>
-        <md-toolbar-row>
-            <p style="color:white"> {{seed | json }}</p>
-        </md-toolbar-row>
+        <!-- <md&#45;toolbar&#45;row> -->
+        <!-- <p> {{seed | json }}</p> -->
+        <!-- </md&#45;toolbar&#45;row> -->
     </md-toolbar>
 </div>

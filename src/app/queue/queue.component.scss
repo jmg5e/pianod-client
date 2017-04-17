@@ -1,0 +1,17 @@
+
+md-card {
+    height: auto;
+    width: 80%;
+    margin: 20px;
+}
+
+.queue-container {
+    display:flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    align-items: center;
+    justify-content: center;
+}

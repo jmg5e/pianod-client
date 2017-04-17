@@ -4,14 +4,12 @@ import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
+import {LoginDialogComponent} from '../shared/dialogs/login-dialog.component';
 import {
   Connection,
   LocalStorageService,
   LoginInfo
 } from '../shared/local-storage.service';
-import {
-  LoginDialogComponent
-} from '../shared/login-dialog/login-dialog.component';
 import {PianodService} from '../shared/pianod.service';
 
 @Component({
@@ -75,17 +73,16 @@ export class ConnectComponent implements OnInit {
   }
 
   connect(host, port) {
-    this.connecting = false;
-    try {
-      this.pianodService.connect(host, port).then(res => {
-        this.connecting = false;
-        if (res.error) {
-          this.snackBar.open('failed to connect to pianod', '', this.barConfig);
-        }
-      });
-    } catch (err) {
-      this.connecting = false;
-    }
+    this.connecting = true;
+    this.pianodService.connect(host, port)
+        .then(res => {
+          this.connecting = false;
+          if (res.error) {
+            this.snackBar.open('failed to connect to pianod', '',
+                               this.barConfig);
+          }
+        })
+        .catch(err => this.connecting = false);
   }
 
   setDefaultUser(connection: Connection) {

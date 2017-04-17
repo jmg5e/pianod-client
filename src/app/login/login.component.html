@@ -1,9 +1,20 @@
-<button md-menu-item (click)="openDialog()" *ngIf="!(user$ | async)?.admin">
+<!-- TODO broken -->
+
+<!-- <button md&#45;menu&#45;item (click)="openDialog()" *ngIf="!(user$ | async)?.admin"> -->
+<!--         <md&#45;icon>fingerprint</md&#45;icon> -->
+<!--         <span>Login</span> -->
+<!-- </button> -->
+<!--  -->
+<!-- <button md&#45;menu&#45;item (click)="logout()" *ngIf="(user$ | async)?.admin"> -->
+<!--         <md&#45;icon>exit_to_app</md&#45;icon> -->
+<!--         <span>Logout</span> -->
+<!-- </button> -->
+<button md-menu-item (click)="openDialog()">
         <md-icon>fingerprint</md-icon>
         <span>Login</span>
 </button>
 
-<button md-menu-item (click)="logout()" *ngIf="(user$ | async)?.admin">
+<button md-menu-item (click)="logout()">
         <md-icon>exit_to_app</md-icon>
         <span>Logout</span>
 </button>

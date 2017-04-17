@@ -5,17 +5,17 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/catch';
+import queue from 'async-es/queue';
 
 import {Injectable} from '@angular/core';
-import * as Async from 'async';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
-import {Message} from './models/message';
-import {Seed} from './models/seed';
-import {Song, SongInfo} from './models/song';
-import {User} from './models/user';
+import {Message, Seed, Song, SongInfo, User} from './models';
+
+// TODO minor bug: remaingTime is not rendered in client when pianod is
+// initially paused
 
 @Injectable()
 export class PianodService {
@@ -39,11 +39,12 @@ export class PianodService {
   constructor() {
     // limit concurrency of socket commands to 1
     // using libarary async js queue to solve this problem
-    this.q = Async.queue((cmd, done) => {
+    this.q = queue((cmd, done) => {
       this.doSendCmd(cmd).then(res => done(res)).catch(err => done(err));
     }, 1);
   }
-
+  // TODO I don't realy like how all state is stored/updated in this service,
+  // use ngrx/redux to manage state?
   public getQueueList() { return this.queueList.asObservable(); }
   public getSources() { return this.sources.asObservable(); }
   public getPlaylists() { return this.playlists.asObservable(); }
@@ -56,6 +57,7 @@ export class PianodService {
   public getSelectedPlaylist() { return this.selectedPlaylist.asObservable(); }
   // should get a response when first connecting to socket
   public async connect(host, port) {
+    // TODO should really validate input!
     const url = `ws://${host}:${port}/pianod`;
     this.socket = new WebSocket(url);
     // this.socket.onerror = function(err) {
@@ -67,7 +69,7 @@ export class PianodService {
       if (this.socket.readyState !== 1) {
         return Promise.reject(`websocket failed to connect ${url}`);
       }
-    }, 100);
+    }, 2000);
 
     const response = await this.getResponse();
     if (!response.error && response.msg === 'Success') {
@@ -77,7 +79,6 @@ export class PianodService {
 
       this.updatePlaylists();
       this.updateQueueList();
-      // this.user.next(new User());
     }
 
     this.listen();
@@ -97,10 +98,10 @@ export class PianodService {
   }
 
   // get all incoming socket messages
-  public getMessages() { return this.pianodMessages$; }
+  public getMessages(): Observable<Message> { return this.pianodMessages$; }
 
   // sendCmd -> pushes cmd to queue -> doSendCmd() -> getResponse
-  public sendCmd(cmd): Promise<any> {
+  public sendCmd(cmd): Promise<Response> {
     return new Promise(
         (resolve, reject) => { this.q.push(cmd, (res) => resolve(res)); });
   }
@@ -124,16 +125,9 @@ export class PianodService {
         this.playlists.next(playlists);
       }
     });
-    // const playLists = response.data.reduce(
-    //     (results, dataPacket) => dataPacket.map(station =>
-    //     station.Playlist),
-    //     []);
-    //
-    // return playLists;
   }
 
   private updateQueueList() {
-
     // let sources = [];
     this.sendCmd('QUEUE LIST').then(response => {
       if (!response.error && response.data) {
@@ -145,25 +139,26 @@ export class PianodService {
     });
   }
 
-  // private async updateSources() {
-  //
-  //   let sourceList = [];
-  //   const response = await this.sendCmd('SOURCE LIST');
-  //   if (!response.error && response.data) {
-  //     sourceList =
-  //         response.data.map((playlist) => playlist.reduce(
-  //                               (obj, item) => Object.assign(obj, item),
-  //                               {}));
-  //   }
-  //
-  //   this.sources.next(sourceList);
-  //   return sourceList;
-  // }
+  private async updateSources() {
 
-  public async search(searchTerm, category, source) {
-    const response =
-        await this.sendCmd(`FIND SUGGESTION WHERE artist=\"${searchTerm}\"`);
-    // map data packet of seed array into an object
+    let sourceList = [];
+    const response = await this.sendCmd('SOURCE LIST');
+    if (!response.error && response.data) {
+      sourceList =
+          response.data.map((playlist) => playlist.reduce(
+                                (obj, item) => Object.assign(obj, item), {}));
+    }
+
+    this.sources.next(sourceList);
+    return sourceList;
+  }
+
+  public async search(searchTerm, category, manner) {
+    console.log(`FIND ${manner} WHERE ${category}=\"${searchTerm}\"`);
+    const response = await this.sendCmd(
+        `FIND ${manner} WHERE ${category}=\"${searchTerm}\"`);
+    // TODO is their any situation where i shouldnt map response data to array
+    // of objects(treat as default behavior in getResponse())?
     const results = response.data.map(
         (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
     return results;
@@ -202,8 +197,7 @@ export class PianodService {
   }
 
   // pass message to update pianod state unless message is an error or is a
-  // data
-  // request
+  // data request
   private handleRuntime() {
     let dataRequest = false;
     this.pianodMessages$.subscribe((msg: Message) => {
@@ -232,20 +226,15 @@ export class PianodService {
     const msgs = [];
 
     const response$ = new Subject<any>();
-    // observe response from socket messages
-    // const pianodMsgs$ = Observable.fromEvent(this.socket, 'message');
-
-    // this works i think but breaks unit tests
     const pianodMsgs$ = Observable.fromEvent(this.socket, 'message')
                             .timeout(this.responseTimeout);
-    // , Promise.resolve({error : true, msg : 'TimeoutError'});
 
     pianodMsgs$.filter((event: any) => Message.isValid(event.data))
         .map((event: any) => new Message(event.data))
         .takeUntil(response$)
         .subscribe(
             (msg: Message) => {
-              msgs.push(msg); // for debugging purposes only
+              msgs.push(msg); // really only used for debugging
               if (msg.error) {
                 response$.next({error : true, msg : msg.content, msgs : msgs});
                 response$.complete();
@@ -269,22 +258,11 @@ export class PianodService {
               } else if (dataRequest) {
                 dataPacket.push(msg.data);
               }
-              // else if (msg.code === 204) { // end of data request
-              // if (dataPacket.length > 0) {
-              //   data.push(dataPacket);
-              // }
-              // response$.next({error : msg.error, data : data});
-              // response$.complete();
-              // }
             },
             error => {
               response$.next({error : true, msg : error.name});
               response$.complete();
             });
-
-    // setTimeout(response$.error('TimoutError'), this.responseTimeout);
-    //
-    // return Promise.race([ timeoutPromise, end$.toPromise() ]);
 
     return response$.toPromise();
   }
@@ -293,11 +271,13 @@ export class PianodService {
     const response =
         await this.sendCmd(`playlist song list where id=${playlistId}`);
 
-    return response.data;
+    const seeds: Array<Seed> = response.data.map(
+        (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
+    return seeds;
   }
 
-  public async getPlaylistSeeds(playlistId) {
-    const response = await this.sendCmd(`seed list playlist id ${playlistId}`);
+  public async getPlaylistSeeds(playlist) {
+    const response = await this.sendCmd(`seed list playlist id ${playlist.ID}`);
     const seeds: Array<Seed> = response.data.map(
         (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
     return seeds;
@@ -311,42 +291,49 @@ export class PianodService {
     }
 
     if (msg.code >= 1 && msg.code <= 7) {
-      if (msg.code === 1) {
-        this.song.setTime(msg.content);
-      }
       this.updatePlayback(msg);
     }
-    // if (msg.code === 24) {
-    //   // 024 Available sources have changed: ready for Source 3
-    //   this.updateSources();
-    // }
+    if (msg.code === 22) {
+      // 022 Playlists have changed: ready for Source 3
+      this.updatePlaylists();
+    }
+    if (msg.code === 24) {
+      // 024 Available sources have changed: ready for Source 3
+      this.updateSources();
+    }
     if (msg.code === 26) {
-      console.log('queue changed');
       this.updateQueueList();
-      // 026 QueueChanged
     }
     // user logged in
     if (msg.code === 136) {
       this.userInfo.update(msg);
       this.user.next(this.userInfo);
-      // this.updateSources();
+      this.updateSources();
     }
   }
 
   private updatePlayback(msg: Message) {
+    /* Messages
+    * 001 Playing: 00: 00 / 03: 55 / -03: 54
+    * 002 Paused: 00: 18 / 03: 55 / -03: 36
+    * 007 Stopped
+    * 004 Track playback complete
+    * 006 Idle
+    */
     switch (msg.code) {
-    case 1:
+    case 1: // PLAYING
       this.playback.next('PLAYING');
+      this.song.setTime(msg.content);
       this.song.startTimer();
       break;
-    case 2:
+    case 2: // PAUSED
       this.playback.next('PAUSED');
+      this.song.setTime(msg.content);
       this.song.stopTimer();
       break;
-    case 7:
+    case 7: // STOPPED
       this.playback.next('STOPPED');
       this.song.clearTime();
-      // clear song info
       this.songInfo.next(this.song.clearSong());
       break;
     };
@@ -356,6 +343,6 @@ export class PianodService {
 export interface Response {
   error: boolean;
   msg: Message;
-  msgs: Array<any>;
+  msgs: Array<Message>;
   data: Array<any>;
 }

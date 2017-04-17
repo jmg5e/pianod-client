@@ -1,19 +1,14 @@
 // import {Component, OnInit} from '@angular/core';
-import {
-  AfterViewChecked,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import {MessagePipe} from './message.pipe';
+import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+
 import {Message} from '../shared/models/message';
 import {PianodService} from '../shared/pianod.service';
+import {MessagePipe} from './message.pipe';
 
 @Component({
-  selector : 'app-command-line',
-  templateUrl : './command-line.component.html',
-  styleUrls : [ './command-line.component.scss' ]
+  selector: 'app-command-line',
+  templateUrl: './command-line.component.html',
+  styleUrls: ['./command-line.component.scss']
 })
 
 export class CommandLineComponent implements OnInit, AfterViewChecked {

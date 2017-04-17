@@ -9,7 +9,7 @@ const response = require('./response');
 const config = require('../config.json');
 
 const wss = new ws.Server({port : config.mockPianod.port, path : '/pianod'});
-console.log('websocket server started on port : ' + config.mockPianod.port);
+console.log('Mock Pianod websocket started on port : ' + config.mockPianod.port);
 wss.on('connection', function connection(ws) {
   response['connected'].forEach(msg => ws.send(msg));
   ws.on('message', (message) => {

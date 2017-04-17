@@ -1,5 +1,5 @@
-<div class="playList-container">
-    <md-toolbar *ngFor="let playlist of playLists" class="station-bar">
+<div class="playlist-container">
+    <md-toolbar *ngFor="let playlist of playLists" class="playlist-bar">
         <span class="fill-space center"> {{playlist.Name}}</span>
         <button md-button>
             <md-icon>playlist_add</md-icon>
@@ -7,26 +7,30 @@
           </button>
         <button md-icon-button [mdMenuTriggerFor]="playListMenu"><md-icon>menu</md-icon></button>
         <md-menu #playListMenu="mdMenu">
-            <button md-menu-item (click)="selectPlaylist(playlist)">
+            <button md-menu-item (click)="playPlaylist(playlist)">
             <md-icon>play_arrow</md-icon>
             <span>play</span>
           </button>
-            <button md-menu-item>
+            <button md-menu-item disabled>
             <md-icon>playlist_add</md-icon>
             <span>Mix</span>
           </button>
-            <button md-menu-item (click)="getPlaylistSongs(playlist)">
-            <span>get songs</span>
+            <button md-menu-item (click)="openEditSeedsDialog(playlist)">
+            <md-icon>edit</md-icon>
+            <span>Manage</span>
           </button>
-            <button md-menu-item (click)="getPlaylistSeeds(playlist)">
-            <span>get seeds</span>
-          </button>
+            <!--   <button md&#45;menu&#45;item (click)="getPlaylistSongs(playlist)"> -->
+            <!--   <span>get songs</span> -->
+            <!-- </button> -->
+            <!--   <button md&#45;menu&#45;item (click)="getPlaylistSeeds(playlist)"> -->
+            <!--   <span>get seeds</span> -->
+            <!-- </button> -->
             <button md-menu-item (click)="deletePlaylist(playlist)">
+            <md-icon>delete</md-icon>
             <span>delete</span>
           </button>
         </md-menu>
     </md-toolbar>
 
-
-    <p style="color: white"> {{playLists | json }} </p>
+    <p> {{playLists | json }} </p>
 </div>

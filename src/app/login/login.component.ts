@@ -1,18 +1,27 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
-
-import {LocalStorageService, LoginInfo} from '../shared/local-storage.service';
 import {
-  LoginDialogComponent
-} from '../shared/login-dialog/login-dialog.component';
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {LoginDialogComponent} from '../shared/dialogs/login-dialog.component';
+import {LocalStorageService, LoginInfo} from '../shared/local-storage.service';
 import {User} from '../shared/models/user';
 import {PianodService} from '../shared/pianod.service';
 
-@Component({selector : 'app-login', templateUrl : './login.component.html'})
+@Component({
+  selector : 'app-login',
+  templateUrl : './login.component.html',
+  // changeDetection : ChangeDetectionStrategy.OnPush
+})
 
 export class LoginComponent implements OnInit {
   dialogRef: MdDialogRef<LoginDialogComponent>;
   loginInfo: LoginInfo;
+  @Input() user: User;
   user$;
   connected = false;
 

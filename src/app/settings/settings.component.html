@@ -1,8 +1,9 @@
 <!-- <md&#45;toolbar *ngFor="let source of sources | async" class="station&#45;bar"> -->
-<md-toolbar *ngFor="let source of sources" class="station-bar">
+<h3> Sources </h3>
+<md-toolbar *ngFor="let source of sources" style="width: 80%; margin:20px">
     <span class="fill-space center"> {{source.Name}}</span>
-    <button md-button>
-            <md-icon>playlist_add</md-icon>
+    <button md-button (click)="selectSource(source)">
+            <md-icon>check</md-icon>
             <span class="label-btn">Select</span>
           </button>
     <button md-icon-button [mdMenuTriggerFor]="sourceListMenu"><md-icon>menu</md-icon></button>

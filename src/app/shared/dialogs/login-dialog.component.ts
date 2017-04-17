@@ -10,17 +10,11 @@ import {MdDialogConfig, MdDialogRef} from '@angular/material';
 export class LoginDialogComponent implements OnInit {
 
   loginForm;
-  username: string;
-  password: string;
   config: MdDialogConfig = new MdDialogConfig();
 
   constructor(public dialogRef: MdDialogRef<LoginDialogComponent>) {}
 
   ngOnInit() {
-    // this.loginForm = this.fb.group({
-    //   username : [ null, Validators.required ],
-    //   password : [ null, Validators.required ]
-    // });
     this.loginForm = new FormGroup({
       username : new FormControl(null, Validators.required),
       password : new FormControl(null, Validators.required)

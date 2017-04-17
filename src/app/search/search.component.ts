@@ -1,11 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
-import {Seed} from '../shared/models/seed';
-import {PianodService} from '../shared/pianod.service';
+import {InputDialogComponent} from '../shared/dialogs/input-dialog.component';
 import {
-  StationSelectDialogComponent
-} from '../shared/station-select-dialog/station-select-dialog.component';
+  PlaylistSelectDialogComponent
+} from '../shared/dialogs/playlist-select-dialog.component';
+import {Playlist, Seed, Source} from '../shared/models';
+import {PianodService} from '../shared/pianod.service';
 
 @Component({
   selector : 'app-search',
@@ -16,21 +17,27 @@ import {
 export class SearchComponent implements OnInit {
 
   searchResults: Array<Seed>;
-  sources;
-  category = 'Any';
+  playlists: Array<Playlist>;
+  sources: Array<Source>;
+  category = 'Artist';
+  manner = 'All';
   searching = false;
-  selectStationDialogRef: MdDialogRef<StationSelectDialogComponent>;
-  selectedSource;
+  selectPlaylistDialogRef: MdDialogRef<PlaylistSelectDialogComponent>;
+  namePlaylistDialogRef: MdDialogRef<InputDialogComponent>;
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
     this.pianodService.getSources().subscribe(
         sources => { this.sources = sources; });
+
+    this.pianodService.getPlaylists().subscribe(
+        playlists => { this.playlists = playlists; });
   }
 
-  search(searchTerm, category) {
+  search(searchTerm, category, manner) {
+    // console.log(` searching for ${searchTerm} ${manner} where ${category}`);
     this.searching = true;
-    this.pianodService.search(searchTerm, category, this.selectedSource)
+    this.pianodService.search(searchTerm, category, manner)
         .then((results: any) => {
           this.searchResults = results;
           this.searching = false;
@@ -38,16 +45,24 @@ export class SearchComponent implements OnInit {
         .catch((err) => { this.searching = false; });
   }
 
-  createPlaylist(seed: Seed) {
-    console.log('create playlist');
-    // this.pianodService.sendCmd(`CREATE STATION FROM SUGGESTION ${seed.ID}`)
-    //     .then(res => {
-    //       if (!res.error) {
-    //         this.stationsModified.emit('New station was succesfully
-    //         created.');
-    //       }
-    //     });
+  async createPlaylist(seed: Seed) {
+    // SOURCE SELECT ID ${source.ID}
+    // SOURCE SELECT TYPE {type} NAME {name}
+    const selectResponse = await this.pianodService.sendCmd(
+        `source select type ${seed.Source} NAME \"${seed.Name}\"`);
+    console.log(selectResponse);
+
+    const playlistName = await this.openNamePlaylistDialog(seed);
+    this.namePlaylistDialogRef = null;
+    console.log(playlistName);
+    if (playlistName) {
+      const response = await this.pianodService.sendCmd(
+          `PLAYLIST CREATE NAME \"${playlistName}\" FROM ID
+        \"${seed.ID}\"`);
+      console.log(response);
+    }
   }
+
   addToQueue(seed) {
     console.log('adding to queue');
     // this.pianodService.sendCmd(`REQUEST where ID=\"${seed.ID}\"`)
@@ -56,16 +71,30 @@ export class SearchComponent implements OnInit {
         .catch(err => console.log('catch' + err));
   }
 
-  addToPlaylist(seed) { console.log('select playlist to add to'); }
+  openNamePlaylistDialog(seed: Seed) {
+    this.namePlaylistDialogRef =
+        this.dialog.open(InputDialogComponent, {disableClose : true});
+    this.namePlaylistDialogRef.componentInstance.title = 'Name New Station';
+    return this.namePlaylistDialogRef.afterClosed().toPromise();
+  }
 
-  addSeedToPlaylist(seedId, playlist) {
-    // this.pianodService
-    //     .sendCmd(`ADD SEED FROM SUGGESTION ${seedId} TO \"${stationName}\"`)
-    //     .then((res) => {
-    //       if (!res.error) {
-    //         this.stationsModified.emit('New seed was succesfully added to ' +
-    //                                    stationName);
-    //       }
-    //     });
+  openSelectPlaylistDialog(): Promise<Playlist> {
+    this.selectPlaylistDialogRef =
+        this.dialog.open(PlaylistSelectDialogComponent, {disableClose : true});
+
+    this.selectPlaylistDialogRef.componentInstance.title =
+        'Add Seed To Playlist.';
+    this.selectPlaylistDialogRef.componentInstance.playlists = this.playlists;
+    return this.selectPlaylistDialogRef.afterClosed().toPromise();
+  }
+
+  async addToPlaylist(seed) {
+    const selectedPlaylist = await this.openSelectPlaylistDialog();
+    if (selectedPlaylist) {
+      this.pianodService
+          .sendCmd(
+              `seed add id ${seed.ID} to playlist id ${selectedPlaylist.ID}`)
+          .then(res => console.log(res));
+    }
   }
 }

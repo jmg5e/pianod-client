@@ -4,7 +4,7 @@
         <span>Pianod Client</span>
         <span class="fill-space"></span>
         <md-menu #appMenu="mdMenu">
-            <app-login> </app-login>
+            <app-login user="user | async"> </app-login>
             <button md-menu-item (click)="disconnect()"> Disconect </button>
         </md-menu>
         <button md-icon-button [mdMenuTriggerFor]="appMenu">
@@ -13,39 +13,39 @@
     </md-toolbar>
     <md-tab-group class="tab-container">
         <md-tab>
-            <template md-tab-label>
-              <em>Now Playing</em>
-            </template>
+            <ng-template md-tab-label>
+                <em>Now Playing</em>
+            </ng-template>
             <app-now-playing class="tab-content center"> </app-now-playing>
         </md-tab>
         <md-tab>
-            <template md-tab-label>
-              <em>Queue</em>
-            </template>
+            <ng-template md-tab-label>
+                <em>Queue</em>
+            </ng-template>
             <app-queue class="tab-content center"> </app-queue>
         </md-tab>
         <md-tab>
-            <template md-tab-label>
-              <em>Playlists</em>
-            </template>
+            <ng-template md-tab-label>
+                <em>Playlists</em>
+            </ng-template>
             <app-playlists class="tab-content center"> </app-playlists>
         </md-tab>
         <md-tab>
-            <template md-tab-label>
-              <em>Search</em>
-            </template>
+            <ng-template md-tab-label>
+                <em>Search</em>
+            </ng-template>
             <app-search class="tab-content center"> </app-search>
         </md-tab>
         <md-tab>
-            <template md-tab-label>
-              <em>Command Line</em>
-            </template>
+            <ng-template md-tab-label>
+                <em>Command Line</em>
+            </ng-template>
             <app-command-line class="tab-content center"> </app-command-line>
         </md-tab>
         <md-tab *ngIf="(user | async).privileges?.admin">
-            <template md-tab-label>
-              <em>Settings</em>
-            </template>
+            <ng-template md-tab-label>
+                <em>Settings</em>
+            </ng-template>
             <app-settings class="tab-content center"> </app-settings>
         </md-tab>
     </md-tab-group>

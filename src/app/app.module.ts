@@ -15,27 +15,32 @@ import {ConnectComponent} from './connect/connect.component';
 import {ControlsComponent} from './controls/controls.component';
 import {LoginComponent} from './login/login.component';
 import {NowPlayingComponent} from './now-playing/now-playing.component';
+import {EditSeedsComponent} from './playlists/edit-seeds.component';
 import {PlaylistsComponent} from './playlists/playlists.component';
 import {QueueComponent} from './queue/queue.component';
 import {SearchComponent} from './search/search.component';
 import {SettingsComponent} from './settings/settings.component';
 import {
-  ConfirmDialogComponent
-} from './shared/confirm-dialog/confirm-dialog.component';
+  ConfirmDialogComponent,
+  InputDialogComponent,
+  LoginDialogComponent,
+  PlaylistSelectDialogComponent
+} from './shared/dialogs';
 import {LocalStorageService} from './shared/local-storage.service';
-import {
-  LoginDialogComponent
-} from './shared/login-dialog/login-dialog.component';
 import {PianodService} from './shared/pianod.service';
 
 @NgModule({
   declarations : [
     AppComponent, NowPlayingComponent, LoginComponent, ConnectComponent,
     ControlsComponent, LoginDialogComponent, ConfirmDialogComponent,
-    CommandLineComponent, MessagePipe, PlaylistsComponent, SettingsComponent,
-    SearchComponent, QueueComponent
+    CommandLineComponent, MessagePipe, PlaylistsComponent, EditSeedsComponent,
+    SettingsComponent, SearchComponent, QueueComponent, InputDialogComponent,
+    PlaylistSelectDialogComponent
   ],
-  entryComponents : [ LoginDialogComponent, ConfirmDialogComponent ],
+  entryComponents : [
+    LoginDialogComponent, ConfirmDialogComponent, EditSeedsComponent,
+    InputDialogComponent, PlaylistSelectDialogComponent
+  ],
   imports : [
     BrowserModule, FormsModule, BrowserAnimationsModule, MaterialModule,
     FlexLayoutModule, ReactiveFormsModule

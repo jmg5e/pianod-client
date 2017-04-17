@@ -1,4 +1,4 @@
-<md-card>
+<md-card color="primary">
     <md-card-title-group>
         <md-card-title>{{song?.Title}}</md-card-title>
         <img md-card-md-image src="{{song?.CoverArt}}">
@@ -9,9 +9,8 @@
     <md-card-content>
         {{ song | json}}
         <h3>
-            <span>{{song.totalTime?.toString()}} / </span>
-            <!-- <span> {{(remainingTime$ | async)?.minutes}}:{{(remainingTime$ | async)?.seconds}} </span> -->
-            <span> {{remainingTime$ | async}}</span>
+            <span> {{remainingTime$ | async}} / </span>
+            <span> {{song.totalTime?.toString()}} </span>
         </h3>
     </md-card-content>
 </md-card>
