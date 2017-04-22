@@ -2,10 +2,10 @@ import {Component, OnInit} from '@angular/core';
 
 import {MdDialogConfig, MdDialogRef} from '@angular/material';
 @Component({
-  selector : 'app-rename-dialog',
-  template : ` <h3 md-dialog-title> Rename {{station}} </h3>
-    <md-input-container>
-        <input #newName mdInput placeholder="Rename" value="{{station}}">
+  selector : 'app-input-dialog',
+  template : ` <h3 md-dialog-title> {{title}} </h3>
+    <md-input-container (keyUp.enter)="dialogRef.close(newName.value)">
+        <input #newName mdInput value="{{inputValue}}">
     </md-input-container>
     <md-dialog-actions>
         <button md-raised-button (click)="dialogRef.close()"> Cancel</button>
@@ -14,11 +14,12 @@ import {MdDialogConfig, MdDialogRef} from '@angular/material';
     </md-dialog-actions>`
 })
 
-export class RenameDialogComponent implements OnInit {
+export class InputDialogComponent implements OnInit {
   config: MdDialogConfig = new MdDialogConfig();
-  station: string;
+  inputValue: string;
+  title: string;
 
-  constructor(public dialogRef: MdDialogRef<RenameDialogComponent>) {}
+  constructor(public dialogRef: MdDialogRef<InputDialogComponent>) {}
 
   ngOnInit() {}
 }

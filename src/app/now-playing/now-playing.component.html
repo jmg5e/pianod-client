@@ -1,16 +1,15 @@
 <md-card>
     <md-card-title-group>
-        <md-card-title>{{song?.Title}}</md-card-title>
-        <img md-card-md-image src="{{song?.CoverArt}}">
-        <md-card-subtitle><label> Artist : </label> {{song?.Artist}}</md-card-subtitle>
-        <md-card-subtitle><label> Album : </label> {{song?.Album}}</md-card-subtitle>
-        <md-card-subtitle><label> Station: </label> {{song?.Station}}</md-card-subtitle>
+        <md-card-title>{{(song | async)?.Title}}</md-card-title>
+        <img md-card-md-image src="{{(song | async)?.CoverArt}}">
+        <md-card-subtitle><label> Artist : </label> {{(song | async)?.Artist}}</md-card-subtitle>
+        <md-card-subtitle><label> Album : </label> {{(song | async)?.Album}}</md-card-subtitle>
+        <md-card-subtitle><label> Station: </label> {{(song | async)?.Station}}</md-card-subtitle>
     </md-card-title-group>
     <md-card-content>
         <h3>
-            <span>{{song.totalTime?.toString()}} / </span>
-            <!-- <span> {{(remainingTime$ | async)?.minutes}}:{{(remainingTime$ | async)?.seconds}} </span> -->
-            <span> {{remainingTime$ | async}}</span>
+            <span> {{remainingTime | async}} /</span>
+            <span>{{(song | async)?.totalTime?.toString()}} </span>
         </h3>
     </md-card-content>
 </md-card>

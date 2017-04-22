@@ -1,10 +1,8 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
+import {LoginDialogComponent} from '../shared/dialogs';
 import {LocalStorageService, LoginInfo} from '../shared/local-storage.service';
-import {
-  LoginDialogComponent
-} from '../shared/login-dialog/login-dialog.component';
 import {User} from '../shared/models/user';
 import {PianodService} from '../shared/pianod.service';
 
@@ -53,9 +51,8 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  login(loginData) {
-    this.pianodService.sendCmd(
-        `user ${loginData.username} ${loginData.password}`);
+  login(loginInfo) {
+    this.pianodService.login(loginInfo.username, loginInfo.password);
   }
 
   logout() { this.pianodService.logout(); }

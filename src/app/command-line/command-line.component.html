@@ -10,12 +10,17 @@
 </md-toolbar>
 
 <md-toolbar class="command-bar">
+    <md-icon class="help-icon" mdTooltip="type help to see available commands">
+        info </md-icon>
     <md-input-container class="command-input">
         <input mdInput type="text" #commandInput (keyup.enter)="sendCommand(commandInput)" placeholder="Command...">
     </md-input-container>
-    <md-icon class="help-icon" mdTooltip="type help to see available commands">
-        info </md-icon>
+
+    <button md-raised-button (click)="sendCommand(commandInput)">
+      <md-icon>send</md-icon>
+    </button>
 </md-toolbar>
+
 <div #messageList class="message-container">
     <md-list dense *ngFor="let message of pianodMessages">
         <md-list-item>

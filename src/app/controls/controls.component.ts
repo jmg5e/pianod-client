@@ -1,5 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
 
+import {StationSelectDialogComponent} from '../shared/dialogs';
 import {PianodService} from '../shared/pianod.service';
 
 @Component({
@@ -8,21 +11,20 @@ import {PianodService} from '../shared/pianod.service';
   styleUrls : [ './controls.component.scss' ]
 })
 export class ControlsComponent implements OnInit {
-  playback: string;
+  selectStationDialogRef: MdDialogRef<StationSelectDialogComponent>;
+  playback: Observable<string>;
   playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
-  currentStation: string;
+  currentStation: Observable<string>;
   stationList: Array<string>;
   @Input() privileges;
 
-  constructor(private pianodService: PianodService) {}
+  constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.pianodService.getPlayback().subscribe(playback => this.playback =
-                                                   playback);
+    this.playback = this.pianodService.getPlayback();
     this.pianodService.getStations().subscribe(stations => this.stationList =
                                                    stations);
-    this.pianodService.getCurrentStation().subscribe(
-        currentStation => this.currentStation = currentStation);
+    this.currentStation = this.pianodService.getCurrentStation();
   }
   play() {
     if (this.privileges.admin) {
@@ -42,19 +44,30 @@ export class ControlsComponent implements OnInit {
     }
   }
 
+  playStation(stationName) {
+    if (this.privileges.admin) {
+      this.pianodService.sendCmd(`PLAY STATION \"${stationName}\"`);
+    }
+  }
+
   playMix() {
     if (this.privileges.admin) {
       this.pianodService.sendCmd('PLAY MIX');
     }
   }
 
-  changeStation(station) {
-    if (this.privileges.admin) {
-      if (station === 'mix QuickMix') {
-        this.pianodService.sendCmd('PLAY MIX');
-      } else {
-        this.pianodService.sendCmd(`PLAY STATION \"${station}\"`);
-      }
-    }
+  selectStation() {
+    this.selectStationDialogRef =
+        this.dialog.open(StationSelectDialogComponent);
+    this.selectStationDialogRef.componentInstance.stationList =
+        this.stationList;
+    this.selectStationDialogRef.componentInstance.dialogTitle = 'Play Station';
+    this.selectStationDialogRef.afterClosed().subscribe(
+        (selectedStation: string) => {
+          if (selectedStation) {
+            this.playStation(selectedStation);
+          }
+          this.selectStationDialogRef = null;
+        });
   }
 }

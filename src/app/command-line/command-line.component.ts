@@ -1,4 +1,3 @@
-// import {Component, OnInit} from '@angular/core';
 import {
   AfterViewChecked,
   Component,
@@ -6,6 +5,7 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
+
 import {MessagePipe} from './message.pipe';
 import {Message} from '../shared/models/message';
 import {PianodService} from '../shared/pianod.service';
@@ -18,9 +18,9 @@ import {PianodService} from '../shared/pianod.service';
 
 export class CommandLineComponent implements OnInit, AfterViewChecked {
   @ViewChild('messageList') private scrollContainer: ElementRef;
-  showColors = false;
-  showCodes = false;
-  messagesLimit = 50;
+  showColors = true;
+  showCodes = true;
+  messagesLimit = 100;
   pianodMessages: Array<Message>;
   // history: Array<string>;
   constructor(private pianodService: PianodService) {
@@ -54,14 +54,6 @@ export class CommandLineComponent implements OnInit, AfterViewChecked {
       });
     }
   }
-  clearMessages() { this.pianodMessages = []; }
 
-  // inputEventHandler(event) {
-  //   event.preventDefault();
-  //   if (event.keyCode === 40) {
-  //     console.log('down arrow');
-  //   } else if (event.keyCode === 38) {
-  //     console.log('up arrow');
-  //   }
-  // }
+  clearMessages() { this.pianodMessages = []; }
 }

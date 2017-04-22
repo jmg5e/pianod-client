@@ -1,12 +1,3 @@
-<div class="top-menu">
-    <button md-raised-button [color]="currentStation !== 'mix QuickMix' ? 'primary' : 'accent'" (click)="selectStation()">
-        <md-icon>play_circle_filled</md-icon>
-        Play Station</button>
-    <button md-raised-button (click)="playMix()" [color]="currentStation=='mix QuickMix' ? 'primary' : 'accent'">
-        <md-icon>playlist_add</md-icon>
-        Play Mix</button>
-</div>
-
 <div class="station-list-container">
     <md-toolbar *ngFor="let station of stationList" class="station-bar">
         <span class="fill-space center"> {{station}}</span>
