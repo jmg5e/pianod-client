@@ -14,8 +14,8 @@ import {
 } from '@angular/platform-browser-dynamic/testing';
 
 // mock backend configuration seetings
-import * as config from '../config.json';
-global.config = config;
+// import * as config from '../config.json';
+// global.config = config;
 
 // Unfortunately there's no typing for the `__karma__` variable. Just declare it
 // as any.
