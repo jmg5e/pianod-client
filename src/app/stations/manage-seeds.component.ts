@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MdDialogConfig, MdDialogRef} from '@angular/material';
-import {PianodService} from '../../shared/pianod.service';
+import {PianodService} from '../shared/pianod.service';
 @Component({
   selector : 'app-manage-seeds',
   template : `<h2 md-dialog-title> Station: {{station}}</h2>

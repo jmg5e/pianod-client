@@ -1,6 +1,6 @@
 export class SongTime {
-  minutes: number;
-  seconds: number;
+  public minutes: number;
+  public seconds: number;
 
   constructor(minutes = 0, seconds = 0) {
     this.minutes = minutes;

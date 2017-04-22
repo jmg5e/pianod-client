@@ -11,10 +11,10 @@ import {Subscription} from 'rxjs/Subscription';
 import {SongTime} from './song-time';
 
 export class Song {
-  data = {} as SongInfo;
-  private totalTime: SongTime;
-  private playedTime: SongTime;
-  private remainingTime: SongTime;
+  public data = {} as SongInfo;
+  public totalTime: SongTime;
+  public playedTime: SongTime;
+  public remainingTime: SongTime;
   private remainingTime$: BehaviorSubject<SongTime>;
   private isPlaying = false;
   public songCountDown: Subscription;

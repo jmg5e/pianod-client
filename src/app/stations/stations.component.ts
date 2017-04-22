@@ -1,17 +1,14 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
 
 import {
-  ConfirmDialogComponent
-} from '../shared/confirm-dialog/confirm-dialog.component';
+  ConfirmDialogComponent,
+  InputDialogComponent,
+} from '../shared/dialogs';
 import {User} from '../shared/models/user';
 import {PianodService} from '../shared/pianod.service';
-import {
-  StationSelectDialogComponent
-} from '../shared/station-select-dialog/station-select-dialog.component';
-
-import {ManageSeedsComponent} from './dialogs/manage-seeds.component';
-import {RenameDialogComponent} from './dialogs/rename-dialog.component';
+import {ManageSeedsComponent} from './manage-seeds.component';
 
 @Component({
   selector : 'app-stations',
@@ -21,11 +18,9 @@ import {RenameDialogComponent} from './dialogs/rename-dialog.component';
 
 export class StationsComponent implements OnInit {
   confirmDialogRef: MdDialogRef<ConfirmDialogComponent>;
-  selectStationDialogRef: MdDialogRef<StationSelectDialogComponent>;
-  renameDialogRef: MdDialogRef<RenameDialogComponent>;
+  renameDialogRef: MdDialogRef<InputDialogComponent>;
   manageSeedsRef: MdDialogRef<ManageSeedsComponent>;
   currentStation: string;
-  // stations = [];
   stationList: Array<string> = [];
   mixList: Array<string> = [];
   @Output() stationsModified = new EventEmitter();
@@ -47,7 +42,9 @@ export class StationsComponent implements OnInit {
   playStation(stationName) {
     this.pianodService.sendCmd(`PLAY STATION \"${stationName}\"`);
   }
+
   inMix(stationName) { return (this.mixList.indexOf(stationName) !== -1); }
+
   isPlaying(stationName) {
     if (this.inMix(stationName) && this.currentStation === 'mix QuickMix') {
       return true;
@@ -72,19 +69,6 @@ export class StationsComponent implements OnInit {
         });
   }
 
-  // deleteSeed(seedId) {
-  //   this.pianodService.sendCmd(`DELETE SEED ${seedId}`).then(res => {
-  //     if (!res.error) {
-  //       this.stations = this.stations.map(station => {
-  //         station.Seeds = station.Seeds.filter(seed => seed.ID !== seedId);
-  //         return station;
-  //       });
-  //       this.stationsModified.emit(
-  //           'Seed was successfully deleted from station.');
-  //     }
-  //   });
-  // }
-
   openManageSeeds(stationName) {
     this.manageSeedsRef =
         this.dialog.open(ManageSeedsComponent, {disableClose : false});
@@ -95,16 +79,18 @@ export class StationsComponent implements OnInit {
 
   openRenameDialog(stationName) {
     this.renameDialogRef =
-        this.dialog.open(RenameDialogComponent, {disableClose : true});
-    this.renameDialogRef.componentInstance.station = stationName;
+        this.dialog.open(InputDialogComponent, {disableClose : true});
+    this.renameDialogRef.componentInstance.title =
+        `Rename station ${stationName}`;
+    this.renameDialogRef.componentInstance.inputValue = stationName;
     this.renameDialogRef.afterClosed().subscribe((newName: string) => {
       if (newName) {
-        // console.log(newName);
         this.renameStation(stationName, newName);
       }
       this.renameDialogRef = null;
     });
   }
+
   renameStation(stationName, newName) {
     this.pianodService.sendCmd(
         `RENAME STATION \"${stationName}\" TO \"${newName}\"`);
@@ -122,20 +108,5 @@ export class StationsComponent implements OnInit {
       }
       this.confirmDialogRef = null;
     });
-  }
-
-  selectStation() {
-    this.selectStationDialogRef =
-        this.dialog.open(StationSelectDialogComponent);
-    this.selectStationDialogRef.componentInstance.stationList =
-        this.stationList;
-    this.selectStationDialogRef.componentInstance.dialogTitle = 'Play Station';
-    this.selectStationDialogRef.afterClosed().subscribe(
-        (selectedStation: string) => {
-          if (selectedStation) {
-            this.playStation(selectedStation);
-          }
-          this.selectStationDialogRef = null;
-        });
   }
 }

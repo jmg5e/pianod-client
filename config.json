@@ -1,5 +1,5 @@
 {
-    "testServer": {
+    "mockPianod": {
         "port": 4201,
         "host": "localhost"
     }

@@ -1,5 +1,4 @@
-@import '~@angular/material/core/theming/all-theme';
-
+@import '~@angular/material/theming';
 // NOTE: Theming is currently experimental and not yet publically released!
 
 @include mat-core();
@@ -22,4 +21,3 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
 @include angular-material-theme($theme);
 // @include angular-material-theme($dark-theme);
-

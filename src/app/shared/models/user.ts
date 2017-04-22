@@ -2,6 +2,7 @@ import {Message} from './message';
 
 export class User {
   private privileges: Privileges;
+  public name = '';
 
   constructor() {
 
@@ -14,15 +15,29 @@ export class User {
     };
   }
 
-  update(msg: Message) {
+  // set user name?
+  getUserInfo(): UserInfo {
+    return {name : this.name, privileges : this.privileges};
+  }
+
+  getPrivileges(): Privileges { return this.privileges; }
+
+  setPrivileges(msg: Message) {
     if (msg.code === 136) {
       // msg.content is just a string with all user privileges
-      this.privileges.admin = msg.content.includes('admin');
-      this.privileges.owner = msg.content.includes('owner');
-      this.privileges.service = msg.content.includes('service');
-      this.privileges.influence = msg.content.includes('influence');
-      this.privileges.tuner = msg.content.includes('tuner');
+      // TODO fix this
+      Object.assign(this, {
+        privileges : {
+          admin : msg.content.includes('admin'),
+          owner : msg.content.includes('owner'),
+          service : msg.content.includes('service'),
+          influence : msg.content.includes('influence'),
+          tuner : msg.content.includes('tuner')
+        }
+      });
     }
+
+    return this.getUserInfo();
   }
 }
 
@@ -32,4 +47,9 @@ export interface Privileges {
   service: boolean;
   influence: boolean;
   tuner: boolean;
+}
+
+export interface UserInfo {
+  name: string;
+  privileges: Privileges;
 }

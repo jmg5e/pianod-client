@@ -92,7 +92,7 @@ describe('LocalStorageService', () => {
   it('set connection default user should store user',
      inject([ LocalStorageService ], (service: LocalStorageService) => {
        const connectionToSave = {host : 'testHost', port : 1};
-       const userToSave = {user : 'testUser', pass : 'testPass'};
+       const userToSave = {username : 'testUser', password : 'testPass'};
        service.saveConnection('testHost', 1);
        service.setDefaultUser(connectionToSave, userToSave);
 
@@ -102,7 +102,7 @@ describe('LocalStorageService', () => {
            host : 'testHost',
            port : 1,
            auto_connect : false,
-           defaultUser : {user : 'testUser', pass : 'testPass'}
+           defaultUser : {username : 'testUser', password : 'testPass'}
          } ]
        });
      }));
@@ -110,7 +110,7 @@ describe('LocalStorageService', () => {
   it('get default user from connection should return correct results',
      inject([ LocalStorageService ], (service: LocalStorageService) => {
        const connectionToSave = {host : 'testHost', port : 1};
-       const userToSave = {user : 'testUser', pass : 'testPass'};
+       const userToSave = {username : 'testUser', password : 'testPass'};
        service.saveConnection('testHost', 1);
        service.setDefaultUser(connectionToSave, userToSave);
 
@@ -131,7 +131,7 @@ describe('LocalStorageService', () => {
      inject([ LocalStorageService ], (service: LocalStorageService) => {
        service.saveConnection('testHost', 1);
        service.setDefaultUser({host : 'testHost', port : 1},
-                              {user : 'testUser', pass : 'testPass'});
+                              {username : 'testUser', password : 'testPass'});
        service.removeDefaultUser({host : 'testHost', port : 1});
 
        const pianodStorage = localStorage.getItem('Pianod');

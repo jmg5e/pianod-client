@@ -7,15 +7,12 @@ import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/catch';
 
 import {Injectable} from '@angular/core';
-import * as Async from 'async';
+import queue from 'async-es/queue';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
-import {Message} from './models/message';
-import {Seed} from './models/seed';
-import {Song, SongInfo} from './models/song';
-import {User} from './models/user';
+import {Message, Seed, Song, SongInfo, User, UserInfo} from './models';
 
 @Injectable()
 export class PianodService {
@@ -28,17 +25,17 @@ export class PianodService {
   private currentStation = new BehaviorSubject<string>('');
   private stations = new Subject<any>();
   private mixList = new Subject<any>();
-  private user = new BehaviorSubject<User>(new User());
   private song: Song = new Song();
   private songInfo = new BehaviorSubject<SongInfo>(this.song.data);
-  private userInfo: User = new User();
+  private user: User = new User();
+  private userInfo = new BehaviorSubject<UserInfo>(this.user.getUserInfo());
   private socket: WebSocket;
   private q;
 
   constructor() {
     // limit concurrency of socket commands to 1
     // using libarary async js queue to solve this problem
-    this.q = Async.queue((cmd, done) => {
+    this.q = queue((cmd, done) => {
       this.doSendCmd(cmd).then(res => done(res)).catch(err => done(err));
     }, 1);
   }
@@ -47,7 +44,7 @@ export class PianodService {
   public getPlayback() { return this.playback.asObservable(); }
   public getErrors() { return this.error.asObservable(); }
   public getSong() { return this.songInfo.asObservable(); }
-  public getUser() { return this.user.asObservable(); }
+  public getUser() { return this.userInfo.asObservable(); }
   public getCurrentStation() { return this.currentStation.asObservable(); }
   public getStations() { return this.stations.asObservable(); }
   public getMixList() { return this.mixList.asObservable(); }
@@ -70,8 +67,9 @@ export class PianodService {
     const response = await this.getResponse();
     if (!response.error && response.msg === 'Connected') {
       this.connectionInfo = {host : host, port : port};
+      this.user = new User();
+      this.userInfo.next(this.user.getUserInfo());
       this.connected.next(true);
-      this.user.next(new User());
     }
 
     this.listen();
@@ -99,6 +97,15 @@ export class PianodService {
         (resolve, reject) => { this.q.push(cmd, (res) => resolve(res)); });
   }
 
+  public async login(userName, password) {
+    const response = await this.sendCmd(`USER ${userName} ${password}`);
+    if (!response.error) {
+      this.user.name = userName;
+    }
+
+    return response;
+  }
+
   public async getStationSeeds(stationName) {
     const seedResponse: any =
         await this.sendCmd(`station seeds \"${stationName}\"`);
@@ -106,17 +113,6 @@ export class PianodService {
     const seeds: Array<Seed> = seedResponse.data.map(
         (seed) => seed.reduce((obj, item) => Object.assign(obj, item), {}));
     return seeds;
-  }
-
-  private async updateStations() {
-    // get list of stations
-    const response = await this.sendCmd('stations');
-
-    const stations = response.data.reduce(
-        (results, dataPacket) => dataPacket.map(station => station.Station),
-        []);
-
-    return stations;
   }
 
   public async search(searchTerm, category) {
@@ -131,15 +127,25 @@ export class PianodService {
     return this.song.getSongRemainingTime();
   }
 
+  private async updateStations() {
+    // get list of stations
+    const response = await this.sendCmd('stations');
+
+    const stations = response.data.reduce(
+        (results, dataPacket) => dataPacket.map(station => station.Station),
+        []);
+
+    this.stations.next(stations);
+    return stations;
+  }
   private async updateMixList() {
     // get list of stations
     const response = await this.sendCmd('mix list');
 
-    // get list of stations from dataPacket and rename property
     const mixList = response.data.reduce(
         (results, dataPacket) => dataPacket.map(station => station.Station),
         []);
-
+    this.mixList.next(mixList);
     return mixList;
   }
 
@@ -164,7 +170,8 @@ export class PianodService {
     this.socket.onclose = () => {
       this.connectionInfo = undefined;
       this.connected.next(false);
-      this.user.next(new User());
+      this.user = new User();
+      this.userInfo.next(this.user.getUserInfo());
     };
   }
 
@@ -199,12 +206,9 @@ export class PianodService {
     const msgs = [];
 
     // observe response from socket messages
-    const pianodMsgs$ = Observable.fromEvent(this.socket, 'message');
-
-    // this works i think but breaks unit tests
-    // const pianodMsgs$= Observable.fromEvent(this.socket,
-    // 'message').timeout(this.responseTimeout, Promise.resolve({error: true,
-    // msg: 'TimeoutError'});
+    // const pianodMsgs$ = Observable.fromEvent(this.socket, 'message');
+    const pianodMsgs$ = Observable.fromEvent(this.socket, 'message')
+                            .timeout(this.responseTimeout);
 
     pianodMsgs$.filter((event: any) => Message.isValid(event.data))
         .map((event: any) => new Message(event.data))
@@ -215,7 +219,6 @@ export class PianodService {
               if (msg.error) {
                 response$.next({error : true, msg : msg.content, msgs : msgs});
                 response$.complete();
-                // end$.error({error : true, msg : msg.content, msgs : msgs});
               } else if (msg.code === 203) { // start of data request
                 if (dataRequest) {           // Multiple data packets
                   data.push(dataPacket);
@@ -240,10 +243,6 @@ export class PianodService {
               response$.next({error : true, msg : error.name});
               response$.complete();
             });
-
-    // setTimeout(response$.error('TimoutError'), this.responseTimeout);
-    //
-    // return Promise.race([ timeoutPromise, end$.toPromise() ]);
 
     return response$.toPromise();
   }
@@ -272,20 +271,19 @@ export class PianodService {
     }
     // stationList changed
     if (msg.code === 135) {
-      this.updateStations().then(stationList =>
-                                     this.stations.next(stationList));
+      this.updateStations();
     }
+
     // mixList changed
     if (msg.code === 134) {
-      this.updateMixList().then(mixList => this.mixList.next(mixList));
+      this.updateMixList();
     }
     // user logged in
     if (msg.code === 136) {
-      this.userInfo.update(msg);
-      this.user.next(this.userInfo);
-      this.updateStations().then(stationList =>
-                                     this.stations.next(stationList));
-      this.updateMixList().then(mixList => this.mixList.next(mixList));
+      this.user.setPrivileges(msg);
+      this.userInfo.next(this.user.getUserInfo());
+      this.updateStations();
+      this.updateMixList();
     }
   }
 

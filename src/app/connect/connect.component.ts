@@ -4,14 +4,12 @@ import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
+import {LoginDialogComponent} from '../shared/dialogs';
 import {
   Connection,
   LocalStorageService,
   LoginInfo
 } from '../shared/local-storage.service';
-import {
-  LoginDialogComponent
-} from '../shared/login-dialog/login-dialog.component';
 import {PianodService} from '../shared/pianod.service';
 
 @Component({
@@ -19,7 +17,8 @@ import {PianodService} from '../shared/pianod.service';
   templateUrl : './connect.component.html',
   styleUrls : [ './connect.component.scss' ]
 })
-
+// TODO this is bad! fix how auto connect here is implemented
+// should really move logic to service or someething
 export class ConnectComponent implements OnInit {
   connectForm;
   dialogRef: MdDialogRef<LoginDialogComponent>;
@@ -77,7 +76,7 @@ export class ConnectComponent implements OnInit {
   connect(host, port) {
     this.connecting = false;
     try {
-      this.pianodService.connect(host, port).then(res => {
+      this.pianodService.connect(host.trim(), port).then(res => {
         this.connecting = false;
         if (res.error) {
           this.snackBar.open('failed to connect to pianod', '', this.barConfig);

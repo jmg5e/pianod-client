@@ -1,41 +1,59 @@
 import {inject, TestBed} from '@angular/core/testing';
 
 import {Message} from './message';
-import {User} from './user';
+import {User, UserInfo} from './user';
 
 describe('User', () => {
   beforeEach(() => { TestBed.configureTestingModule({providers : [ User ]}); });
 
   it('user initial values should be correct', inject([ User ], (user: User) => {
        expect(user).toBeTruthy();
-
-       expect(user.privileges.admin).toBeFalsy();
-       expect(user.privileges.influence).toBeFalsy();
-       expect(user.privileges.owner).toBeFalsy();
-       expect(user.privileges.service).toBeFalsy();
-       expect(user.privileges.tuner).toBeFalsy();
+       expect(user.name).toEqual('');
+       expect(user.getPrivileges().admin).toBeFalsy();
+       expect(user.getPrivileges().influence).toBeFalsy();
+       expect(user.getPrivileges().owner).toBeFalsy();
+       expect(user.getPrivileges().service).toBeFalsy();
+       expect(user.getPrivileges().tuner).toBeFalsy();
      }));
-  it('update(msg) should correctly set properties',
+
+  it('setPrivileges(msg) should correctly set privileges',
      inject([ User ], (user: User) => {
        const mockMessage1 =
            new Message('136 Privileges: admin owner service influence tuner');
        const mockMessage2 =
            new Message('136 Privileges: admin service influence');
 
-       user.update(mockMessage1);
-       // TODO test all initial properties
-       expect(user.privileges.admin).toBeTruthy();
-       expect(user.privileges.owner).toBeTruthy();
-       expect(user.privileges.service).toBeTruthy();
-       expect(user.privileges.influence).toBeTruthy();
-       expect(user.privileges.tuner).toBeTruthy();
+       user.setPrivileges(mockMessage1);
+       expect(user.getPrivileges().admin).toBeTruthy();
+       expect(user.getPrivileges().owner).toBeTruthy();
+       expect(user.getPrivileges().service).toBeTruthy();
+       expect(user.getPrivileges().influence).toBeTruthy();
+       expect(user.getPrivileges().tuner).toBeTruthy();
 
-       user.update(mockMessage2);
-       expect(user.privileges.admin).toBeTruthy();
-       expect(user.privileges.owner).toBeFalsy();
-       expect(user.privileges.service).toBeTruthy();
-       expect(user.privileges.influence).toBeTruthy();
-       expect(user.privileges.tuner).toBeFalsy();
+       user.setPrivileges(mockMessage2);
+       expect(user.getPrivileges().admin).toBeTruthy();
+       expect(user.getPrivileges().owner).toBeFalsy();
+       expect(user.getPrivileges().service).toBeTruthy();
+       expect(user.getPrivileges().influence).toBeTruthy();
+       expect(user.getPrivileges().tuner).toBeFalsy();
      }));
 
+  it('getUserInfo() should return correct user properties',
+     inject([ User ], (user: User) => {
+       const mockMessage = new Message('136 Privileges: admin owner');
+
+       user.setPrivileges(mockMessage);
+       user.name = 'UserName';
+       const userInfo = user.getUserInfo();
+       expect(userInfo).toEqual({
+         'name' : 'UserName',
+         privileges : {
+           admin : true,
+           owner : true,
+           service : false,
+           influence : false,
+           tuner : false
+         }
+       });
+     }));
 });

@@ -1,11 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
-import {Seed} from '../shared/models/seed';
+import {StationSelectDialogComponent} from '../shared/dialogs';
+import {Seed} from '../shared/models';
 import {PianodService} from '../shared/pianod.service';
-import {
-  StationSelectDialogComponent
-} from '../shared/station-select-dialog/station-select-dialog.component';
 
 @Component({
   selector : 'app-search',
@@ -14,9 +12,7 @@ import {
 })
 
 export class SearchComponent implements OnInit {
-
   searchResults: Array<Seed>;
-  // @Input() stationList: Array<string>;
   stationList: Array<string>;
   category = 'Any';
   searching = false;
