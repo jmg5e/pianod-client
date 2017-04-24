@@ -1,4 +1,4 @@
-<app-connect [hidden]="connected"> </app-connect>
+<app-connect *ngIf="!connected"> </app-connect>
 <div class="app-container" *ngIf="connected">
     <md-toolbar [color]="user.privileges?.admin ? 'primary' : 'warn'">
         <span>Pianod Client</span>

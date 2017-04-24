@@ -5,9 +5,8 @@ import {
   OnInit
 } from '@angular/core';
 import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
-
 import {LoginComponent} from './login/login.component';
-// import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {ConnectService, LoginService} from './services';
 
 import {LocalStorageService} from './shared/local-storage.service';
 import {UserInfo} from './shared/models/user';
@@ -16,7 +15,8 @@ import {PianodService} from './shared/pianod.service';
 @Component({
   // changeDetection : ChangeDetectionStrategy.OnPush,
   selector : 'app-root',
-  templateUrl : './app.component.html'
+  templateUrl : './app.component.html',
+  providers : [ LoginService, ConnectService ],
 })
 
 export class AppComponent implements OnInit, OnDestroy {
@@ -27,8 +27,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService,
-              private snackBar: MdSnackBar) {
-    this.barConfig.duration = 3000;
+              private snackBar: MdSnackBar,
+              private connectService: ConnectService,
+              private loginService: LoginService) {
+
+    this.barConfig.duration = 2000;
   }
 
   ngOnInit() {
@@ -38,6 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.pianodService.getUser().subscribe(user => { this.user = user; });
 
     this.pianodService.getConnectionState().subscribe(connectedState => {
+
       // lost connection
       if (this.connected && connectedState === false) {
         this.showSnackBarMsg('Disconnected from pianod socket.');
@@ -47,6 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // is this really necessary?
     if (this.error) {
       this.error.unsubscribe();
     }

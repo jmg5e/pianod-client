@@ -11,32 +11,12 @@ import {PianodService} from '../shared/pianod.service';
 export class LoginComponent implements OnInit {
   dialogRef: MdDialogRef<LoginDialogComponent>;
   loginInfo: LoginInfo;
-  user$;
-  connected = false;
 
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService,
               public dialog: MdDialog) {}
 
-  ngOnInit() {
-    this.user$ = this.pianodService.getUser();
-    this.pianodService.getConnectionState().subscribe((connected) => {
-      // if connected for first time
-      if (connected && !this.connected) {
-        const defaultUser = this.getDefaultUser();
-        // auto login
-        if (defaultUser) {
-          this.login(defaultUser);
-        }
-      }
-      this.connected = connected;
-    });
-  }
-
-  private getDefaultUser() {
-    const connectionInfo = this.pianodService.connectionInfo;
-    return this.localStorageService.getDefaultUser(connectionInfo);
-  }
+  ngOnInit() {}
 
   openDialog() {
     this.dialogRef =
@@ -51,6 +31,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  // TODO validate input
   login(loginInfo) {
     this.pianodService.login(loginInfo.username, loginInfo.password);
   }

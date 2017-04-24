@@ -14,6 +14,7 @@ import {ControlsComponent} from './controls/controls.component';
 import {LoginComponent} from './login/login.component';
 import {NowPlayingComponent} from './now-playing/now-playing.component';
 import {SearchComponent} from './search/search.component';
+import {ConnectService, LoginService} from './services';
 import {
   ConfirmDialogComponent,
   InputDialogComponent,
@@ -40,7 +41,8 @@ import {StationsComponent} from './stations/stations.component';
     BrowserModule, BrowserAnimationsModule, MaterialModule.forRoot(),
     FormsModule, ReactiveFormsModule
   ],
-  providers : [ PianodService, LocalStorageService ],
+  providers :
+      [ PianodService, LocalStorageService ],
   bootstrap : [ AppComponent ]
 })
 export class AppModule {
