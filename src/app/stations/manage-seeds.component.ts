@@ -22,6 +22,7 @@ export class ManageSeedsComponent implements OnInit {
   ngOnInit() {
     this.pianodService.getStationSeeds(this.station).then(seeds => {
       this.seeds = seeds;
+      console.log(seeds);
     });
   }
 

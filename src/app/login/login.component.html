@@ -1,9 +1,9 @@
-<button md-menu-item (click)="openDialog()" *ngIf="!(user$ | async)?.privileges.admin">
+<button md-menu-item (click)="openDialog()" *ngIf="!user.privileges.admin">
         <md-icon>fingerprint</md-icon>
         <span>Login</span>
 </button>
 
-<button md-menu-item (click)="logout()" *ngIf="(user$ | async)?.privileges.admin">
+<button md-menu-item (click)="logout()" *ngIf="user.privileges.admin">
         <md-icon>exit_to_app</md-icon>
         <span>Logout</span>
 </button>

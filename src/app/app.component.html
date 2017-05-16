@@ -1,42 +1,35 @@
-<app-connect *ngIf="!connected"> </app-connect>
-<div class="app-container" *ngIf="connected">
+<div class="app-container">
     <md-toolbar [color]="user.privileges?.admin ? 'primary' : 'warn'">
         <span>Pianod Client</span>
         <span class="fill-space"> </span>
         <span class="fill-space center" *ngIf="user.name"> Welcome {{user.name}}</span>
         <md-menu #appMenu="mdMenu">
-            <app-login> </app-login>
+            <app-login [user]="user"> </app-login>
             <button md-menu-item (click)="disconnect()"> Disconect </button>
         </md-menu>
         <button md-icon-button [mdMenuTriggerFor]="appMenu">
           <md-icon>menu</md-icon>
         </button>
+        <md-toolbar-row style="justify-content:space-between">
+            <button md-button routerLink="/NowPlaying" routerLinkActive="btn-active">Now Playing</button>
+            <button md-button routerLink="/Stations" routerLinkActive="btn-active">Stations</button>
+            <button md-button routerLink="/Search" routerLinkActive="btn-active">Search</button>
+            <button md-button routerLink="/CommandLine" routerLinkActive="btn-active">Command Line</button>
+        </md-toolbar-row>
     </md-toolbar>
-    <md-tab-group class="tab-container" *ngIf="connected">
-        <md-tab>
-            <ng-template md-tab-label>
-                <em>Now Playing</em>
-            </ng-template>
-            <app-now-playing class="tab-content center"> </app-now-playing>
-        </md-tab>
-        <md-tab *ngIf="user.privileges?.admin">
-            <ng-template md-tab-label>
-                <em>Stations</em>
-            </ng-template>
-            <app-stations (stationsModified)="showSnackBarMsg($event)" class="tab-content"> </app-stations>
-        </md-tab>
-        <md-tab *ngIf="user.privileges?.admin">
-            <ng-template md-tab-label>
-                <em>Search</em>
-            </ng-template>
-            <app-search (stationsModified)="showSnackBarMsg($event)" class="tab-content"> </app-search>
-        </md-tab>
-        <md-tab *ngIf="user.privileges?.admin">
-            <ng-template md-tab-label>
-                <em>Command Line</em>
-            </ng-template>
-            <app-command-line class="tab-content center"> </app-command-line>
-        </md-tab>
-    </md-tab-group>
-    <app-controls class="control-bar" [privileges]="user.privileges"> </app-controls>
+    <!-- <nav> -->
+    <!--     <a routerLink="/NowPlaying" routerLinkActive="active">Now Playing</a> -->
+    <!--     <a routerLink="/Stations" routerLinkActive="active">Stations</a> -->
+    <!--     <a routerLink="/Search" routerLinkActive="active">Search</a> -->
+    <!--     <a routerLink="/CommandLine" routerLinkActive="active">Command Line</a> -->
+    <!-- </nav> -->
+  <div fxFlex>
+    <router-outlet></router-outlet>
+  </div>
+    <!-- </span > -->
+    <!-- </div> -->
+
+
+    <app-controls [privileges]="user.privileges" *ngIf="connected"> </app-controls>
+    <!-- </div> -->
 </div>

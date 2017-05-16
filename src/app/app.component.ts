@@ -5,9 +5,10 @@ import {
   OnInit
 } from '@angular/core';
 import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
+
 import {LoginComponent} from './login/login.component';
 import {ConnectService, LoginService} from './services';
-
 import {LocalStorageService} from './shared/local-storage.service';
 import {UserInfo} from './shared/models/user';
 import {PianodService} from './shared/pianod.service';
@@ -24,6 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
   connected = false;
   user: UserInfo;
   barConfig = new MdSnackBarConfig();
+  stationList: Observable<String[]>;
 
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService,

@@ -1,6 +1,10 @@
 <div class="station-list-container">
     <md-toolbar *ngFor="let station of stationList" class="station-bar">
         <span class="fill-space center"> {{station}}</span>
+
+        <button md-button (click)="selectStation(station)">
+            <span class="label-btn">go</span>
+          </button>
         <button md-button [ngClass]="{'active': inMix(station)}" (click)="toggleInMix(station)">
             <md-icon>playlist_add</md-icon>
             <span class="label-btn">Mix</span>
@@ -29,4 +33,8 @@
           </button>
         </md-menu>
     </md-toolbar>
+</div>
+<hr>
+<div *ngFor="let station of stations">
+    {{station}}
 </div>

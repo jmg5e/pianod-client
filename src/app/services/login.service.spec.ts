@@ -36,8 +36,8 @@ describe('LoginService', () => {
                        // provide instance of connect service
                        // is really testing to see if ConnectService auto
                        // connects as well
-                       this.connectService = new ConnectService(
-                           pianodService, localStorageService);
+                       // this.connectService = new ConnectService();
+                       // pianodService, localStorageService);
                        // this.pianodService
                        //     .connect(mockPianod.host, mockPianod.port)
                        //     .then(res => console.log(res));

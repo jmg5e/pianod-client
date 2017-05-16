@@ -1,6 +1,14 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
+import {Subscriber} from 'rxjs/Subscriber';
 
 import {
   ConfirmDialogComponent,
@@ -8,6 +16,7 @@ import {
 } from '../shared/dialogs';
 import {User} from '../shared/models/user';
 import {PianodService} from '../shared/pianod.service';
+
 import {ManageSeedsComponent} from './manage-seeds.component';
 
 @Component({
@@ -16,26 +25,33 @@ import {ManageSeedsComponent} from './manage-seeds.component';
   styleUrls : [ './stations.component.scss' ]
 })
 
-export class StationsComponent implements OnInit {
+export class StationsComponent implements OnInit, OnDestroy {
   confirmDialogRef: MdDialogRef<ConfirmDialogComponent>;
   renameDialogRef: MdDialogRef<InputDialogComponent>;
   manageSeedsRef: MdDialogRef<ManageSeedsComponent>;
   currentStation: string;
   stationList: Array<string> = [];
+  mixList$;
+  stationList$;
   mixList: Array<string> = [];
   @Output() stationsModified = new EventEmitter();
 
-  constructor(private pianodService: PianodService, public dialog: MdDialog) {}
+  constructor(private pianodService: PianodService, private router: Router,
+              public dialog: MdDialog) {}
 
   ngOnInit() {
     this.pianodService.getStations().subscribe(
         stationList => { this.stationList = stationList; });
 
-    this.pianodService.getMixList().subscribe((mixList) => this.mixList =
-                                                  mixList);
+    this.mixList$ = this.pianodService.getMixList().subscribe(
+        (mixList) => this.mixList = mixList);
 
-    this.pianodService.getCurrentStation().subscribe(
+    this.stationList$ = this.pianodService.getCurrentStation().subscribe(
         currentStation => this.currentStation = currentStation);
+  }
+  ngOnDestroy() {
+    this.mixList$.unsubscribe();
+    this.stationList$.unsubscribe();
   }
   playMix() { this.pianodService.sendCmd('PLAY MIX'); }
 
@@ -59,6 +75,7 @@ export class StationsComponent implements OnInit {
     this.pianodService.sendCmd(`MIX TOGGLE \"${stationName}\"`);
   }
 
+  selectStation(station) { this.router.navigate([ '/Stations', station ]); }
   deleteStation(stationName) {
     this.pianodService.sendCmd(`DELETE STATION \"${stationName}\"`)
         .then(res => {

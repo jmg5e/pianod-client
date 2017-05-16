@@ -1,9 +1,9 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {LoginDialogComponent} from '../shared/dialogs';
 import {LocalStorageService, LoginInfo} from '../shared/local-storage.service';
-import {User} from '../shared/models/user';
+import {UserInfo} from '../shared/models';
 import {PianodService} from '../shared/pianod.service';
 
 @Component({selector : 'app-login', templateUrl : './login.component.html'})
@@ -11,6 +11,7 @@ import {PianodService} from '../shared/pianod.service';
 export class LoginComponent implements OnInit {
   dialogRef: MdDialogRef<LoginDialogComponent>;
   loginInfo: LoginInfo;
+  @Input() user: UserInfo;
 
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService,

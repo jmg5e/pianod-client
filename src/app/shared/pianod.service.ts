@@ -10,6 +10,7 @@ import {Injectable} from '@angular/core';
 import queue from 'async-es/queue';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {ReplaySubject} from 'rxjs/ReplaySubject';
 import {Subject} from 'rxjs/Subject';
 
 import {Message, Seed, Song, SongInfo, User, UserInfo} from './models';
@@ -23,8 +24,8 @@ export class PianodService {
   private playback = new BehaviorSubject<string>('STOPPED');
   private error = new Subject<string>();
   private currentStation = new BehaviorSubject<string>('');
-  private stations = new Subject<any>();
-  private mixList = new Subject<any>();
+  private stations = new ReplaySubject<any>();
+  private mixList = new ReplaySubject<any>();
   private song: Song = new Song();
   private songInfo = new BehaviorSubject<SongInfo>(this.song.data);
   private user: User = new User();
@@ -40,13 +41,25 @@ export class PianodService {
     }, 1);
   }
 
-  public getConnectionState() { return this.connected.asObservable(); }
-  public getPlayback() { return this.playback.asObservable(); }
+  public getConnectionState(): Observable<boolean> {
+    return this.connected.asObservable();
+  }
+  public getPlayback(): Observable<string> {
+    return this.playback.asObservable();
+  }
   public getErrors() { return this.error.asObservable(); }
-  public getSong() { return this.songInfo.asObservable(); }
-  public getUser() { return this.userInfo.asObservable(); }
-  public getCurrentStation() { return this.currentStation.asObservable(); }
-  public getStations() { return this.stations.asObservable(); }
+  public getSong(): Observable<SongInfo> {
+    return this.songInfo.asObservable();
+  }
+  public getUser(): Observable<UserInfo> {
+    return this.userInfo.asObservable();
+  }
+  public getCurrentStation(): Observable<string> {
+    return this.currentStation.asObservable();
+  }
+  public getStations(): Observable<string[]> {
+    return this.stations.asObservable();
+  }
   public getMixList() { return this.mixList.asObservable(); }
 
   // should get a response when first connecting to socket
@@ -101,7 +114,7 @@ export class PianodService {
     const response = await this.sendCmd(`USER ${userName} ${password}`);
     if (!response.error) {
       this.user.name = userName;
-    }
+      }
 
     return response;
   }
@@ -183,13 +196,13 @@ export class PianodService {
       if (msg.error) {
         this.error.next(msg.content);
         dataRequest = false;
-      }
+        }
       if (msg.code === 203) {
         dataRequest = true;
-      }
+        }
       if (msg.code === 204) {
         dataRequest = false;
-      }
+        }
       if (!dataRequest) {
         this.updatePianod(msg);
       }
@@ -252,32 +265,32 @@ export class PianodService {
     if (msg.data) {
       this.song.update(msg.data);
       this.songInfo.next(this.song.data);
-    }
+      }
 
     if (msg.code > 100 && msg.code < 107) { // playback
       this.updatePlayback(msg);
       if (msg.code === 101) {
         this.song.setTime(msg.content);
       }
-    }
+      }
     // no station selected
     if (msg.code === 108) {
       this.currentStation.next('');
-    }
+      }
     // Selected  Station
     if (msg.code === 109) {
       this.currentStation.next(
           msg.data.SelectedStation.replace('station ', ''));
-    }
+      }
     // stationList changed
     if (msg.code === 135) {
       this.updateStations();
-    }
+      }
 
     // mixList changed
     if (msg.code === 134) {
       this.updateMixList();
-    }
+      }
     // user logged in
     if (msg.code === 136) {
       this.user.setPrivileges(msg);
