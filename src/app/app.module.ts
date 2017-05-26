@@ -38,7 +38,7 @@ import {StationsComponent} from './stations/stations.component';
     ManageSeedsComponent, InputDialogComponent
   ],
   imports : [
-    BrowserModule, BrowserAnimationsModule, MaterialModule.forRoot(),
+    BrowserModule, BrowserAnimationsModule, MaterialModule,
     FormsModule, ReactiveFormsModule
   ],
   providers :

@@ -6,48 +6,42 @@ import {Observable} from 'rxjs/Observable';
 
 // import {AutoConnectService} from '../services/auto-connect.service';
 import {LoginDialogComponent} from '../shared/dialogs';
-import {
-  Connection,
-  LocalStorageService,
-  LoginInfo
-} from '../shared/local-storage.service';
+import {Connection, LocalStorageService, LoginInfo} from '../shared/local-storage.service';
 import {PianodService} from '../shared/pianod.service';
 
 @Component({
-  selector : 'app-connect',
-  templateUrl : './connect.component.html',
-  styleUrls : [ './connect.component.scss' ]
+  selector: 'app-connect',
+  templateUrl: './connect.component.html',
+  styleUrls: ['./connect.component.scss']
 })
 
 export class ConnectComponent implements OnInit {
   connectForm;
   dialogRef: MdDialogRef<LoginDialogComponent>;
-  connecting = false; // show conecting spinner
+  connecting = false;  // show conecting spinner
   barConfig = new MdSnackBarConfig();
   storedConnections: Array<Connection>;
 
-  constructor(private pianodService: PianodService,
-              private snackBar: MdSnackBar, public dialog: MdDialog,
-              private localStorageService: LocalStorageService,
-              private fb: FormBuilder) {
-
+  constructor(
+      private pianodService: PianodService, private snackBar: MdSnackBar, public dialog: MdDialog,
+      private localStorageService: LocalStorageService, private fb: FormBuilder) {
     this.barConfig.duration = 3000;
 
     // TODO validate input!
-    this.connectForm = fb.group({
-      host : [ null, Validators.required ],
-      port : [ null, Validators.required ]
-    });
+    this.connectForm =
+        fb.group({host: [null, Validators.required], port: [null, Validators.required]});
     this.storedConnections = this.localStorageService.getStoredConnections();
   }
 
   ngOnInit() {}
 
-  submitForm(form) { this.connect(form.host.trim(), form.port); }
+  submitForm(form) {
+    this.connect(form.host.trim(), form.port);
+  }
 
   saveConnection(form) {
     if (form.host && form.port) {
-      this.localStorageService.saveConnection(form.host, form.port);
+      this.localStorageService.saveConnection(form.host.trim(), form.port);
       this.storedConnections = this.localStorageService.getStoredConnections();
     }
   }
@@ -73,22 +67,21 @@ export class ConnectComponent implements OnInit {
         .then(res => {
           this.connecting = false;
           if (res.error) {
-            this.snackBar.open('failed to connect to pianod', '',
-                               this.barConfig);
+            this.snackBar.open('failed to connect to pianod', '', this.barConfig);
           }
         })
-        .catch(err => { this.connecting = false; });
+        .catch(err => {
+          this.connecting = false;
+        });
   }
 
   setDefaultUser(connection: Connection) {
-    this.dialogRef =
-        this.dialog.open(LoginDialogComponent, {disableClose : false});
+    this.dialogRef = this.dialog.open(LoginDialogComponent, {disableClose: false});
 
     this.dialogRef.afterClosed().subscribe((loginInput: LoginInfo) => {
       if (loginInput) {
         this.localStorageService.setDefaultUser(connection, loginInput);
-        this.storedConnections =
-            this.localStorageService.getStoredConnections();
+        this.storedConnections = this.localStorageService.getStoredConnections();
       }
       this.dialogRef = null;
     });
