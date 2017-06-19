@@ -20,7 +20,7 @@ describe('Song', () => {
        expect(song.data.Artist).toEqual('Taylor Swift');
      }));
 
-  it('song clearSong() should clear song data and return empty object',
+  it('clearSong() should clear song data and return empty object',
      inject([ Song ], (song: Song) => {
        song.update({Artist : 'Taylor Swift'});
        expect(song.data.Artist).toBeDefined();
@@ -29,132 +29,131 @@ describe('Song', () => {
        expect(song.data.Artist).toBeUndefined();
      }));
 
-  it('song played,total and remainingTime should be 0 if not set',
+  it('playedTime,totalTime and remainingTime should be 0 if not set',
      inject([ Song ], (song: Song) => {
-       expect(song.playedTime.minutes).toEqual(0);
-       expect(song.playedTime.seconds).toEqual(0);
-
        expect(song.remainingTime.minutes).toEqual(0);
        expect(song.remainingTime.seconds).toEqual(0);
+
+       expect(song.playedTime.minutes).toEqual(0);
+       expect(song.playedTime.seconds).toEqual(0);
 
        expect(song.totalTime.minutes).toEqual(0);
        expect(song.totalTime.seconds).toEqual(0);
      }));
 
-  it('song setTime should get and set correct values from string',
+  it('setTime should get and set correct values from string',
      inject([ Song ], (song: Song) => {
        const timeMessage = '101 01:46/04:09/-02:22 Playing';
        song.setTime(timeMessage);
-       expect(song.playedTime.minutes).toEqual(1);
-       expect(song.playedTime.seconds).toEqual(46);
+       expect(song.remainingTime.minutes).toEqual(2);
+       expect(song.remainingTime.seconds).toEqual(22);
 
        expect(song.totalTime.minutes).toEqual(4);
        expect(song.totalTime.seconds).toEqual(9);
 
-       expect(song.remainingTime.minutes).toEqual(2);
-       expect(song.remainingTime.seconds).toEqual(22);
+       expect(song.playedTime.minutes).toEqual(1);
+       expect(song.playedTime.seconds).toEqual(46);
      }));
 
-  it('getSongRemainingTime should emit value of 0 time if not set',
+  it('getSongPlayedTime should emit value of 0 time if not set',
      fakeAsync(inject([ Song ], (song: Song) => {
-       let remainingTime;
 
-       song.getSongRemainingTime().subscribe(newRemaingTime => {
-         remainingTime = newRemaingTime;
-         expect(newRemaingTime).toEqual('0:00');
+       let playedTime;
+       song.getSongPlayedTime().subscribe(newPlayedTime => {
+        playedTime = newPlayedTime.toString();
+         expect(playedTime).toEqual('0:00');
        });
-
        song.startTimer();
        tick(60000);
-       expect(remainingTime).toEqual('0:00');
+       expect(playedTime).toEqual('0:00');
        discardPeriodicTasks();
      })));
 
-  it('song startTimer should decrement remainingTime',
+  it('startTimer() should increment playedTime',
      fakeAsync(inject([ Song ], (song: Song) => {
        const timeMessage = '101 01:46/04:09/-02:22 Playing';
-       let remainingTime;
+       let playedTime;
        song.setTime(timeMessage);
        song.startTimer();
 
-       song.getSongRemainingTime().skip(1).subscribe(newRemainingTime => {
-         remainingTime = newRemainingTime;
+       song.getSongPlayedTime().skip(1).subscribe(newPlayedTime => {
+        playedTime = newPlayedTime.toString();
        });
 
        tick(3000);
-       expect(remainingTime).toEqual('2:19');
+       expect(playedTime).toEqual('1:49');
        discardPeriodicTasks();
      })));
 
-  it('song remainingTime should be correct after a given amount of time',
+  it('song playedTime should be correct after a given amount of time',
      fakeAsync(inject([ Song ], (song: Song) => {
        const timeMessage = '101 01:46/04:09/-02:22 Playing';
-       let remainingTime = {};
+       let playedTime = {};
        song.setTime(timeMessage);
-       song.getSongRemainingTime().subscribe(
-           newRemaingTime => { remainingTime = newRemaingTime; });
+       song.getSongPlayedTime().subscribe(
+           newPlayedTime => { playedTime = newPlayedTime; });
 
        song.startTimer();
-       tick(22000);
-       expect(remainingTime).toEqual('2:00');
-       tick(68000); // 90 seconds or 1 minute 30 seconds passed
-       expect(remainingTime).toEqual('0:52');
+       tick(15000); // 15 seconds
+       expect(playedTime.toString()).toEqual('2:01');
+       tick(90000); // 90 seconds
+       expect(playedTime.toString()).toEqual('3:31');
        discardPeriodicTasks();
      })));
 
-  it('stopTimer should stop updating remainingTime',
+  it('stopTimer should stop updating playedTime',
      fakeAsync(inject([ Song ], (song: Song) => {
        const timeMessage = '101 01:46/04:09/-02:22 Playing';
-       let remainingTime = {};
+       let playedTime; // = {};
        song.setTime(timeMessage);
-       song.getSongRemainingTime().subscribe(
-           newRemaingTime => { remainingTime = newRemaingTime; });
+       song.getSongPlayedTime().subscribe(
+           newPlayedTime => { playedTime = newPlayedTime; });
 
        song.startTimer();
-       tick(22000);
-       expect(remainingTime).toEqual('2:00');
+       tick(15000);
+       expect(playedTime.toString()).toEqual('2:01');
        song.stopTimer();
-       tick(68000); // 90 seconds or 1 minute 30 seconds passed
-       expect(remainingTime).toEqual('2:00');
+       tick(90000); // 90 seconds
+       expect(playedTime.toString()).toEqual('2:01');
        discardPeriodicTasks();
      })));
 
-  it('RemainingTime should be correct after a given amount of time with muiltiple starts and stops',
+  it('playedTime should be correct after a given amount of time with muiltiple starts and stops',
      fakeAsync(inject([ Song ], (song: Song) => {
        const timeMessage = '101 01:46/04:09/-02:22 Playing';
-       let remainingTime = {};
+       let playedTime = {};
        song.setTime(timeMessage);
-       song.getSongRemainingTime().subscribe(
-           newRemaingTime => { remainingTime = newRemaingTime; });
+       song.getSongPlayedTime().subscribe(
+           newPlayedTime => { playedTime = newPlayedTime; });
 
        song.startTimer();
-       tick(22000);
+       tick(16000);
        song.stopTimer();
        tick(12000);
-       expect(remainingTime).toEqual('2:00');
+       expect(playedTime.toString()).toEqual('2:02');
        song.startTimer();
        tick(60000);
-       expect(remainingTime).toEqual('1:00');
+       expect(playedTime.toString()).toEqual('3:02');
        song.stopTimer();
        tick(19000);
-       expect(remainingTime).toEqual('1:00');
+       expect(playedTime.toString()).toEqual('3:02');
        song.startTimer();
        tick(58000);
-       expect(remainingTime).toEqual('0:02');
+       expect(playedTime.toString()).toEqual('4:00');
        discardPeriodicTasks();
      })));
 
-  it('remainingTime should never be negative',
+  xit('playedTime should never be greater than totalTime',
      fakeAsync(inject([ Song ], (song: Song) => {
        const timeMessage = '101 01:46/04:09/-02:22 Playing';
-       let remainingTime = {};
+       let playedTime = {};
        song.setTime(timeMessage);
-       song.getSongRemainingTime().subscribe(
-           newRemaingTime => { remainingTime = newRemaingTime; });
+       song.getSongPlayedTime().subscribe(
+           newPlayedTime => { playedTime = newPlayedTime; });
        song.startTimer();
        tick(222000);
        tick(60000);
-       expect(remainingTime).toEqual('0:00');
+       expect(playedTime.toString()).toEqual('4:09');
        discardPeriodicTasks();
      })));
 

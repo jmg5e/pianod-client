@@ -1,5 +1,4 @@
 import 'rxjs/add/observable/timer';
-// import 'rxjs/add/observable/asObservable';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/takeWhile';
@@ -7,7 +6,6 @@ import 'rxjs/add/operator/takeWhile';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
-
 import {SongTime} from './song-time';
 
 export class Song {
@@ -15,7 +13,7 @@ export class Song {
   public totalTime: SongTime;
   public playedTime: SongTime;
   public remainingTime: SongTime;
-  private remainingTime$: BehaviorSubject<SongTime>;
+  private playedTime$: BehaviorSubject<SongTime>;
   private isPlaying = false;
   public songCountDown: Subscription;
 
@@ -23,33 +21,34 @@ export class Song {
     this.totalTime = new SongTime();
     this.playedTime = new SongTime();
     this.remainingTime = new SongTime();
-    this.remainingTime$ = new BehaviorSubject(this.remainingTime);
-    this.data.totalTime = this.totalTime.toString();
+    this.playedTime$ = new BehaviorSubject(this.playedTime);
+    this.data.totalTime = this.totalTime;
   }
 
-  public update(data) { Object.assign(this.data, data); }
+  public update(data) {
+    Object.assign(this.data, data);
+  }
 
   public clearSong(): SongInfo {
     this.data = {} as SongInfo;
-    this.data.totalTime = this.totalTime.toString();
+    this.data.totalTime = this.totalTime;
     return this.data;
   }
 
-  public getSongRemainingTime(): Observable<string> {
-    return this.remainingTime$.asObservable().map(remainingTime =>
-                                                      remainingTime.toString());
+  public getSongPlayedTime(): Observable<SongTime> {
+    return this.playedTime$.asObservable();  // .map(playedTime => playedTime.toString());
   }
 
   public startTimer() {
     if (!this.isPlaying) {
       this.isPlaying = true;
-      this.updateRemainingTime();
+      this.updatePlayedTime();
     }
   }
 
   public stopTimer() {
     this.isPlaying = false;
-    this.remainingTime = this.remainingTime$.getValue();
+    this.playedTime = this.playedTime$.getValue();
     // save played time, total time?
   }
 
@@ -57,7 +56,7 @@ export class Song {
     this.totalTime.clear();
     this.playedTime.clear();
     this.remainingTime.clear();
-    this.remainingTime$.next(this.remainingTime);
+    this.playedTime$.next(this.playedTime);
   }
 
   // set played, remaining and total time from string
@@ -66,23 +65,17 @@ export class Song {
   // Ex: 00:57/06:30/-05:32 Playing
   public setTime(timeMsg: string) {
     const timeMatch = timeMsg.match(new RegExp(
-        '([0-9]{2})\\:([0-9]{2})/([0-9]{2})\\:([0-9]{2})/\\-([0-9]{2})\\:([0-9]{2})',
-        'i'));
+        '([0-9]{2})\\:([0-9]{2})/([0-9]{2})\\:([0-9]{2})/\\-([0-9]{2})\\:([0-9]{2})', 'i'));
     if (timeMatch !== null && timeMatch.length === 7) {
-      this.playedTime =
-          new SongTime(parseInt(timeMatch[1], 10), parseInt(timeMatch[2], 10));
-      this.totalTime =
-          new SongTime(parseInt(timeMatch[3], 10), parseInt(timeMatch[4], 10));
-      this.remainingTime =
-          new SongTime(parseInt(timeMatch[5], 10), parseInt(timeMatch[6], 10));
-
-      this.data.totalTime = this.totalTime.toString();
-      this.updateRemainingTime();
+      this.playedTime = new SongTime(parseInt(timeMatch[1], 10), parseInt(timeMatch[2], 10));
+      this.totalTime = new SongTime(parseInt(timeMatch[3], 10), parseInt(timeMatch[4], 10));
+      this.remainingTime = new SongTime(parseInt(timeMatch[5], 10), parseInt(timeMatch[6], 10));
+      this.data.totalTime = this.totalTime;  // .toString();
+      this.updatePlayedTime();
     }
   }
 
-  private updateRemainingTime() {
-
+  private updatePlayedTime() {
     if (this.songCountDown) {
       this.songCountDown.unsubscribe();
     }
@@ -90,20 +83,19 @@ export class Song {
     this.songCountDown =
         Observable.timer(0, 1000)
             .takeWhile(
-                () => (this.isPlaying && this.remainingTime.toSeconds() > 0))
-            .map(timer => this.remainingTime.toSeconds() - timer)
+                () => (this.isPlaying && this.playedTime.toSeconds() <= this.totalTime.toSeconds()))
+            .map(timer => this.playedTime.toSeconds() + timer)
             .take(this.remainingTime.toSeconds() + 1)
             .map(timeInSeconds => {
-              const remainingTime = new SongTime();
-              remainingTime.setTimeFromSeconds(timeInSeconds);
-              return remainingTime;
+              const playedTime = new SongTime();
+              playedTime.setTimeFromSeconds(timeInSeconds);
+              return playedTime;
             })
-            .subscribe((newRemainingTime: SongTime) => {
-              this.remainingTime$.next(newRemainingTime);
-              // this.remainingTime = newRemainingTime;
+            .subscribe((newPlayedTime: SongTime) => {
+              this.playedTime$.next(newPlayedTime);
             });
   }
-}
+  }
 
 export interface SongInfo {
   ID: string;
@@ -116,5 +108,5 @@ export interface SongInfo {
   UserRating: string;
   SelectedStation: string;
   Rating: string;
-  totalTime: string;
+  totalTime: SongTime;
 }

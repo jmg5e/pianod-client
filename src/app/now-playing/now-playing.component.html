@@ -7,9 +7,11 @@
         <md-card-subtitle><label> Station: </label> {{(song | async)?.Station}}</md-card-subtitle>
     </md-card-title-group>
     <md-card-content>
-        <h3>
-            <span> {{remainingTime | async}} /</span>
+        <h3 align="center">
+            <span> {{(playedTime | async).toString()}} /</span>
             <span>{{(song | async)?.totalTime?.toString()}} </span>
-        </h3>
+        </h3> 
+        <!-- potential issue(dividing by 0?) -->
+        <md-progress-bar mode="determinate" [value]="(playedTime | async).toSeconds() / (song | async)?.totalTime?.toSeconds() * 100"></md-progress-bar>
     </md-card-content>
 </md-card>
