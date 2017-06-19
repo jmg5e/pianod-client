@@ -19,7 +19,7 @@ describe('LoginService', () => {
       'storedConnections' : [ {
         'host' : mockPianod.host,
         'port' : mockPianod.port,
-        'auto_connect' : true,
+        'isDefault' : true,
         'defaultUser' : {'username' : 'userName', 'password' : 'validPass'}
       } ]
     };

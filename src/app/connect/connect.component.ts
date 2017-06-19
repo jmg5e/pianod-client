@@ -4,7 +4,6 @@ import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
-// import {AutoConnectService} from '../services/auto-connect.service';
 import {LoginDialogComponent} from '../shared/dialogs';
 import {Connection, LocalStorageService, LoginInfo} from '../shared/local-storage.service';
 import {PianodService} from '../shared/pianod.service';
@@ -46,8 +45,8 @@ export class ConnectComponent implements OnInit {
     }
   }
 
-  toggleAutoConnect(connection: Connection) {
-    this.localStorageService.toggleAutoConnect(connection);
+  toggleDefaultConnection(connection: Connection) {
+    this.localStorageService.toggleDefaultConnection(connection);
     this.storedConnections = this.localStorageService.getStoredConnections();
   }
 

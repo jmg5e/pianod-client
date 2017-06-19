@@ -19,7 +19,7 @@ describe('LocalStorageService', () => {
        service.saveConnection('testHost', 1);
        const expected = {
          storedConnections :
-             [ {host : 'testHost', port : 1, auto_connect : false} ]
+             [ {host : 'testHost', port : 1, isDefault: false} ]
        };
        const pianodStorage = window.localStorage.getItem('Pianod');
        expect(JSON.parse(pianodStorage)).toEqual(expected);
@@ -32,8 +32,8 @@ describe('LocalStorageService', () => {
        service.saveConnection('test', 2);
        const expected = {
          storedConnections : [
-           {host : 'test', port : 1, auto_connect : false},
-           {host : 'test', port : 2, auto_connect : false}
+           {host : 'test', port : 1, isDefault : false},
+           {host : 'test', port : 2, isDefault : false}
          ]
        };
        const pianodStorage = window.localStorage.getItem('Pianod');
@@ -43,7 +43,7 @@ describe('LocalStorageService', () => {
   it('service should return stored connections fronm local storage',
      inject([ LocalStorageService ], (service: LocalStorageService) => {
        service.saveConnection('testHost', 1);
-       const expected = [ {host : 'testHost', port : 1, auto_connect : false} ];
+       const expected = [ {host : 'testHost', port : 1, isDefault : false} ];
        const storedConnections = service.getStoredConnections();
        expect(storedConnections).toEqual(expected);
      }));
@@ -53,38 +53,38 @@ describe('LocalStorageService', () => {
        service.saveConnection('testHost', 1);
        service.saveConnection('testHost', 2);
        service.deleteSavedConnection({host : 'testHost', port : 1});
-       const expected = [ {host : 'testHost', port : 2, auto_connect : false} ];
+       const expected = [ {host : 'testHost', port : 2, isDefault : false} ];
        const storedConnections = service.getStoredConnections();
        expect(storedConnections).toEqual(expected);
      }));
 
-  it('toggle auto_connect should set correct value for all stored connections',
+  it('toggle isDefault should set correct value for all stored connections',
      inject([ LocalStorageService ], (service: LocalStorageService) => {
        service.saveConnection('testHost', 1);
        service.saveConnection('testHost', 2);
        service.saveConnection('testHost', 3);
 
-       service.toggleAutoConnect({host : 'testHost', port : 1});
+       service.toggleDefaultConnection({host : 'testHost', port : 1});
        const expectedAfterToggle1 = [
-         {host : 'testHost', port : 1, auto_connect : true},
-         {host : 'testHost', port : 2, auto_connect : false},
-         {host : 'testHost', port : 3, auto_connect : false}
+         {host : 'testHost', port : 1, isDefault : true},
+         {host : 'testHost', port : 2, isDefault : false},
+         {host : 'testHost', port : 3, isDefault : false}
        ];
        expect(service.getStoredConnections()).toEqual(expectedAfterToggle1);
 
-       service.toggleAutoConnect({host : 'testHost', 'port' : 2});
+       service.toggleDefaultConnection({host : 'testHost', 'port' : 2});
        const expectedAfterToggle2 = [
-         {host : 'testHost', 'port' : 1, auto_connect : false},
-         {host : 'testHost', 'port' : 2, auto_connect : true},
-         {host : 'testHost', 'port' : 3, auto_connect : false}
+         {host : 'testHost', 'port' : 1, isDefault : false},
+         {host : 'testHost', 'port' : 2, isDefault : true},
+         {host : 'testHost', 'port' : 3, isDefault : false}
        ];
        expect(service.getStoredConnections()).toEqual(expectedAfterToggle2);
 
-       service.toggleAutoConnect({host : 'testHost', 'port' : 2});
+       service.toggleDefaultConnection({host : 'testHost', 'port' : 2});
        const expectedAfterToggle3 = [
-         {host : 'testHost', port : 1, auto_connect : false},
-         {host : 'testHost', port : 2, auto_connect : false},
-         {host : 'testHost', port : 3, auto_connect : false}
+         {host : 'testHost', port : 1, isDefault : false},
+         {host : 'testHost', port : 2, isDefault : false},
+         {host : 'testHost', port : 3, isDefault : false}
        ];
        expect(service.getStoredConnections()).toEqual(expectedAfterToggle3);
      }));
@@ -101,7 +101,7 @@ describe('LocalStorageService', () => {
          storedConnections : [ {
            host : 'testHost',
            port : 1,
-           auto_connect : false,
+           isDefault : false,
            defaultUser : {username : 'testUser', password : 'testPass'}
          } ]
        });
@@ -137,7 +137,7 @@ describe('LocalStorageService', () => {
        const pianodStorage = localStorage.getItem('Pianod');
        expect(JSON.parse(pianodStorage)).toEqual({
          storedConnections :
-             [ {host : 'testHost', port : 1, auto_connect : false} ]
+             [ {host : 'testHost', port : 1, isDefault : false} ]
        });
      }));
 });

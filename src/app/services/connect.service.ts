@@ -6,19 +6,19 @@ import {PianodService} from '../shared/pianod.service';
 @Injectable()
 export class ConnectService {
 
-  savedAutoConnection;
+  defaultConnection;
   constructor(private pianodService: PianodService,
               private localStorageService: LocalStorageService) {
 
-    this.savedAutoConnection = this.getAutoConnection();
-    if (this.savedAutoConnection) {
-      this.connect(this.savedAutoConnection);
+    this.defaultConnection = this.getDefaultConnection();
+    if (this.defaultConnection) {
+      this.connect(this.defaultConnection);
     }
   }
 
-  private getAutoConnection() {
+  private getDefaultConnection() {
     const storedConnections = this.localStorageService.getStoredConnections();
-    return storedConnections.find(conn => conn.auto_connect);
+    return storedConnections.find(conn => conn.isDefault);
   }
 
   private connect(connectionInfo: Connection) {

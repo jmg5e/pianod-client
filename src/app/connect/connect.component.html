@@ -45,7 +45,7 @@
         <!-- <button md&#45;raised&#45;button (click)="removeDefaultUser(connection)"> remove </button> -->
     </md-toolbar-row>
     <md-toolbar-row>
-        <md-checkbox [ngModel]="connection.auto_connect" (change)="toggleAutoConnect(connection)">Auto Connect</md-checkbox>
+        <md-checkbox [ngModel]="connection.isDefault" (change)="toggleDefaultConnection(connection)">Default Connection</md-checkbox>
         <span class="fill-space"></span>
         <button md-raised-button (click)="deleteSavedConnection(connection)"> Delete </button>
         <button md-raised-button (click)="connect(connection.host, connection.port)"> Connect </button>

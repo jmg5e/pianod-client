@@ -16,7 +16,7 @@ export class LocalStorageService {
   public saveConnection(host: string, port: number) {
     if (!this.connectionExists({host : host, port : port})) {
       const storedConnections = this.get('storedConnections');
-      storedConnections.push({host : host, port : port, auto_connect : false});
+      storedConnections.push({host : host, port : port, isDefault : false});
       this.save('storedConnections', storedConnections);
       this.storedConnections = storedConnections;
     }
@@ -28,12 +28,12 @@ export class LocalStorageService {
     this.save('storedConnections', this.storedConnections);
   }
 
-  public toggleAutoConnect(connection: Connection) {
+  public toggleDefaultConnection(connection: Connection) {
     this.storedConnections = this.storedConnections.map(x => {
       if (x.port === connection.port && x.host === connection.host) {
-        x.auto_connect = !x.auto_connect;
+        x.isDefault = !x.isDefault;
       } else {
-        x.auto_connect = false;
+        x.isDefault = false;
       }
       return x;
     });
@@ -126,7 +126,7 @@ export class LocalStorageService {
 export interface Connection {
   port: number;
   host: string;
-  auto_connect?: boolean;
+  isDefault?: boolean;
   defaultUser?: LoginInfo;
 }
 
