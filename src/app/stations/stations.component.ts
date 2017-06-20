@@ -1,13 +1,13 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
 import {
   ConfirmDialogComponent,
   InputDialogComponent,
-} from '../shared/dialogs';
-import {User} from '../shared/models/user';
-import {PianodService} from '../shared/pianod.service';
+} from '../dialogs';
+import {User} from '../models';
+import {PianodService} from '../services';
 import {ManageSeedsComponent} from './manage-seeds.component';
 
 @Component({
@@ -21,18 +21,15 @@ export class StationsComponent implements OnInit {
   renameDialogRef: MdDialogRef<InputDialogComponent>;
   manageSeedsRef: MdDialogRef<ManageSeedsComponent>;
   currentStation: string;
-  stationList: Array<string> = [];
-  mixList: Array<string> = [];
-  @Output() stationsModified = new EventEmitter();
+  stationList: Observable<Array<string>>;
+  mixList: Observable<Array<string>>;
 
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.pianodService.getStations().subscribe(
-        stationList => { this.stationList = stationList; });
+    this.stationList = this.pianodService.getStations();
 
-    this.pianodService.getMixList().subscribe((mixList) => this.mixList =
-                                                  mixList);
+    this.mixList = this.pianodService.getMixList();
 
     this.pianodService.getCurrentStation().subscribe(
         currentStation => this.currentStation = currentStation);
@@ -43,30 +40,26 @@ export class StationsComponent implements OnInit {
     this.pianodService.sendCmd(`PLAY STATION \"${stationName}\"`);
   }
 
-  inMix(stationName) { return (this.mixList.indexOf(stationName) !== -1); }
-
-  isPlaying(stationName) {
-    if (this.inMix(stationName) && this.currentStation === 'mix QuickMix') {
-      return true;
-    } else if (stationName === this.currentStation) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   toggleInMix(stationName) {
-    this.pianodService.sendCmd(`MIX TOGGLE \"${stationName}\"`);
+    this.pianodService.toggleStationInMix(stationName);
   }
 
   deleteStation(stationName) {
     this.pianodService.sendCmd(`DELETE STATION \"${stationName}\"`)
         .then(res => {
           if (!res.error) {
-            this.stationsModified.emit('Station ' + stationName +
-                                       ' was successfully deleted.');
+            // this.stationsModified.emit('Station ' + stationName +
+            //                            ' was successfully deleted.');
           }
         });
+  }
+
+  stationIsPlaying(station): Observable<boolean> {
+    return this.pianodService.stationIsPlaying(station);
+  }
+
+  stationIsInMix(station): Observable<boolean> {
+    return this.pianodService.stationIsInMix(station);
   }
 
   openManageSeeds(stationName) {

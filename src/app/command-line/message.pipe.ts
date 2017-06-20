@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Message} from '../shared/models/message';
+import {Message} from '../models/message';
 @Pipe({name : 'display_message'})
 export class MessagePipe implements PipeTransform {
 

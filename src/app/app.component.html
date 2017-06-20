@@ -1,42 +1,46 @@
-<app-connect *ngIf="!connected"> </app-connect>
-<div class="app-container" *ngIf="connected">
-    <md-toolbar [color]="user.privileges?.admin ? 'primary' : 'warn'">
-        <span>Pianod Client</span>
-        <span class="fill-space"> </span>
-        <span class="fill-space center" *ngIf="user.name"> Welcome {{user.name}}</span>
-        <md-menu #appMenu="mdMenu">
-            <app-login> </app-login>
-            <button md-menu-item (click)="disconnect()"> Disconect </button>
-        </md-menu>
-        <button md-icon-button [mdMenuTriggerFor]="appMenu">
-          <md-icon>menu</md-icon>
-        </button>
-    </md-toolbar>
-    <md-tab-group class="tab-container" *ngIf="connected">
-        <md-tab>
-            <ng-template md-tab-label>
-                <em>Now Playing</em>
-            </ng-template>
-            <app-now-playing class="tab-content center"> </app-now-playing>
-        </md-tab>
-        <md-tab *ngIf="user.privileges?.admin">
-            <ng-template md-tab-label>
-                <em>Stations</em>
-            </ng-template>
-            <app-stations (stationsModified)="showSnackBarMsg($event)" class="tab-content"> </app-stations>
-        </md-tab>
-        <md-tab *ngIf="user.privileges?.admin">
-            <ng-template md-tab-label>
-                <em>Search</em>
-            </ng-template>
-            <app-search (stationsModified)="showSnackBarMsg($event)" class="tab-content"> </app-search>
-        </md-tab>
-        <md-tab *ngIf="user.privileges?.admin">
-            <ng-template md-tab-label>
-                <em>Command Line</em>
-            </ng-template>
-            <app-command-line class="tab-content center"> </app-command-line>
-        </md-tab>
-    </md-tab-group>
-    <app-controls class="control-bar" [privileges]="user.privileges"> </app-controls>
+<div class="app-container">
+  <router-outlet></router-outlet>
 </div>
+
+<!-- <app&#45;connect *ngIf="!connected"> </app&#45;connect> -->
+<!-- <div class="app&#45;container" *ngIf="connected"> -->
+<!--     <md&#45;toolbar [color]="user.privileges?.admin ? 'primary' : 'warn'"> -->
+<!--         <span>Pianod Client</span> -->
+<!--         <span class="fill&#45;space"> </span> -->
+<!--         <span class="fill&#45;space center" *ngIf="user.name"> Welcome {{user.name}}</span> -->
+<!--         <md&#45;menu #appMenu="mdMenu"> -->
+<!--             <app&#45;login> </app&#45;login> -->
+<!--             <button md&#45;menu&#45;item (click)="disconnect()"> Disconect </button> -->
+<!--         </md&#45;menu> -->
+<!--         <button md&#45;icon&#45;button [mdMenuTriggerFor]="appMenu"> -->
+<!--           <md&#45;icon>menu</md&#45;icon> -->
+<!--         </button> -->
+<!--     </md&#45;toolbar> -->
+<!--     <md&#45;tab&#45;group class="tab&#45;container" *ngIf="connected"> -->
+<!--         <md&#45;tab> -->
+<!--             <ng&#45;template md&#45;tab&#45;label> -->
+<!--                 <em>Now Playing</em> -->
+<!--             </ng&#45;template> -->
+<!--             <app&#45;now&#45;playing class="tab&#45;content center"> </app&#45;now&#45;playing> -->
+<!--         </md&#45;tab> -->
+<!--         <md&#45;tab *ngIf="user.privileges?.admin"> -->
+<!--             <ng&#45;template md&#45;tab&#45;label> -->
+<!--                 <em>Stations</em> -->
+<!--             </ng&#45;template> -->
+<!--             <app&#45;stations (stationsModified)="showSnackBarMsg($event)" class="tab&#45;content"> </app&#45;stations> -->
+<!--         </md&#45;tab> -->
+<!--         <md&#45;tab *ngIf="user.privileges?.admin"> -->
+<!--             <ng&#45;template md&#45;tab&#45;label> -->
+<!--                 <em>Search</em> -->
+<!--             </ng&#45;template> -->
+<!--             <app&#45;search (stationsModified)="showSnackBarMsg($event)" class="tab&#45;content"> </app&#45;search> -->
+<!--         </md&#45;tab> -->
+<!--         <md&#45;tab *ngIf="user.privileges?.admin"> -->
+<!--             <ng&#45;template md&#45;tab&#45;label> -->
+<!--                 <em>Command Line</em> -->
+<!--             </ng&#45;template> -->
+<!--             <app&#45;command&#45;line class="tab&#45;content center"> </app&#45;command&#45;line> -->
+<!--         </md&#45;tab> -->
+<!--     </md&#45;tab&#45;group> -->
+<!--     <app&#45;controls class="control&#45;bar" [privileges]="user.privileges"> </app&#45;controls> -->
+<!-- </div> -->

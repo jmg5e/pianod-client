@@ -1,20 +1,25 @@
 <div class="station-list-container">
-    <md-toolbar *ngFor="let station of stationList" class="station-bar">
-        <span class="fill-space center"> {{station}}</span>
-        <button md-button [ngClass]="{'active': inMix(station)}" (click)="toggleInMix(station)">
+    <md-toolbar *ngFor="let station of stationList | async" class="station-bar">
+        <!-- <button md&#45;button [ngClass]="{'active': inMix(station)}" (click)="toggleInMix(station)"> -->
+          <button md-button (click)="playStation(station)"  [style.color]="(stationIsPlaying(station) | async) ? 'blue' : ''">
+            <md-icon [style.color]="(stationIsPlaying(station) | async) ? 'blue' : ''">play_arrow</md-icon>
+            <span>Play</span>
+          </button>
+          <button md-button (click)="toggleInMix(station)"  [style.color]="(stationIsInMix(station) | async) ? 'blue' : ''">
             <md-icon>playlist_add</md-icon>
             <span class="label-btn">Mix</span>
           </button>
+        <span class="fill-space center"> {{station}}</span>
         <button md-icon-button [mdMenuTriggerFor]="stationMenu"><md-icon>menu</md-icon></button>
         <md-menu #stationMenu="mdMenu">
-            <button md-menu-item (click)="playStation(station)">
-            <md-icon>play_arrow</md-icon>
-            <span>play</span>
-          </button>
-            <button md-menu-item>
-            <md-icon>playlist_add</md-icon>
-            <span>Mix</span>
-          </button>
+          <!--   <button md&#45;menu&#45;item (click)="playStation(station)"> -->
+          <!--   <md&#45;icon>play_arrow</md&#45;icon> -->
+          <!--   <span>play</span> -->
+          <!-- </button> -->
+          <!--   <button md&#45;menu&#45;item> -->
+          <!--   <md&#45;icon>playlist_add</md&#45;icon> -->
+          <!--   <span>Mix</span> -->
+          <!-- </button> -->
             <button md-menu-item (click)="openManageSeeds(station)">
             <md-icon>settings</md-icon>
             <span>Manage Seeds</span>

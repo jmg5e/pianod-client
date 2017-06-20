@@ -8,7 +8,7 @@ describe('User', () => {
 
   it('user initial values should be correct', inject([ User ], (user: User) => {
        expect(user).toBeTruthy();
-       expect(user.name).toEqual('');
+       expect(user.name).toBeUndefined();
        expect(user.getPrivileges().admin).toBeFalsy();
        expect(user.getPrivileges().influence).toBeFalsy();
        expect(user.getPrivileges().owner).toBeFalsy();

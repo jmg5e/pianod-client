@@ -1,31 +1,40 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
 
-import {StationSelectDialogComponent} from '../shared/dialogs';
-import {PianodService} from '../shared/pianod.service';
+import {StationSelectDialogComponent} from '../dialogs';
+import {PianodService} from '../services';
 
 @Component({
-  selector : 'app-controls',
-  templateUrl : './controls.component.html',
-  styleUrls : [ './controls.component.scss' ]
+  selector: 'app-controls',
+  templateUrl: './controls.component.html',
+  styleUrls: ['./controls.component.scss']
 })
-export class ControlsComponent implements OnInit {
+
+export class ControlsComponent implements OnInit, OnDestroy {
   selectStationDialogRef: MdDialogRef<StationSelectDialogComponent>;
   playback: Observable<string>;
-  playbackOptions = [ 'PLAYING', 'PAUSED', 'STOPPED' ];
+  playbackOptions = ['PLAYING', 'PAUSED', 'STOPPED'];
   currentStation: Observable<string>;
   stationList: Array<string>;
+  stationList$: Subscription;
   @Input() privileges;
 
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
     this.playback = this.pianodService.getPlayback();
-    this.pianodService.getStations().subscribe(stations => this.stationList =
-                                                   stations);
+    this.stationList$ = this.pianodService.getStations().subscribe(stations => this.stationList = stations);
     this.currentStation = this.pianodService.getCurrentStation();
   }
+
+  ngOnDestroy() {
+    if(this.stationList$) {
+      this.stationList$.unsubscribe();
+    }
+  }
+
   play() {
     if (this.privileges.admin) {
       this.pianodService.sendCmd('PLAY');
@@ -57,17 +66,14 @@ export class ControlsComponent implements OnInit {
   }
 
   selectStation() {
-    this.selectStationDialogRef =
-        this.dialog.open(StationSelectDialogComponent);
-    this.selectStationDialogRef.componentInstance.stationList =
-        this.stationList;
+    this.selectStationDialogRef = this.dialog.open(StationSelectDialogComponent);
+    this.selectStationDialogRef.componentInstance.stationList = this.stationList;
     this.selectStationDialogRef.componentInstance.dialogTitle = 'Play Station';
-    this.selectStationDialogRef.afterClosed().subscribe(
-        (selectedStation: string) => {
-          if (selectedStation) {
-            this.playStation(selectedStation);
-          }
-          this.selectStationDialogRef = null;
-        });
+    this.selectStationDialogRef.afterClosed().subscribe((selectedStation: string) => {
+      if (selectedStation) {
+        this.playStation(selectedStation);
+      }
+      this.selectStationDialogRef = null;
+    });
   }
 }

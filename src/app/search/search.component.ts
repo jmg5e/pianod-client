@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
-import {StationSelectDialogComponent} from '../shared/dialogs';
-import {Seed} from '../shared/models';
-import {PianodService} from '../shared/pianod.service';
+import {StationSelectDialogComponent} from '../dialogs';
+import {Seed} from '../models';
+import {PianodService} from '../services';
 
 @Component({
   selector : 'app-search',
@@ -17,7 +17,6 @@ export class SearchComponent implements OnInit {
   category = 'Any';
   searching = false;
   selectStationDialogRef: MdDialogRef<StationSelectDialogComponent>;
-  @Output() stationsModified = new EventEmitter();
 
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
@@ -40,7 +39,7 @@ export class SearchComponent implements OnInit {
     this.pianodService.sendCmd(`CREATE STATION FROM SUGGESTION ${seed.ID}`)
         .then(res => {
           if (!res.error) {
-            this.stationsModified.emit('New station was succesfully created.');
+            // this.stationsModified.emit('New station was succesfully created.');
           }
         });
   }
@@ -67,8 +66,8 @@ export class SearchComponent implements OnInit {
         .sendCmd(`ADD SEED FROM SUGGESTION ${seedId} TO \"${stationName}\"`)
         .then((res) => {
           if (!res.error) {
-            this.stationsModified.emit('New seed was succesfully added to ' +
-                                       stationName);
+            // this.stationsModified.emit('New seed was succesfully added to ' +
+            //                            stationName);
           }
         });
   }

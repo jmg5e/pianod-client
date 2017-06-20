@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 
 import {MessagePipe} from './message.pipe';
-import {Message} from '../shared/models/message';
-import {PianodService} from '../shared/pianod.service';
+import {Message} from '../models/message';
+import {PianodService} from '../services';
 
 @Component({
   selector : 'app-command-line',

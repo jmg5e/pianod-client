@@ -2,10 +2,9 @@ import {Message} from './message';
 
 export class User {
   private privileges: Privileges;
-  public name = '';
+  public name : string;
 
   constructor() {
-
     this.privileges = {
       admin : false,
       owner : false,
@@ -15,7 +14,6 @@ export class User {
     };
   }
 
-  // set user name?
   getUserInfo(): UserInfo {
     return {name : this.name, privileges : this.privileges};
   }
@@ -25,7 +23,6 @@ export class User {
   setPrivileges(msg: Message) {
     if (msg.code === 136) {
       // msg.content is just a string with all user privileges
-      // TODO fix this
       Object.assign(this, {
         privileges : {
           admin : msg.content.includes('admin'),

@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 // import {RouterModule, Routes} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
-import {SongInfo, SongTime} from '../shared/models';
-import {PianodService} from '../shared/pianod.service';
+import {SongInfo, SongTime} from '../models';
+import {PianodService} from '../services';
 
 @Component({
   selector: 'app-now-playing',
@@ -16,8 +16,7 @@ export class NowPlayingComponent implements OnInit {
   constructor(private pianodService: PianodService) {}
 
   ngOnInit() {
-    this.playedTime =
-        this.pianodService.getSongPlayedTime();
+    this.playedTime = this.pianodService.getSongPlayedTime();
     // .map(playedTime => playedTime.toString());
     // this.pianodService.getSong().subscribe(song => this.song = song);
     this.song = this.pianodService.getSong();

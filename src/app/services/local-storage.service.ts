@@ -14,9 +14,9 @@ export class LocalStorageService {
   }
 
   public saveConnection(host: string, port: number) {
-    if (!this.connectionExists({host : host, port : port})) {
+    if (!this.connectionExists({host: host, port: port})) {
       const storedConnections = this.get('storedConnections');
-      storedConnections.push({host : host, port : port, isDefault : false});
+      storedConnections.push({host: host, port: port, isDefault: false});
       this.save('storedConnections', storedConnections);
       this.storedConnections = storedConnections;
     }
@@ -34,20 +34,26 @@ export class LocalStorageService {
         x.isDefault = !x.isDefault;
       } else {
         x.isDefault = false;
-      }
+        }
       return x;
     });
     this.save('storedConnections', this.storedConnections);
   }
 
-  public getStoredConnections() { return this.storedConnections; }
+  public getStoredConnections() {
+    return this.storedConnections;
+  }
+
+  public getDefaultConnection() {
+    return this.storedConnections.find(conn => conn.isDefault);
+  }
 
   public setDefaultUser(connection: Connection, defaultUser: LoginInfo) {
     if (this.connectionExists(connection)) {
       this.storedConnections = this.storedConnections.map(cn => {
         if (cn.host === connection.host && cn.port === connection.port) {
           cn.defaultUser = defaultUser;
-        }
+          }
         return cn;
       });
       this.save('storedConnections', this.storedConnections);
@@ -59,7 +65,7 @@ export class LocalStorageService {
       this.storedConnections = this.storedConnections.map(cn => {
         if (cn.host === connection.host && cn.port === connection.port) {
           delete cn.defaultUser;
-        }
+          }
         return cn;
       });
       this.save('storedConnections', this.storedConnections);
@@ -67,8 +73,7 @@ export class LocalStorageService {
   }
   public getDefaultUser(connection: Connection) {
     return this.storedConnections
-        .filter(cn =>
-                    cn.port === connection.port && cn.host === connection.host)
+        .filter(cn => cn.port === connection.port && cn.host === connection.host)
         .map(cn => cn.defaultUser)
         .reduce((defaultUser, user) => defaultUser = user);
   }
@@ -90,7 +95,7 @@ export class LocalStorageService {
     const data = JSON.parse(window.localStorage.getItem('Pianod'));
     if (!data) {
       return undefined;
-    }
+      }
 
     if (name) {
       if (data[name]) {
@@ -98,7 +103,7 @@ export class LocalStorageService {
       } else {
         return null;
       }
-    }
+      }
     return data;
   }
 
@@ -112,23 +117,21 @@ export class LocalStorageService {
   }
 
   private connectionExists(connection: Connection) {
-    if (this.storedConnections
-            .filter(x => x.port === connection.port &&
-                         x.host === connection.host)
+    if (this.storedConnections.filter(x => x.port === connection.port && x.host === connection.host)
             .length > 0) {
       return true;
     } else {
       return false;
     }
   }
-}
+  }
 
 export interface Connection {
   port: number;
   host: string;
   isDefault?: boolean;
   defaultUser?: LoginInfo;
-}
+  }
 
 export interface LoginInfo {
   username: string;
