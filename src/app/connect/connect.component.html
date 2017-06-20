@@ -48,7 +48,7 @@
         <md-checkbox [ngModel]="connection.isDefault" (change)="toggleDefaultConnection(connection)">Default Connection</md-checkbox>
         <span class="fill-space"></span>
         <button md-raised-button (click)="deleteSavedConnection(connection)"> Delete </button>
-        <button md-raised-button (click)="connect(connection.host, connection.port)"> Connect </button>
+        <button md-raised-button (click)="connect(connection)"> Connect </button>
     </md-toolbar-row>
     </md-toolbar>
     </md-card>

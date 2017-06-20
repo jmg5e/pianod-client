@@ -4,9 +4,9 @@ import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
-import {LoginDialogComponent} from '../shared/dialogs';
-import {Connection, LocalStorageService, LoginInfo} from '../shared/local-storage.service';
-import {PianodService} from '../shared/pianod.service';
+import {LoginDialogComponent} from '../dialogs';
+import {Connection, LoginInfo} from '../models';
+import {ConnectService, LocalStorageService, PianodService} from '../services';
 
 @Component({
   selector: 'app-connect',
@@ -16,17 +16,18 @@ import {PianodService} from '../shared/pianod.service';
 
 export class ConnectComponent implements OnInit {
   connectForm;
-  dialogRef: MdDialogRef<LoginDialogComponent>;
+  loginDialogRef: MdDialogRef<LoginDialogComponent>;
   connecting = false;  // show conecting spinner
   barConfig = new MdSnackBarConfig();
   storedConnections: Array<Connection>;
 
   constructor(
       private pianodService: PianodService, private snackBar: MdSnackBar, public dialog: MdDialog,
-      private localStorageService: LocalStorageService, private fb: FormBuilder) {
+      private localStorageService: LocalStorageService, private connectService: ConnectService,
+      private fb: FormBuilder) {
     this.barConfig.duration = 3000;
 
-    // TODO validate input!
+    // TODO use custom validator
     this.connectForm =
         fb.group({host: [null, Validators.required], port: [null, Validators.required]});
     this.storedConnections = this.localStorageService.getStoredConnections();
@@ -35,11 +36,16 @@ export class ConnectComponent implements OnInit {
   ngOnInit() {}
 
   submitForm(form) {
-    this.connect(form.host.trim(), form.port);
+    if (ConnectService.isValidConnection(form.host.trim(), form.port)) {
+      const connection = {host: form.host.trim(), port: form.port};
+      this.connect(connection);
+    } else {
+      // console.log('invalid connection');
+    }
   }
 
   saveConnection(form) {
-    if (form.host && form.port) {
+    if (ConnectService.isValidConnection(form.host.trim(), form.port)) {
       this.localStorageService.saveConnection(form.host.trim(), form.port);
       this.storedConnections = this.localStorageService.getStoredConnections();
     }
@@ -60,13 +66,15 @@ export class ConnectComponent implements OnInit {
     this.storedConnections = this.localStorageService.getStoredConnections();
   }
 
-  connect(host, port) {
+  connect(connection: Connection) {
     this.connecting = false;
-    this.pianodService.connect(host.trim(), port)
+    this.connectService.connect(connection)
         .then(res => {
           this.connecting = false;
           if (res.error) {
-            this.snackBar.open('failed to connect to pianod', '', this.barConfig);
+            this.snackBar.open('Failed to connect to pianod.', '', this.barConfig);
+          } else {
+            this.snackBar.open('Connected to pianod.', '', this.barConfig);
           }
         })
         .catch(err => {
@@ -74,15 +82,17 @@ export class ConnectComponent implements OnInit {
         });
   }
 
+  // TODO validate user input
   setDefaultUser(connection: Connection) {
-    this.dialogRef = this.dialog.open(LoginDialogComponent, {disableClose: false});
+    this.loginDialogRef = this.dialog.open(LoginDialogComponent, {disableClose: false});
 
-    this.dialogRef.afterClosed().subscribe((loginInput: LoginInfo) => {
+    this.loginDialogRef.componentInstance.dialogTitle = 'Set Default User';
+    this.loginDialogRef.afterClosed().subscribe((loginInput: LoginInfo) => {
       if (loginInput) {
         this.localStorageService.setDefaultUser(connection, loginInput);
         this.storedConnections = this.localStorageService.getStoredConnections();
       }
-      this.dialogRef = null;
+      this.loginDialogRef = null;
     });
   }
 }
