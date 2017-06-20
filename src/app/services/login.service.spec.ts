@@ -20,9 +20,7 @@ describe('LoginService', () => {
       }]
     };
     window.localStorage.setItem('Pianod', JSON.stringify(storage));
-    TestBed.configureTestingModule({
-      providers: [PianodService, LocalStorageService]
-    });
+    TestBed.configureTestingModule({providers: [PianodService, LocalStorageService]});
   });
 
   // loginService depends on PianodService & LoginService
@@ -34,13 +32,13 @@ describe('LoginService', () => {
       })));
 
   it('should create instance of login service', (done) => {
-    let loginService = new LoginService(this.localStorageService, this.pianodService);
+    const loginService = new LoginService(this.localStorageService, this.pianodService);
     expect(LoginService).toBeTruthy();
     done();
   });
 
   it('tryAutoLogin should login to pianod with valid user after connecting to pianod', (done) => {
-    let loginService = new LoginService(this.localStorageService, this.pianodService);
+    const loginService = new LoginService(this.localStorageService, this.pianodService);
     loginService.tryAutoLogin();
     this.pianodService.getUser().take(2).toArray().subscribe(users => {
       expect(users[0].name).toBeUndefined();

@@ -9,6 +9,15 @@ import {PianodService} from './pianod.service';
 export class ConnectService {
   private connected: boolean;
 
+  // probably more ideal to validate input in component form
+  static isValidConnection(host: string, port: number) {
+    const validHost =
+        /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/
+            .test(host);
+    const validPort = Number.isInteger(port) && port > 0 && port < 65535;
+    return validHost && validPort;
+  }
+
   constructor(
       private pianodService: PianodService, private localStorageService: LocalStorageService,
       private router: Router) {
@@ -41,15 +50,6 @@ export class ConnectService {
     if (defaultConnection) {
       this.connect(defaultConnection);
     }
-  }
-
-  // probably more ideal to validate input in component form
-  public static isValidConnection(host: string, port: number) {
-    let validHost =
-        /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/
-            .test(host);
-    let validPort = Number.isInteger(port) && port > 0 && port < 65535;
-    return validHost && validPort;
   }
 
   public connect(connectionInfo: Connection) {

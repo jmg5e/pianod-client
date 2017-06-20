@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, OnDestroy} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
@@ -25,12 +25,13 @@ export class ControlsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.playback = this.pianodService.getPlayback();
-    this.stationList$ = this.pianodService.getStations().subscribe(stations => this.stationList = stations);
+    this.stationList$ =
+        this.pianodService.getStations().subscribe(stations => this.stationList = stations);
     this.currentStation = this.pianodService.getCurrentStation();
   }
 
   ngOnDestroy() {
-    if(this.stationList$) {
+    if (this.stationList$) {
       this.stationList$.unsubscribe();
     }
   }
