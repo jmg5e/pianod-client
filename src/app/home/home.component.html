@@ -1,46 +1,30 @@
-<md-toolbar [color]="(user | async)?.privileges?.admin ? 'primary' : 'warn'">
+<div fxFlexFill fxLayout="column">
+  <md-toolbar color="primary" fxLayoutWrap="wrap">
     <span>Pianod Client</span>
     <span class="fill-space"> </span>
-    <span class="fill-space center" *ngIf="(user | async)?.name"> Welcome {{(user | async).name}}</span>
+    <span class="fill-space center welcome-user" *ngIf="(user | async)?.name"> Welcome {{(user | async).name}}</span>
     <button md-button (click)="login()" *ngIf="!(user | async)?.privileges.admin">
-            <md-icon>fingerprint</md-icon>
-            <span>Login</span>
+      <md-icon>fingerprint</md-icon>
+      <span>Login</span>
     </button>
     <md-menu #appMenu="mdMenu">
-        <button md-menu-item (click)="logout()" *ngIf="(user | async)?.privileges.admin">
-                <md-icon>exit_to_app</md-icon>
-                <span>Logout</span>
-        </button>
-        <button md-menu-item (click)="disconnect()">Disconnect</button>
+      <button md-menu-item (click)="logout()" *ngIf="(user | async)?.privileges.admin">
+          <md-icon>exit_to_app</md-icon>
+          <span>Logout</span>
+      </button>
+      <button md-menu-item (click)="disconnect()">Disconnect</button>
     </md-menu>
     <button md-icon-button [mdMenuTriggerFor]="appMenu">
-      <md-icon>menu</md-icon>
+        <md-icon>menu</md-icon>
     </button>
-</md-toolbar>
-<md-tab-group class="tab-container">
-    <md-tab>
-        <ng-template md-tab-label>
-            <em>Now Playing</em>
-        </ng-template>
-        <app-now-playing class="tab-content center"> </app-now-playing>
-    </md-tab>
-    <md-tab *ngIf="(user | async)?.privileges.admin">
-        <ng-template md-tab-label>
-            <em>Stations</em>
-        </ng-template>
-        <app-stations  class="tab-content"> </app-stations>
-    </md-tab>
-    <md-tab *ngIf="(user | async)?.privileges.admin">
-        <ng-template md-tab-label>
-            <em>Search</em>
-        </ng-template>
-        <app-search class="tab-content"> </app-search>
-    </md-tab>
-    <md-tab *ngIf="(user | async)?.privileges.admin">
-        <ng-template md-tab-label>
-            <em>Command Line</em>
-        </ng-template>
-        <app-command-line class="tab-content center"> </app-command-line>
-    </md-tab>
-</md-tab-group>
-<app-controls *ngIf="(user | async)?.privileges.admin" class="control-bar" [privileges]="(user | async)?.privileges"> </app-controls>
+  </md-toolbar>
+  <nav md-tab-nav-bar aria-label="navigation links" class="navigationBar">
+    <a md-tab-link *ngFor="let routeLink of routeLinks; let i = index" [routerLink]="routeLink.link" skipLocationChange [active]="activeLinkIndex === i" (click)="activeLinkIndex = i">
+         {{routeLink.label}}
+     </a>
+  </nav>
+  <div fxLayout="column" fxFlex="1 1 auto">
+    <router-outlet></router-outlet>
+  </div>
+  <app-controls *ngIf="(user | async)?.privileges.admin" class="control-bar" [privileges]="(user | async)?.privileges"> </app-controls>
+</div>

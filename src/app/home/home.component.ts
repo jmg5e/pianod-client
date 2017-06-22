@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
@@ -16,6 +16,8 @@ import {LoginService, PianodService} from '../services';
 export class HomeComponent implements OnInit, OnDestroy {
   user: Observable<UserInfo>;
   loginDialogRef: MdDialogRef<LoginDialogComponent>;
+  routeLinks: any[];
+  activeLinkIndex = 0;
 
   constructor(
       private pianodService: PianodService, private loginService: LoginService,
@@ -24,8 +26,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.user = this.pianodService.getUser();
     this.loginService.tryAutoLogin();
-  }
 
+    this.routeLinks = [
+      {label: 'Now Playing', link: 'NowPlaying'}, {label: 'Stations', link: 'Stations'},
+      {label: 'Search', link: 'Search'}
+    ];
+  }
   ngOnDestroy() {}
 
   disconnect() {

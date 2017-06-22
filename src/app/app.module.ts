@@ -1,6 +1,7 @@
 import 'hammerjs';
 
 import {NgModule} from '@angular/core';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
@@ -11,25 +12,24 @@ import {AppRoutingModule, routingComponents} from './app.routing';
 import {MessagePipe} from './command-line/message.pipe';
 import {ControlsComponent} from './controls/controls.component';
 import {ConfirmDialogComponent, InputDialogComponent, LoginDialogComponent, StationSelectDialogComponent} from './dialogs';
-// import {HomeComponent} from './home/home.component';
 import {LocalStorageService} from './services/local-storage.service';
 import {PianodService} from './services/pianod.service';
 import {ManageSeedsComponent} from './stations/manage-seeds.component';
-// import {StationsComponent} from './stations/stations.component';
+import { SeedComponent } from './search/seed/seed.component';
 
 @NgModule({
   declarations: [
     AppComponent, routingComponents, ControlsComponent, LoginDialogComponent,
     ConfirmDialogComponent, StationSelectDialogComponent, ManageSeedsComponent,
-    InputDialogComponent, MessagePipe
+    InputDialogComponent, MessagePipe, SeedComponent
   ],
   entryComponents: [
     LoginDialogComponent, ConfirmDialogComponent, StationSelectDialogComponent,
     ManageSeedsComponent, InputDialogComponent
   ],
   imports: [
-    BrowserModule, BrowserAnimationsModule, MaterialModule, FormsModule, ReactiveFormsModule,
-    AppRoutingModule
+    BrowserModule, BrowserAnimationsModule, MaterialModule, FlexLayoutModule, FormsModule,
+    ReactiveFormsModule, AppRoutingModule
   ],
   providers: [PianodService, LocalStorageService],
   bootstrap: [AppComponent]

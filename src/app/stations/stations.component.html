@@ -1,37 +1,38 @@
-<div class="station-list-container">
-    <md-toolbar *ngFor="let station of stationList | async" class="station-bar">
-        <!-- <button md&#45;button [ngClass]="{'active': inMix(station)}" (click)="toggleInMix(station)"> -->
-          <button md-button (click)="playStation(station)"  [style.color]="(stationIsPlaying(station) | async) ? 'blue' : ''">
-            <md-icon [style.color]="(stationIsPlaying(station) | async) ? 'blue' : ''">play_arrow</md-icon>
-            <span>Play</span>
-          </button>
-          <button md-button (click)="toggleInMix(station)"  [style.color]="(stationIsInMix(station) | async) ? 'blue' : ''">
-            <md-icon>playlist_add</md-icon>
-            <span class="label-btn">Mix</span>
-          </button>
-        <span class="fill-space center"> {{station}}</span>
-        <button md-icon-button [mdMenuTriggerFor]="stationMenu"><md-icon>menu</md-icon></button>
-        <md-menu #stationMenu="mdMenu">
-          <!--   <button md&#45;menu&#45;item (click)="playStation(station)"> -->
-          <!--   <md&#45;icon>play_arrow</md&#45;icon> -->
-          <!--   <span>play</span> -->
-          <!-- </button> -->
-          <!--   <button md&#45;menu&#45;item> -->
-          <!--   <md&#45;icon>playlist_add</md&#45;icon> -->
-          <!--   <span>Mix</span> -->
-          <!-- </button> -->
-            <button md-menu-item (click)="openManageSeeds(station)">
-            <md-icon>settings</md-icon>
-            <span>Manage Seeds</span>
-          </button>
-            <button md-menu-item (click)="openRenameDialog(station)">
-            <md-icon>edit</md-icon>
-            <span>Rename</span>
-          </button>
-            <button md-menu-item (click)="openConfirmDialog(station)">
-            <md-icon>delete</md-icon>
-            <span>delete</span>
-          </button>
-        </md-menu>
-    </md-toolbar>
-</div>
+<md-card *ngFor="let station of stationList | async" class="station">
+  <md-card-title>
+    <span fxFlexAlign="center center" fxFlex="1 1 auto" class="station-title">{{station}} </span>
+
+    <button md-button [mdMenuTriggerFor]="stationMenu" fxFlexAlign="flex-end">
+          <md-icon>settings</md-icon>
+      </button>
+  </md-card-title>
+
+  <md-card-content fxLayoutAlign="start center" fxLayoutGap="20%">
+    <button md-button (click)="playStation(station)" [style.color]="(stationIsPlaying(station) | async) ? 'blue' : ''">
+        <md-icon [style.color]="(stationIsPlaying(station) | async) ? 'blue' : ''">play_arrow</md-icon>
+        <span class="label-btn">Play</span>
+      </button>
+    <button md-button [color]="(stationIsInMix(station) | async) ? 'primary' : ''" fxLayoutAlign="space-between center" (click)="toggleInMix(station)">
+          <!-- <md&#45;icon>playlist_play</md&#45;icon> -->
+        <md-slide-toggle [color]="(stationIsInMix(station) | async) ? 'primary' : ''" [checked]="(stationIsInMix(station) | async)">
+          Mix
+        </md-slide-toggle>
+      </button>
+    <span class="fill-space"> </span>
+
+    <md-menu #stationMenu="mdMenu">
+      <button md-menu-item (click)="openManageSeeds(station)">
+        <md-icon>settings</md-icon>
+        <span>Manage Seeds</span>
+      </button>
+      <button md-menu-item (click)="openRenameDialog(station)">
+        <md-icon>edit</md-icon>
+        <span>Rename</span>
+      </button>
+      <button md-menu-item (click)="openConfirmDialog(station)">
+        <md-icon>delete</md-icon>
+        <span>delete</span>
+      </button>
+    </md-menu>
+  </md-card-content>
+</md-card>

@@ -16,7 +16,11 @@ const routes: Routes = [
     component: HomeComponent,
     canActivate: [ConnectedGuard],
     children: [
-      {path: 'Stations', component: StationsComponent, outlet: 'Stations'},
+      // {path: '', redirectTo: 'NowPlaying', pathMatch: 'full'},
+      {path: '', component: NowPlayingComponent},
+      {path: 'NowPlaying', component: NowPlayingComponent},
+      {path: 'Stations', component: StationsComponent},
+      {path: 'Search', component: SearchComponent},
     ]
   }
 ];

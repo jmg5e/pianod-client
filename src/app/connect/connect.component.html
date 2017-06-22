@@ -1,56 +1,45 @@
-<div class="container center">
-    <div class="connecting-container" *ngIf="connecting">
-        <div class="connecting-spinner">
-            <h1> CONNECTING </h1>
-            <md-progress-spinner mode="indeterminate" class="spinner">
-            </md-progress-spinner>
-        </div>
-    </div>
-    <span class="content" *ngIf="!connecting">
-      <md-card>
-        <form (ngSubmit)="submitForm(connectForm.value)" [formGroup]="connectForm">
-            <md-input-container style="width: 100%">
-                <input mdInput type="text" formControlName="host" placeholder="Host">
-            </md-input-container>
-            <md-input-container style="width: 100%">
-                <input mdInput type="number" required formControlName="port" placeholder="Port">
-            </md-input-container>
-            <md-card-actions>
-                <button md-raised-button type="button" (click)="saveConnection(connectForm.value)"> Save </button>
-                <button md-raised-button type='submit'> Connect</button>
-            </md-card-actions>
-        </form>
-    </md-card>
-
-    <md-card>
-      <h2> Saved Connections</h2>
-      <md-toolbar class="storedConnectionList" *ngFor="let connection of storedConnections">
-        <span> {{connection.host}}</span>
-    <span class="fill-space"></span>
-    <span> {{connection.port}}</span>
-    <md-toolbar-row>
-        <span> Default User: 
+<div fxLayout="column" fxLayoutAlign="space-between center" style="color:white">
+  <md-card>
+    <form (ngSubmit)="submitForm(connectForm.value)" [formGroup]="connectForm">
+      <md-input-container style="width: 100%">
+        <input mdInput type="text" formControlName="host" placeholder="Host">
+      </md-input-container>
+      <md-input-container style="width: 100%">
+        <input mdInput type="number" required formControlName="port" placeholder="Port">
+      </md-input-container>
+      <md-card-actions fxLayout="row" fxLayoutAlign="space-between center">
+        <button md-raised-button type="button" (click)="saveConnection(connectForm.value)"> Save </button>
+        <button md-raised-button type='submit'> Connect</button>
+      </md-card-actions>
+    </form>
+  </md-card>
+  <h2 style="color:#212121"> Saved Connections</h2>
+  <md-card *ngFor="let connection of storedConnections">
+    <md-card-title fxLayoutAlign="space-around center">
+      <span>{{connection.host}}</span>
+      <span> Port: {{connection.port}}</span>
+    </md-card-title>
+    <md-card-content fxLayout="column" fxLayoutAlign="start stretch">
+      <div fxLayoutAlign="start center" fxLayoutGap="20px">
+        <span> Default User: </span>
         <span class="active">{{connection?.defaultUser?.username}}</span>
-        </span>
         <span class="fill-space"></span>
         <button md-icon-button (click)="setDefaultUser(connection)">
             <md-icon>edit</md-icon>
-            <!-- <span>Set</span> -->
           </button>
         <button md-icon-button color="warn" (click)="removeDefaultUser(connection)">
-            <md-icon>delete</md-icon>
-            <!-- <span>delete</span> -->
+            <md-icon>clear</md-icon>
           </button>
-        <!-- <button md&#45;raised&#45;button (click)="setDefaultUser(connection)"> set </button> -->
-        <!-- <button md&#45;raised&#45;button (click)="removeDefaultUser(connection)"> remove </button> -->
-    </md-toolbar-row>
-    <md-toolbar-row>
-        <md-checkbox [ngModel]="connection.isDefault" (change)="toggleDefaultConnection(connection)">Default Connection</md-checkbox>
-        <span class="fill-space"></span>
-        <button md-raised-button (click)="deleteSavedConnection(connection)"> Delete </button>
-        <button md-raised-button (click)="connect(connection)"> Connect </button>
-    </md-toolbar-row>
-    </md-toolbar>
-    </md-card>
-    </span>
+      </div>
+      <div fxLayoutAlign="start center" fxLayoutGap="20px">
+        <span> Default Connection:  </span>
+        <md-checkbox [ngModel]="connection.isDefault" (change)="toggleDefaultConnection(connection)"></md-checkbox>
+        <span></span>
+      </div>
+    </md-card-content>
+    <md-card-actions fxLayoutAlign="space-between center">
+      <button md-raised-button color="warn" (click)="deleteSavedConnection(connection)"> Delete </button>
+      <button md-raised-button color="primary" (click)="connect(connection)"> Connect </button>
+    </md-card-actions>
+  </md-card>
 </div>

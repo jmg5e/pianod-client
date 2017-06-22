@@ -1,36 +1,32 @@
-<md-toolbar class="search-bar">
-    <md-input-container class="search-input-container">
-        <input mdInput type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
-    </md-input-container>
+<div fxLayout="row" class="search-bar" fxLayoutAlign="space-between center">
+  <md-input-container class="search-input-container" fxFlex="1 1 auto" style="padding:10px">
+    <input mdInput type="text" class="search-input" #searchInput (keyup.enter)="search(searchInput.value, category)" placeholder="Search For..">
+  </md-input-container>
 
-    <md-select placeholder="category" [(ngModel)]="category" class="search-category">
-        <md-option value="Any"> Any</md-option>
-        <md-option value="Artist"> Artist </md-option>
-        <md-option value="Genre"> Genre</md-option>
-    </md-select>
-    <button md-raised-button class="search-btn" color="primary"> Search </button>
-</md-toolbar>
+  <md-select placeholder="category" [(ngModel)]="category" class="search-category">
+    <md-option value="Any"> Any</md-option>
+    <md-option value="Artist"> Artist </md-option>
+    <md-option value="Genre"> Genre</md-option>
+  </md-select>
 
-<md-progress-spinner mode="indeterminate" *ngIf="searching" class="search-spinner">
-</md-progress-spinner>
+  <!-- <button md&#45;button class="search&#45;btn" color="primary"> Search </button> -->
+</div>
 
-<div *ngIf="!searching" class="search-results-container">
-    <md-toolbar *ngFor="let seed of searchResults" class="search-result-item">
-        <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
-        <span *ngIf="seed.Song"> Song : {{seed?.Song}}</span>
-        <span *ngIf="seed.Genre"> Genre : {{seed?.Genre}}</span>
-        <span class="fill-space"> </span>
+<div fxLayout="column" fxLayoutGap="20px" fxLayoutAlign="space-between center" style="width:100%">
+  <md-card  class="seed" *ngFor="let seed of searchResults" fxLayout="row" fxLayoutAlign="space-between center">
+    <app-seed [seed]="seed"> </app-seed>
+    <span class="fill-space"> </span>
+    <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>more_vert</md-icon></button>
 
-        <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>more_vert</md-icon></button>
-        <md-menu #menu="mdMenu">
-            <button md-menu-item (click)="createStation(seed)">
+    <md-menu #menu="mdMenu">
+      <button md-menu-item (click)="createStation(seed)">
             <md-icon>fiber_new</md-icon>
             <span>New Station</span>
-          </button>
-            <button md-menu-item (click)="addToStation(seed)">
+      </button>
+      <button md-menu-item (click)="addToStation(seed)">
             <md-icon>playlist_add</md-icon>
             <span>Add To Station</span>
-          </button>
-        </md-menu>
-    </md-toolbar>
+        </button>
+    </md-menu>
+  </md-card>
 </div>

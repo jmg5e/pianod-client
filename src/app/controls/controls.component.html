@@ -1,26 +1,23 @@
-<md-toolbar [color]="privileges.admin? 'primary' : 'warn'">
-    <button md-button (click)="play()" [color]="(playback | async)==='PLAYING' ? 'default' : 'accent'">
-      <md-icon class="md-24">play_arrow</md-icon>
-    </button>
-    <button md-button (click)="pause()" [color]="(playback | async)==='PAUSED' ? 'default' : 'accent'">
-      <md-icon class="md-24">pause</md-icon>
-    </button>
-    <button md-button (click)="stop()" [color]="(playback | async)==='STOPPED' ? 'default' : 'accent'">
-      <md-icon class="md-24">stop</md-icon>
-    </button>
+<div class="control-bar" fxLayoutWrap="wrap" fxLayout="row" fxLayoutAlign="space-between center">
+  <div class="playback-controls" fxLayoutAlign="space-around center" fxFlex="1 1 auto" fxLayoutGap="5px">
+    <button md-fab class="playback-btn" (click)="play()" [color]="(playback | async)==='PLAYING' ? 'primary' : 'accent'"><md-icon>play_arrow</md-icon></button>
+    <button md-fab class="playback-btn" (click)="pause()" [color]="(playback | async)==='PAUSED' ? 'primary' : 'accent'"><md-icon>pause</md-icon></button>
+    <button md-fab class="playback-btn" (click)="stop()" [color]="(playback | async)==='STOPPED' ? 'primary' : 'accent'"><md-icon>stop</md-icon></button>
+  </div>
+  <div>
 
-    <span style="margin-left:50px;">
-      <button md-mini-fab class="btn-fab" [disabled]="!privileges.admin" (click)="selectStation()">
-        <md-icon class="md-24"
-          [ngClass]="{'active' : (currentStation  | async) !=='mix QuickMix' && (currentStation | async) != ''}">radio
-        </md-icon>
+    <button md-icon-button color="primary" [mdMenuTriggerFor]="controlsMenu" class="controls-menu-btn">
+      <md-icon color="primary">stars</md-icon>
+    </button>
+    <md-menu #controlsMenu="mdMenu">
+      <button md-menu-item (click)="playMix()" [class]="(currentStation | async) === 'mix QuickMix' ? 'active' : ''">
+          <md-icon>playlist_play</md-icon>
+          <span>Play Mix</span>
       </button>
-      <button md-mini-fab class="btn-fab" [disabled]="!privileges.admin" (click)="playMix()">
-        <md-icon class="md-24" [ngClass]="{'active' : (currentStation  | async)==='mix QuickMix'}">playlist_play</md-icon>
-      </button>
-    </span>
-    <span class="fill-space"> </span>
-    <span class="currentStation">{{currentStation | async}}</span>
-    <span class="fill-space"> </span>
-
-</md-toolbar>
+      <hr>
+      <button md-menu-item *ngFor="let station of stationList | async" (click)="playStation(station)">
+          <span [class]="(currentStation | async) === station ? 'active' : ''">{{station}}</span>
+        </button>
+    </md-menu>
+  </div>
+</div>

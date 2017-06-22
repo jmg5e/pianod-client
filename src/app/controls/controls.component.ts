@@ -17,23 +17,18 @@ export class ControlsComponent implements OnInit, OnDestroy {
   playback: Observable<string>;
   playbackOptions = ['PLAYING', 'PAUSED', 'STOPPED'];
   currentStation: Observable<string>;
-  stationList: Array<string>;
-  stationList$: Subscription;
+  stationList: Observable<string[]>;
   @Input() privileges;
 
   constructor(private pianodService: PianodService, public dialog: MdDialog) {}
 
   ngOnInit() {
     this.playback = this.pianodService.getPlayback();
-    this.stationList$ =
-        this.pianodService.getStations().subscribe(stations => this.stationList = stations);
+    this.stationList = this.pianodService.getStations();
     this.currentStation = this.pianodService.getCurrentStation();
   }
 
   ngOnDestroy() {
-    if (this.stationList$) {
-      this.stationList$.unsubscribe();
-    }
   }
 
   play() {
@@ -66,15 +61,15 @@ export class ControlsComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectStation() {
-    this.selectStationDialogRef = this.dialog.open(StationSelectDialogComponent);
-    this.selectStationDialogRef.componentInstance.stationList = this.stationList;
-    this.selectStationDialogRef.componentInstance.dialogTitle = 'Play Station';
-    this.selectStationDialogRef.afterClosed().subscribe((selectedStation: string) => {
-      if (selectedStation) {
-        this.playStation(selectedStation);
-      }
-      this.selectStationDialogRef = null;
-    });
-  }
+  // selectStation() {
+  //   this.selectStationDialogRef = this.dialog.open(StationSelectDialogComponent);
+  //   this.selectStationDialogRef.componentInstance.stationList = this.stationList;
+  //   this.selectStationDialogRef.componentInstance.dialogTitle = 'Play Station';
+  //   this.selectStationDialogRef.afterClosed().subscribe((selectedStation: string) => {
+  //     if (selectedStation) {
+  //       this.playStation(selectedStation);
+  //     }
+  //     this.selectStationDialogRef = null;
+  //   });
+  // }
 }
