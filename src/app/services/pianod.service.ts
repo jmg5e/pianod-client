@@ -346,6 +346,7 @@ export class PianodService {
         break;
       case 103:
         this.playback.next('STOPPED');
+        this.song.stopTimer();
         this.song.clearTime();
         // clear song info
         this.songInfo.next(this.song.clearSong());
