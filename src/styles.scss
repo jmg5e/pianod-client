@@ -91,6 +91,15 @@ md-card.station {
     margin-bottom:50px
 }
 
+.loading-spinner {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  z-index:100;
+  margin: auto;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
 .fill-space {
     flex: 1 1 auto;
 }
