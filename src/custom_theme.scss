@@ -2,10 +2,6 @@
 // NOTE: Theming is currently experimental and not yet publically released!
 
 @include mat-core();
-//
-// $primary: mat-palette($mat-deep-purple);
-// $accent:  mat-palette($mat-amber, A200, A100, A400);
-// $warn:  mat-palette($mat-red, A200, A100, A400);
 
 $primary:  mat-palette($mat-blue, A700, A100, A400);
 $accent: mat-palette($mat-grey, 800, 500, 900);

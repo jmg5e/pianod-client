@@ -10,12 +10,12 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AppComponent} from './app.component';
 import {AppRoutingModule, routingComponents} from './app.routing';
 import {MessagePipe} from './command-line/message.pipe';
-import {ControlsComponent} from './controls/controls.component';
 import {ConfirmDialogComponent, InputDialogComponent, LoginDialogComponent, StationSelectDialogComponent} from './dialogs';
 import {LocalStorageService} from './services/local-storage.service';
 import {PianodService} from './services/pianod.service';
-import {ManageSeedsComponent} from './stations/manage-seeds.component';
-import { SeedComponent } from './search/seed/seed.component';
+import {ControlsComponent} from './home/controls/controls.component';
+import { SeedComponent } from './components/seed.component';
+import {ManageSeedsComponent} from './components/manage-seeds.component';
 
 @NgModule({
   declarations: [

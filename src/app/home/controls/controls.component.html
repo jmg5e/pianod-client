@@ -1,8 +1,8 @@
 <div class="control-bar" fxLayoutWrap="wrap" fxLayout="row" fxLayoutAlign="space-between center">
   <div class="playback-controls" fxLayoutAlign="space-around center" fxFlex="1 1 auto" fxLayoutGap="5px">
-    <button md-fab class="playback-btn" (click)="play()" [color]="(playback | async)==='PLAYING' ? 'primary' : 'accent'"><md-icon>play_arrow</md-icon></button>
-    <button md-fab class="playback-btn" (click)="pause()" [color]="(playback | async)==='PAUSED' ? 'primary' : 'accent'"><md-icon>pause</md-icon></button>
-    <button md-fab class="playback-btn" (click)="stop()" [color]="(playback | async)==='STOPPED' ? 'primary' : 'accent'"><md-icon>stop</md-icon></button>
+    <button md-icon-button class="playback-btn" (click)="play()" [color]="(playback | async)==='PLAYING' ? 'primary' : 'accent'"><md-icon class="md-36">play_arrow</md-icon></button>
+    <button md-icon-button class="playback-btn" (click)="pause()" [color]="(playback | async)==='PAUSED' ? 'primary' : 'accent'"><md-icon class="md-36">pause</md-icon></button>
+    <button md-icon-button class="playback-btn" (click)="stop()" [color]="(playback | async)==='STOPPED' ? 'primary' : 'accent'"><md-icon class="md-36">stop</md-icon></button>
   </div>
   <div>
 

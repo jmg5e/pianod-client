@@ -10,8 +10,7 @@ import {ConnectService, LocalStorageService, PianodService} from '../services';
 
 @Component({
   selector: 'app-connect',
-  templateUrl: './connect.component.html',
-  styleUrls: ['./connect.component.scss']
+  templateUrl: './connect.component.html'
 })
 
 export class ConnectComponent implements OnInit {

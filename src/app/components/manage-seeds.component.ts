@@ -3,22 +3,21 @@ import {MdDialogConfig, MdDialogRef} from '@angular/material';
 import {PianodService} from '../services';
 
 @Component({
-  selector : 'app-manage-seeds',
-  template : `<h2 md-dialog-title> Station: {{station}}</h2>
+  selector: 'app-manage-seeds',
+  template: `<h2 md-dialog-title class="station-title"> Station: {{station}}</h2>
     <md-toolbar *ngFor="let seed of seeds">
-        <span *ngIf="seed.Artist">Artist : {{seed?.Artist}}</span>
-        <span *ngIf="seed.Song">Song : {{seed?.Song}}</span>
-        <span *ngIf="seed.Genre">Genre : {{seed?.Genre}}</span>
+        <app-seed [seed]="seed"> </app-seed>
         <span class="fill-space"> </span>
         <button md-button (click)="deleteSeed(seed.ID)" color="warn"><md-icon>delete</md-icon></button>
     </md-toolbar>`
 })
-export class ManageSeedsComponent implements OnInit {
 
+export class ManageSeedsComponent implements OnInit {
   station: string;
   seeds: Array<any> = [];
-  constructor(public dialogRef: MdDialogRef<ManageSeedsComponent>,
-              private pianodService: PianodService) {}
+
+  constructor(
+      public dialogRef: MdDialogRef<ManageSeedsComponent>, private pianodService: PianodService) {}
 
   ngOnInit() {
     this.pianodService.getStationSeeds(this.station).then(seeds => {

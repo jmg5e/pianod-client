@@ -31,7 +31,6 @@ body,
 
 .app-container {
     background-color:#212121;
-    // background-image: url("./assets/rockywall.png");
 }
 
 .navigationBar {
@@ -66,7 +65,7 @@ md-card.station {
     margin-top:25px;
 }
 
-.station-title {
+.station-title, .seed-label {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -75,18 +74,12 @@ md-card.station {
 .control-bar {
     box-sizing: border-box;
     width: 100%;
-    // height:64px;
     height: auto;
     padding:5px;
     white-space: nowrap;
     background:transparent;
-    // background: #2962ff;
-    // background-color:#212121;
-    // background-color:whitesmoke;
-    // background: rgba(33,33,33, 0.2);
     color: #2962ff;
     z-index:100;
-    // margin-bottom:0px;
 }
 
 .search-bar {
@@ -108,4 +101,15 @@ md-card.station {
 
 .active > md-icon, label-btn {
     color: #2962FF !important;
+}
+
+@mixin md-icon-size($size: 24px) {
+  font-size: $size;
+  height: $size;
+  width: $size;
+  line-height: $size;
+}
+
+.mat-icon.md-36 {
+  @include md-icon-size(36px);
 }

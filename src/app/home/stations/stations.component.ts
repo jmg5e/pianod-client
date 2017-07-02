@@ -5,10 +5,10 @@ import {Observable} from 'rxjs/Observable';
 import {
   ConfirmDialogComponent,
   InputDialogComponent,
-} from '../dialogs';
-import {User} from '../models';
-import {PianodService} from '../services';
-import {ManageSeedsComponent} from './manage-seeds.component';
+} from '../../dialogs';
+import {User} from '../../models';
+import {PianodService} from '../../services';
+import {ManageSeedsComponent} from '../../components/manage-seeds.component';
 
 @Component({
   selector : 'app-stations',

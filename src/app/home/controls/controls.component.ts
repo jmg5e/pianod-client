@@ -3,13 +3,12 @@ import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 
-import {StationSelectDialogComponent} from '../dialogs';
-import {PianodService} from '../services';
+import {StationSelectDialogComponent} from '../../dialogs';
+import {PianodService} from '../../services';
 
 @Component({
   selector: 'app-controls',
-  templateUrl: './controls.component.html',
-  styleUrls: ['./controls.component.scss']
+  templateUrl: './controls.component.html'
 })
 
 export class ControlsComponent implements OnInit, OnDestroy {
