@@ -21,6 +21,7 @@ const routes: Routes = [
       {path: 'NowPlaying', component: NowPlayingComponent},
       {path: 'Stations', component: StationsComponent},
       {path: 'Search', component: SearchComponent},
+      {path: 'CommandLine', component: CommandLineComponent},
     ]
   }
 ];

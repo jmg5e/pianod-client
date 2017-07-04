@@ -8,11 +8,18 @@
       <span>Login</span>
     </button>
     <md-menu #appMenu="mdMenu">
+      <button md-menu-item *ngIf="(user | async)?.privileges.admin" [routerLink]="['/Home/CommandLine']">
+          <md-icon>sms</md-icon>
+          <span>Command Line</span>
+      </button>
       <button md-menu-item (click)="logout()" *ngIf="(user | async)?.privileges.admin">
-          <md-icon>exit_to_app</md-icon>
+          <md-icon> perm_identity</md-icon>
           <span>Logout</span>
       </button>
-      <button md-menu-item (click)="disconnect()">Disconnect</button>
+      <button md-menu-item (click)="disconnect()">
+          <md-icon>exit_to_app</md-icon>
+          <span>Disconnect</span>
+      </button>
     </md-menu>
     <button md-icon-button [mdMenuTriggerFor]="appMenu">
         <md-icon>menu</md-icon>
