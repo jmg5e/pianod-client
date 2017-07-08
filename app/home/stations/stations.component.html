@@ -1,0 +1,17 @@
+<GridLayout rows="*">
+  <StackLayout class="list-group">
+    <FlexboxLayout (tap)="goMixDetails()" (longPress)="openMixMenu()" justifyContent="space-between" alignItems="center" class="list-group-item">
+      <Label text='mix QuickMix' width="75%"></Label>
+      <Label class="mdi" [text]="'mdi-play-arrow' | fonticon" alignself="flex-end" [class]="(stationIsPlaying('mix QuickMix') | async) ? 'mdi active' : 'mdi inactive'"></Label>
+    </FlexboxLayout>
+    <ListView [items]="stations">
+      <ng-template let-station="item" let-i="index">
+        <FlexboxLayout (tap)="goStationDetails(station)" (longPress)="openStationMenu(station)" justifyContent="space-between" alignItems="center" class="list-group-item">
+          <Label [text]='station' width="75%"></Label>
+          <Label class="mdi" [text]="'mdi-playlist-play' | fonticon" alignSelf="flex-end" [class]="(stationIsInMix(station) | async) ? 'mdi active' : 'mdi inactive'"> </Label>
+          <Label class="mdi" [text]="'mdi-play-arrow' | fonticon" alignSelf="flex-end" [class]="(stationIsPlaying(station) | async) ? 'mdi active' : 'mdi inactive'"></Label>
+        </FlexboxLayout>
+      </ng-template>
+    </ListView>
+  </StackLayout>
+</GridLayout>

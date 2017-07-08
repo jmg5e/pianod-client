@@ -1,0 +1,18 @@
+<Label text="Search" class="h3"> </Label>
+<StackLayout orientation="horizontal">
+  <SearchBar hint="Search..." text="taylor swift" width="100%" (loaded)="onSearchBarLoaded($event)" (textChange)="onTextChanged($event)" (submit)="onSubmit($event)"></SearchBar>
+</StackLayout>
+<GridLayout>
+  <StackLayout>
+    <ListView [items]="searchResults" class="list-group">
+      <ng-template let-seed="item">
+        <FlexboxLayout justifyContent="space-between" (tap)="openMenu(seed)" alignItems="center" class="list-group-item">
+          <app-seed [seed]="seed"></app-seed>
+        </FlexboxLayout>
+      </ng-template>
+    </ListView>
+  </StackLayout>
+
+  <ActivityIndicator [busy]="isSearching" [visibility]="isSearching ? 'visible': 'hidden'" width="100" height="100"> </ActivityIndicator>
+
+</GridLayout>

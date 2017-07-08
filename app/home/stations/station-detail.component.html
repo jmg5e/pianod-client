@@ -1,0 +1,31 @@
+<FlexboxLayout justifyContent="space-between">
+  <Button class="mdi transparent-btn" [text]="'mdi-arrow-back' | fonticon" (tap)="goBack()"></Button>
+  <Label [text]="station" class="h1"> </Label>
+  <Button class="mdi transparent-btn" [text]="'mdi-menu' | fonticon" (tap)="openStationMenu()"></Button>
+</FlexboxLayout>
+<GridLayout rows="*">
+  <StackLayout class="list-group">
+    <StackLayout>
+      <FlexboxLayout justifyContent="space-around" alignItems="center">
+        <Button text="Play" (tap)="playStation()"> </Button>
+        <Label text='Off'> </Label>
+        <Switch [checked]="isPlaying" isEnabled="false"> </Switch>
+        <Label text='On'> </Label>
+      </FlexboxLayout>
+      <FlexboxLayout justifyContent="space-around" alignItems="center">
+        <Button text="Mix" (tap)="toggleStationInMix()"> </Button>
+        <Label text='Off'> </Label>
+        <Switch [checked]="isInMix" isEnabled="false"> </Switch>
+        <Label text='On'> </Label>
+      </FlexboxLayout>
+    </StackLayout>
+    <ListView [items]="seeds">
+      <ng-template let-seed="item" let-i="index">
+        <FlexboxLayout justifyContent="space-between" alignItems="center" class="list-group-item">
+          <app-seed [seed]="seed"></app-seed>
+          <Button class="mdi transparent-btn" style="color:red" [text]="'mdi-delete' | fonticon" (tap)="deleteSeed(seed)"></Button>
+        </FlexboxLayout>
+      </ng-template>
+    </ListView>
+  </StackLayout>
+</GridLayout>

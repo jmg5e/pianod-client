@@ -1,0 +1,14 @@
+<StackLayout>
+  <FlexboxLayout flexDirection="column" justifyContent="center" alignItems="center">
+    <Label [text]="song?.Title" class="h1"> </Label>
+    <Label [text]="song?.Artist" class="h3"> </Label>
+    <Label [text]="song?.Album" class="h3"> </Label>
+    <Image [src]="song?.CoverArt" width="70%" height="70%"></Image>
+  </FlexboxLayout>
+  <FlexboxLayout justifyContent="center" alignItems="center">
+    <Label [text]="playedTime.toString()"></Label>
+    <Label text=" / "> </Label>
+    <Label [text]="song?.totalTime?.toString()"> </Label>
+  </FlexboxLayout>
+  <Progress [value]="playedTime.toSeconds()" [maxValue]="song?.totalTime?.toSeconds()" width="90%"> </Progress>
+</StackLayout>

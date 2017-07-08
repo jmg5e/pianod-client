@@ -1,0 +1,5 @@
+<FlexboxLayout justifyContent="space-around" class="control-bar">
+  <Button class="mdi transparent-btn" [text]="'mdi-play-arrow' | fonticon" (tap)="play()" width="25%" [style]="playback == 'PLAYING' ? 'color: blue' : 'color: white'"></Button>
+  <Button class="mdi transparent-btn" [text]="'mdi-pause' | fonticon" (tap)="pause()" width="25%" [style]="playback == 'PAUSED' ? 'color: blue' : 'color: white'"></Button>
+  <Button class="mdi transparent-btn" [text]="'mdi-stop' | fonticon" (tap)="stop()" width="25%" [style]="playback == 'STOPPED' ? 'color: blue' : 'color: white'"></Button>
+</FlexboxLayout>

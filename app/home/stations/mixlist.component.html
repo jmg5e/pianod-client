@@ -1,0 +1,24 @@
+<FlexboxLayout justifyContent="space-between">
+  <Button class="mdi transparent-btn" [text]="'mdi-arrow-back' | fonticon" (tap)="goBack()"></Button>
+  <Label text="Mix List" class="h1"> </Label>
+  <Label> </Label>
+</FlexboxLayout>
+
+<GridLayout rows="*">
+  <StackLayout class="list-group">
+    <FlexboxLayout justifyContent="space-around" alignItems="center">
+      <Button text="Play" (tap)="playMix()"> </Button>
+      <Label text='Off'> </Label>
+      <Switch [checked]="mixIsPlaying() | async" isEnabled="false"> </Switch>
+      <Label text='On'> </Label>
+    </FlexboxLayout>
+    <ListView [items]="stations">
+      <ng-template let-station="item" let-i="index">
+        <FlexboxLayout (tap)="toggleStationInMix(station)" justifyContent="space-between" alignItems="center" class="list-group-item">
+          <Label [text]="station"> </Label>
+          <Switch [checked]="stationIsInMix(station) | async" isEnabled="false"> </Switch>
+        </FlexboxLayout>
+      </ng-template>
+    </ListView>
+  </StackLayout>
+</GridLayout>

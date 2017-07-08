@@ -1,0 +1,16 @@
+<ActionBar title="Pianod Client">
+  <ActionItem text="Clear Data" ios.position="right" android.position="popup" (tap)="clearData()"></ActionItem>
+</ActionBar>
+<DockLayout stretchLastChild="false">
+  <ListView [items]="storedConnections" class="list-group" dock="top">
+    <ng-template let-conn="item">
+      <FlexboxLayout justifyContent="center" alignItems="center" [nsRouterLink]="[ '/Connect',conn.host, conn.port]" (longPress)="openConnectionMenu(conn)">
+        <Label width="90%" [text]='"[ " + conn.host +"] " + conn.port' class="list-group-item"></Label>
+        <Label *ngIf="conn.isDefault" class="mdi" [text]="'mdi-star' | fonticon"></Label>
+      </FlexboxLayout>
+    </ng-template>
+  </ListView>
+  <StackLayout dock="bottom">
+    <Button text="New Connection" (tap)="addConnection()"> </Button>
+  </StackLayout>
+</DockLayout>

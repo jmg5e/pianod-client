@@ -1,0 +1,19 @@
+<!-- <GridLayout backgroundColor="white"> -->
+<!--   <ListView [items]="frameworks" class="list&#45;group"> -->
+<!--     <Template let&#45;framework="item"> -->
+<!--             <StackLayout class="list&#45;group&#45;item" (tap)="close(framework)"> -->
+<!--                 <Label text="{{ framework }}" class="label"></Label> -->
+<!--             </StackLayout> -->
+<!--         </Template> -->
+<!--   </ListView> -->
+<!-- </GridLayout> -->
+<!--  -->
+<!-- <GridLayout backgroundColor="white"> -->
+<StackLayout verticalAlignment="center">
+  <Label text="Create Connection" class="h2"></Label>
+  <TextField hint="host" #host text="localhost" class="input"></TextField>
+  <TextField hint="port" text="4446" #port class="input" keyboardType="number"></TextField>
+  <Button text="Save" (tap)="close({host: host.text, port: port.text})"> </Button>
+  <Button text="Cancel" (tap)="close()"> </Button>
+</StackLayout>
+<!-- </GridLayout> -->

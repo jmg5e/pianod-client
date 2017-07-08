@@ -1,0 +1,42 @@
+<ActionBar title="Connection Details" class="action-bar">
+  <ActionItem text="Connect" ios.position="right" (tap)="connect()"></ActionItem>
+  <!-- <ActionItem text="Delete Connection" ios.position="right" android.position="popup" (tap)="deleteConnection()"></ActionItem> -->
+  <NavigationButton text="Go Back" android.systemIcon="ic_menu_back" [nsRouterLink]="['/Connect']"> </NavigationButton>
+</ActionBar>
+
+<DockLayout stretchLastChild="false">
+  <StackLayout dock="top" width="100%">
+    <FlexboxLayout flexDirection="column" justifyContent="center" alignItems="center">
+      <Label [text]="connection.host" class="h1" style.text-align="center"> </Label>
+      <Label [text]="'port: ' + connection.port" class="h2"> </Label>
+    </FlexboxLayout>
+    <GridLayout columns="100, *, *, *" rows="50,auto, auto" width="90%">
+      <Label text="User" row="0" col="0" class="h1"> </Label>
+
+      <FlexboxLayout row="0" col="1" colspan="3" justifyContent="flex-end" alignItems="center">
+        <Button class="mdi transparent-btn" [text]="'mdi-edit' | fonticon" (tap)="editUser()" style.text-align="center"></Button>
+      </FlexboxLayout>
+
+      <FlexboxLayout row="1" col="1" colspan="2" justifyContent="space-around" alignItems="center">
+        <Label *ngIf="connection.defaultUser" class="mdi" [text]="'mdi-person' | fonticon"></Label>
+        <Label [text]="connection.defaultUser?.username"> </Label>
+      </FlexboxLayout>
+
+      <FlexboxLayout row="2" col="1" colspan="2" justifyContent="space-around" alignItems="center">
+        <label *ngIf="connection.defaultUser" class="mdi" [text]="'mdi-security' | fonticon"></label>
+        <Label [text]="connection.defaultUser?.password"> </Label>
+      </FlexboxLayout>
+    </GridLayout>
+  </StackLayout>
+
+  <StackLayout dock="bottom">
+    <FlexboxLayout justifyContent="space-around" alignItems="center">
+      <Button text="Set as Default" (tap)="toggleDefault()"> </Button>
+      <Label text='Off'> </Label>
+      <Switch [checked]="connection.isDefault" isEnabled="false"> </Switch>
+      <Label text='On'> </Label>
+    </FlexboxLayout>
+    <!-- <Button text="Connect" (tap)="connect()"> </Button> -->
+    <Button text="Delete" (tap)="DeleteConnection()"> </Button>
+  </StackLayout>
+</DockLayout>
