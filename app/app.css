@@ -17,7 +17,8 @@ refer to http://docs.nativescript.org/ui/theme.
 }
 
 .active {
-    color: #0BB5FF;
+    /* color: #0BB5FF; */
+    color: blue;
 }
 
 .inactive {

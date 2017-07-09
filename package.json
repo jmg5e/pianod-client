@@ -1,8 +1,8 @@
 {
-  "description": "NativeScript Application",
-  "license": "SEE LICENSE IN <your-license-filename>",
+  "description": "Native Pianod Client",
+  "license": "MIT",
   "readme": "NativeScript Application",
-  "repository": "<fill-your-repository-here>",
+  "repository": "https://github.com/jmg5e/pianod-client/tree/nativescript",
   "nativescript": {
     "id": "org.nativescript.pianodclient",
     "tns-android": {
