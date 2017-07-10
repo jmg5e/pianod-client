@@ -1,6 +1,3 @@
-//
-// BUG pianod help command returns a message with no content for some reason
-//
 export class Message {
   code: number;
   content: string;

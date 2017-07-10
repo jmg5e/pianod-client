@@ -13,7 +13,7 @@ import {NotificationService} from '../services/notification.service';
 export class ConnectComponent implements OnInit {
   connectForm;
   loginDialogRef: MdDialogRef<LoginDialogComponent>;
-  connecting = false;  // show conecting spinner
+  connecting = false;  // conecting spinner
   storedConnections: Array<Connection>;
 
   constructor(
@@ -33,7 +33,7 @@ export class ConnectComponent implements OnInit {
       const connection = {host: form.host.trim(), port: form.port};
       this.connect(connection);
     } else {
-      // console.log('invalid connection');
+          this.notifcationService.showNotification('Invailid Connection');
     }
   }
 
@@ -64,19 +64,12 @@ export class ConnectComponent implements OnInit {
     this.connectService.connect(connection)
         .then(res => {
           this.connecting = false;
-          // if (res.error) {
-          //   this.notifcationService.showNotification('Failed to connect to pianod');
-          // } else {
-          //   this.notifcationService.showNotification('Connected to pianod');
-          // }
         })
         .catch(err => {
-          // this.notifcationService.showNotification('Failed to connect to pianod');
           this.connecting = false;
         });
   }
 
-  // TODO validate user input
   setDefaultUser(connection: Connection) {
     this.loginDialogRef = this.dialog.open(LoginDialogComponent, {disableClose: false});
 
