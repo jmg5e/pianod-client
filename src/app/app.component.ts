@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {MdSnackBar, MdSnackBarConfig} from '@angular/material';
+import {Subscription} from 'rxjs/Subscription';
 
 import {ConnectService} from './services/connect.service';
-// import {LocalStorageService, PianodService, ConnectService} from './services';
 import {LocalStorageService} from './services/local-storage.service';
 import {LoginService} from './services/login.service';
+import {NotificationService} from './services/notification.service';
 import {PianodService} from './services/pianod.service';
 
 @Component({
@@ -14,27 +14,19 @@ import {PianodService} from './services/pianod.service';
 })
 
 export class AppComponent implements OnInit, OnDestroy {
-  error;
-  barConfig = new MdSnackBarConfig();
+  error: Subscription;
 
   constructor(
-      private pianodService: PianodService, private localStorageService: LocalStorageService,
-      private snackBar: MdSnackBar) {
-    this.barConfig.duration = 2000;
-  }
+      private pianodService: PianodService, private notifcationService: NotificationService) {}
 
   ngOnInit() {
-    this.error = this.pianodService.getErrors().subscribe(err => this.showSnackBarMsg(err));
+    this.error = this.pianodService.getErrors().subscribe(
+        err => this.notifcationService.showNotification(err));
   }
 
   ngOnDestroy() {
-    // is this really necessary?
     if (this.error) {
       this.error.unsubscribe();
     }
-  }
-
-  showSnackBarMsg(msg: string) {
-    this.snackBar.open(msg, '', this.barConfig);
   }
 }

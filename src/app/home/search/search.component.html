@@ -13,7 +13,7 @@
 <md-progress-spinner *ngIf="searching" mode="indeterminate" class="loading-spinner"></md-progress-spinner>
 
 <div fxLayout="column" fxLayoutGap="20px" fxLayoutAlign="space-between center" style="width:100%">
-    <md-card  class="seed" *ngFor="let seed of searchResults" fxLayout="row" fxLayoutAlign="space-between center">
+    <md-card  class="seed" *ngFor="let seed of searchResults | async" fxLayout="row" fxLayoutAlign="space-between center">
         <app-seed [seed]="seed"> </app-seed>
         <span class="fill-space"> </span>
         <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>more_vert</md-icon></button>

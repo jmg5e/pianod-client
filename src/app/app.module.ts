@@ -10,12 +10,13 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AppComponent} from './app.component';
 import {AppRoutingModule, routingComponents} from './app.routing';
 import {MessagePipe} from './command-line/message.pipe';
+import {ManageSeedsComponent} from './components/manage-seeds.component';
+import {SeedComponent} from './components/seed.component';
 import {ConfirmDialogComponent, InputDialogComponent, LoginDialogComponent, StationSelectDialogComponent} from './dialogs';
+import {ControlsComponent} from './home/controls/controls.component';
 import {LocalStorageService} from './services/local-storage.service';
 import {PianodService} from './services/pianod.service';
-import {ControlsComponent} from './home/controls/controls.component';
-import { SeedComponent } from './components/seed.component';
-import {ManageSeedsComponent} from './components/manage-seeds.component';
+import {NotificationService} from './services/notification.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import {ManageSeedsComponent} from './components/manage-seeds.component';
     BrowserModule, BrowserAnimationsModule, MaterialModule, FlexLayoutModule, FormsModule,
     ReactiveFormsModule, AppRoutingModule
   ],
-  providers: [PianodService, LocalStorageService],
+  providers: [PianodService, LocalStorageService, NotificationService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

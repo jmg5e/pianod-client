@@ -1,19 +1,16 @@
-import {Component, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
-import {
-  ConfirmDialogComponent,
-  InputDialogComponent,
-} from '../../dialogs';
+import {ManageSeedsComponent} from '../../components/manage-seeds.component';
+import {ConfirmDialogComponent, InputDialogComponent} from '../../dialogs';
 import {User} from '../../models';
 import {PianodService} from '../../services';
-import {ManageSeedsComponent} from '../../components/manage-seeds.component';
+import {NotificationService} from '../../services/notification.service';
 
 @Component({
-  selector : 'app-stations',
-  templateUrl : './stations.component.html',
-  styleUrls : [ './stations.component.scss' ]
+  selector: 'app-stations',
+  templateUrl: './stations.component.html'
 })
 
 export class StationsComponent implements OnInit {
@@ -24,7 +21,9 @@ export class StationsComponent implements OnInit {
   stationList: Observable<Array<string>>;
   mixList: Observable<Array<string>>;
 
-  constructor(private pianodService: PianodService, public dialog: MdDialog) {}
+  constructor(
+      private pianodService: PianodService, private notifcationService: NotificationService,
+      public dialog: MdDialog) {}
 
   ngOnInit() {
     this.stationList = this.pianodService.getStations();
@@ -34,7 +33,9 @@ export class StationsComponent implements OnInit {
     this.pianodService.getCurrentStation().subscribe(
         currentStation => this.currentStation = currentStation);
   }
-  playMix() { this.pianodService.sendCmd('PLAY MIX'); }
+  playMix() {
+    this.pianodService.sendCmd('PLAY MIX');
+  }
 
   playStation(stationName) {
     this.pianodService.sendCmd(`PLAY STATION \"${stationName}\"`);
@@ -45,13 +46,11 @@ export class StationsComponent implements OnInit {
   }
 
   deleteStation(stationName) {
-    this.pianodService.sendCmd(`DELETE STATION \"${stationName}\"`)
-        .then(res => {
-          if (!res.error) {
-            // this.stationsModified.emit('Station ' + stationName +
-            //                            ' was successfully deleted.');
-          }
-        });
+    this.pianodService.sendCmd(`DELETE STATION \"${stationName}\"`).then(res => {
+      if (!res.error) {
+        this.notifcationService.showNotification(`Succesfully Deleted Station: ${stationName}`);
+      }
+    });
   }
 
   stationIsPlaying(station): Observable<boolean> {
@@ -63,18 +62,16 @@ export class StationsComponent implements OnInit {
   }
 
   openManageSeeds(stationName) {
-    this.manageSeedsRef =
-        this.dialog.open(ManageSeedsComponent, {disableClose : false});
+    this.manageSeedsRef = this.dialog.open(ManageSeedsComponent, {disableClose: false});
     this.manageSeedsRef.componentInstance.station = stationName;
-    this.manageSeedsRef.afterClosed().subscribe(
-        results => { this.manageSeedsRef = null; });
+    this.manageSeedsRef.afterClosed().subscribe(results => {
+      this.manageSeedsRef = null;
+    });
   }
 
   openRenameDialog(stationName) {
-    this.renameDialogRef =
-        this.dialog.open(InputDialogComponent, {disableClose : true});
-    this.renameDialogRef.componentInstance.title =
-        `Rename station ${stationName}`;
+    this.renameDialogRef = this.dialog.open(InputDialogComponent, {disableClose: true});
+    this.renameDialogRef.componentInstance.title = `Rename station ${stationName}`;
     this.renameDialogRef.componentInstance.inputValue = stationName;
     this.renameDialogRef.afterClosed().subscribe((newName: string) => {
       if (newName) {
@@ -85,13 +82,11 @@ export class StationsComponent implements OnInit {
   }
 
   renameStation(stationName, newName) {
-    this.pianodService.sendCmd(
-        `RENAME STATION \"${stationName}\" TO \"${newName}\"`);
+    this.pianodService.sendCmd(`RENAME STATION \"${stationName}\" TO \"${newName}\"`);
   }
 
   openConfirmDialog(stationName) {
-    this.confirmDialogRef =
-        this.dialog.open(ConfirmDialogComponent, {disableClose : true});
+    this.confirmDialogRef = this.dialog.open(ConfirmDialogComponent, {disableClose: true});
 
     this.confirmDialogRef.componentInstance.title =
         `Are your sure you want to delete station ${stationName}?`;

@@ -84,6 +84,7 @@ export class PianodService {
 
       const response = await this.getResponse(this.responseTimeout);
       if (!response.error && response.msg === 'Connected') {
+      // return Promise.reject(`websocket failed to connect ${url}`);
         this.connectionInfo = {host: host, port: port};
         this.user = new User();
         this.userInfo.next(this.user.getUserInfo());
@@ -94,7 +95,8 @@ export class PianodService {
       return response;
     } catch (err) {
       this.error.next('Failed to connect to pianod');
-      return Promise.reject(`websocket failed to connect ${url}`);
+      // resolve with error vs reject?
+      return Promise.resolve({error: true, msg: `websocket failed to connect ${url}`});
     }
   }
 

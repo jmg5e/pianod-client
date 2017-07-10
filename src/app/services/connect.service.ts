@@ -2,7 +2,9 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 
 import {Connection} from '../models';
+
 import {LocalStorageService} from './local-storage.service';
+import {NotificationService} from './notification.service';
 import {PianodService} from './pianod.service';
 
 @Injectable()
@@ -19,8 +21,8 @@ export class ConnectService {
   }
 
   constructor(
-      private pianodService: PianodService, private localStorageService: LocalStorageService,
-      private router: Router) {
+      private pianodService: PianodService, private notifcationService: NotificationService,
+      private localStorageService: LocalStorageService, private router: Router) {
     this.listenConnectedEvents();
 
     this.tryAutoConnect();
@@ -31,9 +33,11 @@ export class ConnectService {
     this.pianodService.getConnectionState().subscribe(connected => {
       if (this.connected != null) {
         if (!this.connected && connected) {
+          this.notifcationService.showNotification('Connected to pianod');
           this.router.navigate(['/Home']);
           }
         if (this.connected && !connected) {
+          this.notifcationService.showNotification('Disconnected from pianod');
           this.router.navigate(['/Connect']);
         }
 
@@ -53,6 +57,10 @@ export class ConnectService {
   }
 
   public connect(connectionInfo: Connection) {
-    return this.pianodService.connect(connectionInfo.host, connectionInfo.port);
+    return this.pianodService.connect(connectionInfo.host, connectionInfo.port).then(res => {
+      if (res.error) {
+        this.notifcationService.showNotification('Failed to connect to pianod');
+      }
+    });
   }
 }

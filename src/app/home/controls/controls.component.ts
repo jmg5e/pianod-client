@@ -59,16 +59,4 @@ export class ControlsComponent implements OnInit, OnDestroy {
       this.pianodService.sendCmd('PLAY MIX');
     }
   }
-
-  // selectStation() {
-  //   this.selectStationDialogRef = this.dialog.open(StationSelectDialogComponent);
-  //   this.selectStationDialogRef.componentInstance.stationList = this.stationList;
-  //   this.selectStationDialogRef.componentInstance.dialogTitle = 'Play Station';
-  //   this.selectStationDialogRef.afterClosed().subscribe((selectedStation: string) => {
-  //     if (selectedStation) {
-  //       this.playStation(selectedStation);
-  //     }
-  //     this.selectStationDialogRef = null;
-  //   });
-  // }
 }
