@@ -1,7 +1,5 @@
 .command-bar {
     padding-top:20px; 
-    margin-top:20px; 
-    width:95%
 }
 .error {
     color: red;
@@ -13,21 +11,24 @@
 .data {
     color: #2962ff;
 }
+
 .data-req-tags {
     color: grey;
 }
 
-.message {
-    padding-right:10px
+.message, .message-code {
+    color:white;
+    padding-right:10px;
 }
 
 .message.default {
-    color: #2962ff;
+    // color: #2962ff;
+    color: white;
 }
 
 .command-input {
     flex: 1 1 auto;
-    margin: 15px;
+    padding: 10px;
 }
 
 .help-icon {
@@ -35,16 +36,12 @@
 }
 
 .message-container {
-    display:flex; 
-    flex-direction:column; 
-    flex: 1 1 0; 
-    margin-top: 10px; 
-    width:95%; 
-    min-width:90%;
+    border: solid 2px #000;
     overflow-y:scroll;
     overflow-x: hidden;
     text-overflow: ellipsis;
-    background:#f6f6f6;
+    background: #424242;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 md-list-item {

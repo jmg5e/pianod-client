@@ -1,38 +1,35 @@
-<md-toolbar>
-    <button md-raised-button (click)="clearMessages()"> clear </button>
-    <span class="fill-space"> </span>
-    <md-checkbox [checked]="showColors" (change)="showColors = !showColors ">Show Colors</md-checkbox>
-    <span class="fill-space"> </span>
-    <md-checkbox [checked]="showCodes" (change)="showCodes = !showCodes">Show Codes</md-checkbox>
-    <!-- <md&#45;input&#45;container style="margin&#45;left:15px"> -->
-    <!--     <input mdInput type="number" placeholder="Buffer Limit" [(ngModel)]="messagesLimit"> -->
-    <!-- </md&#45;input&#45;container> -->
-</md-toolbar>
+<div fxFlexFill fxLayout="column">
+    <md-toolbar color="primary" fxLayoutWrap="wrap">
+        <span>Pianod Client</span>
+        <span class="fill-space"> </span>
+        <button md-button [routerLink]="['/Home']" > <md-icon>arrow_back</md-icon> Home </button>
+    </md-toolbar>
 
-<md-toolbar class="command-bar">
-    <md-icon class="help-icon" mdTooltip="type help to see available commands">
-        info </md-icon>
-    <md-input-container class="command-input">
-        <input mdInput type="text" #commandInput (keyup.enter)="sendCommand(commandInput)" placeholder="Command...">
-    </md-input-container>
+    <md-toolbar color="accent">
+        <button md-raised-button color="primary" (click)="clearMessages()"> clear </button>
+        <!-- <span class="fill&#45;space"> </span> -->
+        <!-- <md&#45;checkbox [checked]="showColors" (change)="showColors = !showColors ">Show Colors</md&#45;checkbox> -->
+        <span class="fill-space"> </span>
+        <md-checkbox [checked]="showCodes" (change)="showCodes = !showCodes">Show Codes</md-checkbox>
+    </md-toolbar>
+    <div fxLayout="column" class="message-container" #messageList fxFlex="1 1 auto">
+        <md-list dense *ngFor="let message of pianodMessages">
+            <md-list-item>
+                <span *ngIf="showCodes" class="message-code"> {{message.code}} </span>
+                <span class="message default"> {{ message | display_message}} </span>
+            </md-list-item>
+        </md-list>
+    </div>
 
-    <button md-raised-button (click)="sendCommand(commandInput)">
-      <md-icon>send</md-icon>
-    </button>
-</md-toolbar>
+    <md-toolbar style="padding-top:15px">
+        <md-icon class="help-icon" mdTooltip="type help to see available commands">
+            info </md-icon>
+        <md-input-container class="command-input">
+            <input mdInput type="text" #commandInput (keyup.enter)="sendCommand(commandInput)" placeholder="Command...">
+        </md-input-container>
 
-<div #messageList class="message-container">
-    <md-list dense *ngFor="let message of pianodMessages">
-        <md-list-item>
-            <span *ngIf="showCodes" class="message"> {{message.code}} </span>
-            <span *ngIf="showColors" class="message" [ngClass]="{'error' : message.error, 'success' : message.code === 200, 'data' : message.data, 
-              'data-req-tags' : message.code == 203 || message.code == 204 }"> 
-              {{ message | display_message }} </span>
-            <span *ngIf="!showColors" class="message default"> {{ message | display_message}} </span>
-        </md-list-item>
-    </md-list>
+        <button md-button (click)="sendCommand(commandInput)">
+            <md-icon>send</md-icon>
+        </button>
+    </md-toolbar>
 </div>
-<!-- <p style="color:white"> -->
-<!--     <span> showCodes = {{showCodes}} </span> -->
-<!--     <span> bufferLimit = {{messagesLimit}} </span> -->
-<!-- </p> -->

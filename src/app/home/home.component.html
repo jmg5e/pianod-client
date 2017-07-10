@@ -8,7 +8,7 @@
       <span>Login</span>
     </button>
     <md-menu #appMenu="mdMenu">
-      <button md-menu-item *ngIf="(user | async)?.privileges.admin" [routerLink]="['/Home/CommandLine']">
+      <button md-menu-item *ngIf="(user | async)?.privileges.admin" [routerLink]="['/CommandLine']">
           <md-icon>sms</md-icon>
           <span>Command Line</span>
       </button>

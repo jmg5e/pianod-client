@@ -11,7 +11,8 @@ import {StationsComponent} from './home/stations/stations.component';
 // import {ConnectService, LoginService} from './services';
 const routes: Routes = [
   {path: '', redirectTo: '/Connect', pathMatch: 'full'},
-  {path: 'Connect', component: ConnectComponent}, {
+  {path: 'Connect', component: ConnectComponent},
+  {
     path: 'Home',
     component: HomeComponent,
     canActivate: [ConnectedGuard],
@@ -21,9 +22,9 @@ const routes: Routes = [
       {path: 'NowPlaying', component: NowPlayingComponent},
       {path: 'Stations', component: StationsComponent},
       {path: 'Search', component: SearchComponent},
-      {path: 'CommandLine', component: CommandLineComponent},
     ]
-  }
+  },
+  {path: 'CommandLine', component: CommandLineComponent, canActivate: [ConnectedGuard]},
 ];
 
 @NgModule(

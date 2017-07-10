@@ -1,34 +1,31 @@
-import {
-  AfterViewChecked,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Subscription} from 'rxjs/Subscription';
 
-import {MessagePipe} from './message.pipe';
 import {Message} from '../models/message';
 import {PianodService} from '../services';
 
+import {MessagePipe} from './message.pipe';
+
 @Component({
-  selector : 'app-command-line',
-  templateUrl : './command-line.component.html',
-  styleUrls : [ './command-line.component.scss' ]
+  selector: 'app-command-line',
+  templateUrl: './command-line.component.html',
+  styleUrls: ['./command-line.component.scss']
 })
 
-export class CommandLineComponent implements OnInit, AfterViewChecked {
+export class CommandLineComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('messageList') private scrollContainer: ElementRef;
-  showColors = true;
+  // showColors = true;
   showCodes = true;
   messagesLimit = 100;
   pianodMessages: Array<Message>;
+  pianodMessages$: Subscription;
   // history: Array<string>;
   constructor(private pianodService: PianodService) {
     this.pianodMessages = [];
   }
 
   ngOnInit() {
-    this.pianodService.getMessages().subscribe(msg => {
+    this.pianodMessages$ = this.pianodService.getMessages().subscribe(msg => {
       if (this.pianodMessages.length >= this.messagesLimit) {
         this.pianodMessages.shift();
       }
@@ -37,7 +34,15 @@ export class CommandLineComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  ngAfterViewChecked() { this.scrollToBottom(); }
+  ngOnDestroy() {
+    if (this.pianodMessages$) {
+      this.pianodMessages$.unsubscribe();
+    }
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
 
   scrollToBottom() {
     try {
@@ -55,5 +60,7 @@ export class CommandLineComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  clearMessages() { this.pianodMessages = []; }
+  clearMessages() {
+    this.pianodMessages = [];
+  }
 }
