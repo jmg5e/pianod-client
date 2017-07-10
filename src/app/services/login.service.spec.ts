@@ -3,10 +3,8 @@ import {LocalStorageService, LoginService, PianodService} from '../services';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 3000;
 
-const mockPianod = {
-  'port': 4201,
-  'host': 'localhost'
-};
+import * as config from '../../../config';
+const mockPianod = config.mockPianod || {'port': 4201, 'host': 'localhost'};
 
 describe('LoginService', () => {
   beforeEach(() => {
