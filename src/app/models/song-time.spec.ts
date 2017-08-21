@@ -16,18 +16,29 @@ describe('SongTime', function() {
     expect(testTime.seconds).toEqual(23);
   });
 
+  it('should throw exception when given negative values', () => {
+    expect(() => new SongTime(-3, 23)).toThrowError(RangeError);
+    expect(() => new SongTime(3, -23)).toThrowError(RangeError);
+  });
+
   it('toString should output time in correct format', () => {
     expect(new SongTime(1, 23).toString()).toEqual('1:23');
     expect(new SongTime(1, 2).toString()).toEqual('1:02');
   });
 
-  it('toSeconds should return correct total time in seconds',
-     () => { expect(new SongTime(1, 23).toSeconds()).toEqual(83); });
+  it('toSeconds should return correct total time in seconds', () => {
+    expect(new SongTime(1, 23).toSeconds()).toEqual(83);
+  });
 
   it('setTimeFromSeconds should set correct time', () => {
     const testTime = new SongTime();
     testTime.setTimeFromSeconds(183);
     expect(testTime.minutes).toEqual(3);
     expect(testTime.seconds).toEqual(3);
+  });
+
+  it('setTimeFromSeconds should throw error when given negative value', () => {
+    const testTime = new SongTime();
+    expect(() => testTime.setTimeFromSeconds(-183)).toThrowError(RangeError);
   });
 });

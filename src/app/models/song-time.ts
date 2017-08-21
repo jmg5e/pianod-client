@@ -3,6 +3,10 @@ export class SongTime {
   public seconds: number;
 
   constructor(minutes = 0, seconds = 0) {
+    if (minutes < 0 || seconds < 0) {
+      throw new RangeError();
+    }
+
     this.minutes = minutes;
     this.seconds = seconds;
   }
@@ -25,9 +29,15 @@ export class SongTime {
     }
   }
 
-  toSeconds(): number { return this.minutes * 60 + this.seconds; }
+  toSeconds(): number {
+    return this.minutes * 60 + this.seconds;
+  }
 
   setTimeFromSeconds(totalSeconds) {
+    if (totalSeconds < 0) {
+      throw new RangeError();
+    }
+
     this.minutes = Math.floor(totalSeconds / 60) % 60;
     this.seconds = totalSeconds % 60;
   }
