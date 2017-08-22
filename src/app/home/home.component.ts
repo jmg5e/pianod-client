@@ -4,7 +4,8 @@ import {Observable} from 'rxjs/Observable';
 
 import {LoginDialogComponent} from '../dialogs';
 import {LoginInfo, UserInfo} from '../models';
-import {LoginService, PianodService} from '../services';
+import {LoginService} from '../services/login.service';
+import {PianodService} from '../services/pianod.service';
 
 @Component({
   selector: 'app-home',

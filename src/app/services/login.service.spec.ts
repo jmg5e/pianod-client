@@ -1,5 +1,7 @@
 import {async, inject, TestBed} from '@angular/core/testing';
-import {LocalStorageService, LoginService, PianodService} from '../services';
+import {LocalStorageService} from './local-storage.service';
+import {LoginService} from './login.service';
+import {PianodService} from './pianod.service';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 3000;
 

@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 
 import {StationSelectDialogComponent} from '../../dialogs';
-import {PianodService} from '../../services';
+import {PianodService} from '../../services/pianod.service';
 
 @Component({
   selector: 'app-controls',

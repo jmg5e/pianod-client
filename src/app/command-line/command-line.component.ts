@@ -2,7 +2,7 @@ import {AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, ViewChild} f
 import {Subscription} from 'rxjs/Subscription';
 
 import {Message} from '../models/message';
-import {PianodService} from '../services';
+import {PianodService} from '../services/pianod.service';
 
 import {MessagePipe} from './message.pipe';
 

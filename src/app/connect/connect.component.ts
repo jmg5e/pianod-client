@@ -5,7 +5,9 @@ import {Observable} from 'rxjs/Observable';
 
 import {LoginDialogComponent} from '../dialogs';
 import {Connection, LoginInfo} from '../models';
-import {ConnectService, LocalStorageService, PianodService} from '../services';
+import {ConnectService} from '../services/connect.service';
+import {LocalStorageService} from '../services/local-storage.service';
+import {PianodService} from '../services/pianod.service';
 import {NotificationService} from '../services/notification.service';
 
 @Component({selector: 'app-connect', templateUrl: './connect.component.html'})

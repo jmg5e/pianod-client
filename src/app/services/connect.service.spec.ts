@@ -5,7 +5,9 @@ import {Router, Routes} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {Connection} from '../models';
-import {ConnectService, LocalStorageService, PianodService} from '../services';
+import {ConnectService} from '../services/connect.service';
+import {LocalStorageService} from '../services/local-storage.service';
+import {PianodService} from '../services/pianod.service';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 4000;
 

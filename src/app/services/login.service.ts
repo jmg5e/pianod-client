@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 
 import {LoginInfo} from '../models';
-import {LocalStorageService, PianodService} from '../services';
+import {LocalStorageService} from '../services/local-storage.service';
+import {PianodService} from '../services/pianod.service';
 
 @Injectable()
 export class LoginService {

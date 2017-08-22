@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {CanActivate, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
-import {PianodService} from '../services';
+import {PianodService} from '../services/pianod.service';
 
 @Injectable()
 export class ConnectedGuard implements CanActivate {

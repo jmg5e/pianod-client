@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {ManageSeedsComponent} from '../../components/manage-seeds.component';
 import {ConfirmDialogComponent, InputDialogComponent} from '../../dialogs';
 import {User} from '../../models';
-import {PianodService} from '../../services';
+import {PianodService} from '../../services/pianod.service';
 import {NotificationService} from '../../services/notification.service';
 
 @Component({

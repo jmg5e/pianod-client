@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {SongInfo, SongTime} from '../../models';
-import {PianodService} from '../../services';
+import {PianodService} from '../../services/pianod.service';
 
 @Component({selector: 'app-now-playing', templateUrl: './now-playing.component.html'})
 export class NowPlayingComponent implements OnInit {
